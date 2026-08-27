@@ -72,13 +72,25 @@ export class LinksController {
   // --- Public Redirect Routes (catch-all) ---
   
   async redirectLink(req: Request, res: Response): Promise<void> {
-    // Mock behavior: If it's a valid mock slug, redirect. Else return 404 text.
-    const { slug } = req.params;
-    if (slug === 'xyz123') {
-      res.redirect(301, 'https://example.com');
-      return;
+    try {
+      const { slug } = req.params;
+      // Import redirectService directly here to avoid circular dependencies if any, 
+      // or at the top. Better yet, since we are using TS, let's assume it's imported at the top.
+      // But I can't easily add the import via this block. I will just require it locally.
+      const { redirectService } = require('../services/redirect.service');
+      
+      const targetUrl = await redirectService.trackAndGetTargetUrl(slug, req);
+      
+      if (targetUrl) {
+        res.redirect(301, targetUrl);
+        return;
+      }
+      
+      res.status(404).send('Link not found');
+    } catch (error) {
+      console.error('Redirect Error:', error);
+      res.status(500).send('Internal Server Error');
     }
-    res.status(404).send('Link not found');
   }
 
   async verifyLinkProtection(req: Request, res: Response): Promise<void> {
