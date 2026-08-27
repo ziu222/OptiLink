@@ -1,0 +1,142 @@
+/* Global Theme & Layout Styles (Vanilla CSS) */
+
+.layout-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+}
+
+/* Common Background - Avatar Blur */
+.bg-avatar-blur {
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.6);
+  z-index: -1;
+}
+
+/* 1. Overlap Center (Beacons Style) */
+.layout-overlap-center {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 2rem;
+}
+.layout-overlap-center .hero-banner {
+  width: 100%;
+  height: 200px;
+  background-color: #333;
+  background-size: cover;
+}
+.layout-overlap-center .profile-section {
+  margin-top: -50px; /* Overlap */
+  text-align: center;
+  z-index: 10;
+}
+.layout-overlap-center .avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 2. Left Aligned (Professional) */
+.layout-left-aligned {
+  width: 100%;
+  max-width: 600px;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.layout-left-aligned .profile-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.layout-left-aligned .avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+/* 3. Minimal Top (Classic Linktree) */
+.layout-minimal-top {
+  width: 100%;
+  max-width: 500px;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.layout-minimal-top .avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+/* 4. Split Screen (Desktop Portfolio) */
+.layout-split-screen {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+.layout-split-screen .split-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.5); /* Can be image */
+}
+.layout-split-screen .split-right {
+  flex: 1;
+  padding: 3rem;
+  overflow-y: auto;
+}
+@media (max-width: 768px) {
+  .layout-split-screen {
+    flex-direction: column;
+    height: auto;
+  }
+}
+
+/* 5. Card Floating (Glassmorphism) */
+.layout-card-floating {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.layout-card-floating .glass-card {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
