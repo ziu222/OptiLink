@@ -19,6 +19,7 @@ import { analyticsRoutes } from './routes/analytics.routes.js';
 import { bioRoutes } from './routes/bio.routes.js';
 import { qrRoutes } from './routes/qr.routes.js';
 import { aiRoutes } from './routes/ai.routes.js';
+import { adminRoutes } from './routes/admin.routes.js';
 import { redirectRoutes } from './routes/redirect.routes.js';
 
 // ── Create Express app ──────────────────────────────────────────
@@ -63,7 +64,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/bio', bioRoutes);
 app.use('/api/qr', qrRoutes);
 app.use('/api/ai', aiRoutes);
-// Phase 7: app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminRoutes);
 
 // MUST BE LAST (catch-all /:slug)
 app.use('/', redirectRoutes);
