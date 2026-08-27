@@ -14,6 +14,8 @@ import { apiLimiter } from './middleware/rateLimiter.js';
 import { logger } from './utils/logger.js';
 import { setupSwagger } from './config/swagger.js';
 import { authRoutes } from './routes/auth.routes.js';
+import { linksRoutes } from './routes/links.routes.js';
+import { redirectRoutes } from './routes/redirect.routes.js';
 
 // ── Create Express app ──────────────────────────────────────────
 
@@ -52,13 +54,15 @@ setupSwagger(app);
 // ── Routes (mount khi implement từng phase) ─────────────────────
 
 app.use('/api/auth', authRoutes);
-// Phase 2: app.use('/api/links', linkRoutes);
+app.use('/api/links', linksRoutes);
 // Phase 3: app.use('/api/analytics', analyticsRoutes);
 // Phase 4: app.use('/api/bio', bioRoutes);
 // Phase 5: app.use('/api/qr', qrRoutes);
 // Phase 6: app.use('/api/ai', aiRoutes);
 // Phase 7: app.use('/api/admin', adminRoutes);
-// Phase 2: app.use('/', redirectRoutes);  // MUST BE LAST (catch-all /:slug)
+
+// MUST BE LAST (catch-all /:slug)
+app.use('/', redirectRoutes);
 
 // ── 404 handler for unmatched API routes ────────────────────────
 
