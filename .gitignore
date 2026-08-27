@@ -38,9 +38,8 @@ coverage/
 .nyc_output/
 
 # Spec & Architecture (local docs)
-spec.md
-architecture.html
-implementation_plan.md
+specs/
+ui_prototypes/
 
 # Agents
 .agents/
