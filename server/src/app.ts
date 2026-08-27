@@ -12,6 +12,8 @@ import { connectRedis, disconnectRedis } from './config/redis.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 import { logger } from './utils/logger.js';
+import { setupSwagger } from './config/swagger.js';
+import { authRoutes } from './routes/auth.routes.js';
 
 // ── Create Express app ──────────────────────────────────────────
 
@@ -44,9 +46,12 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
+// ── Swagger ─────────────────────────────────────────────────────
+setupSwagger(app);
+
 // ── Routes (mount khi implement từng phase) ─────────────────────
 
-// Phase 1: app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 // Phase 2: app.use('/api/links', linkRoutes);
 // Phase 3: app.use('/api/analytics', analyticsRoutes);
 // Phase 4: app.use('/api/bio', bioRoutes);
