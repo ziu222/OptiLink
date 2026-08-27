@@ -8,7 +8,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 
 import { connectDB, disconnectDB } from './config/db.js';
-import { disconnectRedis } from './config/redis.js';
+import { connectRedis, disconnectRedis } from './config/redis.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { apiLimiter } from './middleware/rateLimiter.js';
 import { logger } from './utils/logger.js';
@@ -79,7 +79,7 @@ const startServer = async () => {
   try {
     // Connect to databases
     await connectDB();
-    // Redis connects automatically via ioredis
+    await connectRedis();
 
     const server = app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT} [${process.env.NODE_ENV || 'development'}]`);

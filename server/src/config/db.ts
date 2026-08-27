@@ -5,10 +5,13 @@ const connectDB = async (): Promise<void> => {
   const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/optilink';
 
   try {
-    await mongoose.connect(MONGODB_URI);
+    await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // Fail fast if no MongoDB
+      connectTimeoutMS: 5000,
+    });
     logger.info(`MongoDB connected: ${mongoose.connection.host}/${mongoose.connection.name}`);
   } catch (error) {
-    logger.error('MongoDB connection error:', error);
+    logger.error('MongoDB connection failed:', error instanceof Error ? error.message : error);
     process.exit(1);
   }
 

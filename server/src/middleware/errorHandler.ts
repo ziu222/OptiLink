@@ -105,7 +105,7 @@ export const errorHandler = (
     error: {
       code,
       message,
-      ...(details && { details }),
+      ...(details !== undefined ? { details } : {}),
     },
   };
 

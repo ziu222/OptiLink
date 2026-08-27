@@ -5,8 +5,13 @@ const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 
 const redis = new Redis(REDIS_URL, {
   maxRetriesPerRequest: 3,
+  lazyConnect: true, // Don't auto-connect, we connect explicitly in app.ts
   retryStrategy(times: number) {
-    const delay = Math.min(times * 200, 2000);
+    if (times > 5) {
+      logger.error('Redis: max retries reached, giving up');
+      return null; // Stop retrying
+    }
+    const delay = Math.min(times * 500, 3000);
     return delay;
   },
 });
@@ -25,16 +30,29 @@ redis.on('close', () => {
 
 // ── Helper methods ──────────────────────────────────────────────
 
+const connectRedis = async (): Promise<void> => {
+  try {
+    await redis.connect();
+  } catch (error) {
+    logger.error('Redis connection failed:', error instanceof Error ? error.message : error);
+    logger.warn('Server will continue without Redis — caching disabled');
+  }
+};
+
 /**
  * Get a cached value by key, parsed from JSON.
  */
 const getCache = async <T = unknown>(key: string): Promise<T | null> => {
-  const data = await redis.get(key);
-  if (!data) return null;
   try {
-    return JSON.parse(data) as T;
+    const data = await redis.get(key);
+    if (!data) return null;
+    try {
+      return JSON.parse(data) as T;
+    } catch {
+      return data as unknown as T;
+    }
   } catch {
-    return data as unknown as T;
+    return null; // Silently fail if Redis is down
   }
 };
 
@@ -42,11 +60,15 @@ const getCache = async <T = unknown>(key: string): Promise<T | null> => {
  * Set a cached value with optional TTL (seconds).
  */
 const setCache = async (key: string, value: unknown, ttlSeconds?: number): Promise<void> => {
-  const serialized = typeof value === 'string' ? value : JSON.stringify(value);
-  if (ttlSeconds) {
-    await redis.setex(key, ttlSeconds, serialized);
-  } else {
-    await redis.set(key, serialized);
+  try {
+    const serialized = typeof value === 'string' ? value : JSON.stringify(value);
+    if (ttlSeconds) {
+      await redis.setex(key, ttlSeconds, serialized);
+    } else {
+      await redis.set(key, serialized);
+    }
+  } catch {
+    // Silently fail if Redis is down
   }
 };
 
@@ -54,7 +76,11 @@ const setCache = async (key: string, value: unknown, ttlSeconds?: number): Promi
  * Delete a cached key.
  */
 const deleteCache = async (key: string): Promise<void> => {
-  await redis.del(key);
+  try {
+    await redis.del(key);
+  } catch {
+    // Silently fail
+  }
 };
 
 /**
@@ -62,24 +88,32 @@ const deleteCache = async (key: string): Promise<void> => {
  * Uses SCAN to avoid blocking Redis.
  */
 const deleteCachePattern = async (pattern: string): Promise<number> => {
-  let cursor = '0';
-  let deletedCount = 0;
+  try {
+    let cursor = '0';
+    let deletedCount = 0;
 
-  do {
-    const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
-    cursor = nextCursor;
-    if (keys.length > 0) {
-      await redis.del(...keys);
-      deletedCount += keys.length;
-    }
-  } while (cursor !== '0');
+    do {
+      const [nextCursor, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
+      cursor = nextCursor;
+      if (keys.length > 0) {
+        await redis.del(...keys);
+        deletedCount += keys.length;
+      }
+    } while (cursor !== '0');
 
-  return deletedCount;
+    return deletedCount;
+  } catch {
+    return 0;
+  }
 };
 
 const disconnectRedis = async (): Promise<void> => {
-  await redis.quit();
-  logger.info('Redis connection closed');
+  try {
+    await redis.quit();
+    logger.info('Redis connection closed');
+  } catch {
+    // Already disconnected
+  }
 };
 
-export { redis, getCache, setCache, deleteCache, deleteCachePattern, disconnectRedis };
+export { redis, connectRedis, getCache, setCache, deleteCache, deleteCachePattern, disconnectRedis };
