@@ -16,6 +16,7 @@ import { setupSwagger } from './config/swagger.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { linksRoutes } from './routes/links.routes.js';
 import { analyticsRoutes } from './routes/analytics.routes.js';
+import { bioRoutes } from './routes/bio.routes.js';
 import { redirectRoutes } from './routes/redirect.routes.js';
 
 // ── Create Express app ──────────────────────────────────────────
@@ -57,7 +58,7 @@ setupSwagger(app);
 app.use('/api/auth', authRoutes);
 app.use('/api/links', linksRoutes);
 app.use('/api/analytics', analyticsRoutes);
-// Phase 4: app.use('/api/bio', bioRoutes);
+app.use('/api/bio', bioRoutes);
 // Phase 5: app.use('/api/qr', qrRoutes);
 // Phase 6: app.use('/api/ai', aiRoutes);
 // Phase 7: app.use('/api/admin', adminRoutes);
