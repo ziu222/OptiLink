@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: optilink-backend-prod
+    ports:
+      - '5000:5000'
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/optilink
+      - REDIS_URL=redis://redis:6379
+      # Sẽ bổ sung các biến môi trường khác (JWT, AWS, v.v) thông qua file .env trên EC2
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - redis
+    restart: always
+    networks:
+      - optilink_network
+
+  mongodb:
+    image: mongo:7
+    container_name: optilink-mongo-prod
+    # Ẩn port 27017 ra khỏi public internet, chỉ chạy nội bộ
+    expose:
+      - '27017'
+    volumes:
+      - mongo_data_prod:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: optilink
+    restart: always
+    networks:
+      - optilink_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: optilink-redis-prod
+    # Ẩn port 6379 ra khỏi public internet
+    expose:
+      - '6379'
+    volumes:
+      - redis_data_prod:/data
+    command: redis-server --appendonly yes
+    restart: always
+    networks:
+      - optilink_network
+
+volumes:
+  mongo_data_prod:
+  redis_data_prod:
+
+networks:
+  optilink_network:
+    driver: bridge

@@ -1,0 +1,31 @@
+name: CI/CD Pipeline to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 1. Di chuyển vào thư mục dự án
+            cd /home/ubuntu/OptiLink || { echo "Directory not found"; exit 1; }
+            
+            # 2. Lấy code mới nhất từ nhánh main
+            git pull origin main
+            
+            # 3. Build và chạy lại container Backend (Không down DB)
+            docker-compose -f docker-compose.prod.yml up -d --build backend
+            
+            # 4. Xóa image thừa (Dangling images) để giải phóng dung lượng ổ cứng
+            docker image prune -f
