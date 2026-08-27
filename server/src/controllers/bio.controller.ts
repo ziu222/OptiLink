@@ -1,69 +1,104 @@
 import { Request, Response } from 'express';
+import { bioService } from '../services/bio.service';
 
 export class BioController {
-  async createBio(req: Request, res: Response): Promise<void> {
-    res.status(201).json({
-      success: true,
-      message: 'Tạo trang Bio thành công (Mock)',
-      data: {
-        bio: {
-          id: 'bio_123',
-          slug: req.body.slug || 'my-bio',
-          title: req.body.title || 'My Bio Page',
-          blocks: req.body.blocks || []
-        }
+  
+  /**
+   * Tạo hoặc Cập nhật Bio Page (Owner Panel)
+   */
+  async createOrUpdateBio(req: Request, res: Response): Promise<void> {
+    try {
+      // Giả sử req.user chứa thông tin user sau khi qua auth middleware
+      const userId = (req as any).user?.id || req.body.userId; // Tạm fallback để test
+      
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+        return;
       }
-    });
+
+      const bioData = req.body;
+      const updatedBio = await bioService.upsertBio(userId, bioData);
+
+      res.status(200).json({
+        success: true,
+        message: 'Lưu trang Bio thành công',
+        data: { bio: updatedBio }
+      });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
   }
 
+  /**
+   * Lấy trang Bio cho User chỉnh sửa (Owner Panel)
+   */
   async getBioForUser(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
-      message: 'Lấy trang Bio của user thành công (Mock)',
-      data: {
-        bio: {
-          id: 'bio_123',
-          slug: 'my-bio',
-          title: 'My Bio Page',
-          blocks: []
-        }
+    try {
+      const userId = (req as any).user?.id || req.query.userId;
+      
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+        return;
       }
-    });
+
+      const bio = await bioService.getBioByUserId(userId);
+      
+      if (!bio) {
+        res.status(404).json({ success: false, message: 'Bio page not found' });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        data: { bio }
+      });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
   }
 
-  async getBioBySlug(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
-      message: 'Lấy thông tin trang Bio công khai (Mock)',
-      data: {
-        bio: {
-          id: 'bio_123',
-          slug: req.params.slug,
-          title: 'My Public Bio',
-          blocks: [{ type: 'link', content: 'https://example.com' }]
-        }
+  /**
+   * Lấy trang Bio công khai bằng username (Khách hàng truy cập)
+   */
+  async getBioByUsername(req: Request, res: Response): Promise<void> {
+    try {
+      const { username } = req.params;
+      const bio = await bioService.getBioByUsername(username);
+
+      if (!bio) {
+        res.status(404).json({ success: false, message: 'Bio page not found or inactive' });
+        return;
       }
-    });
+
+      res.status(200).json({
+        success: true,
+        data: { bio }
+      });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
   }
 
-  async updateBio(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
-      message: 'Cập nhật trang Bio thành công (Mock)',
-      data: {
-        bio: {
-          id: req.params.id,
-          ...req.body
-        }
-      }
-    });
-  }
-
+  /**
+   * Xóa trang Bio (Owner Panel)
+   */
   async deleteBio(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
-      message: 'Xóa trang Bio thành công (Mock)'
-    });
+    try {
+      const userId = (req as any).user?.id || req.body.userId;
+      const success = await bioService.deleteBio(userId);
+
+      if (!success) {
+        res.status(404).json({ success: false, message: 'Bio page not found' });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Xóa trang Bio thành công'
+      });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
   }
 }
 
