@@ -16,8 +16,10 @@ export class RedirectService {
     }
 
     // 1. Phân tích Request (IP, Thiết bị)
-    const agent = useragent.parse(req.headers['user-agent']?.toString());
-    const deviceType = agent.device.family === 'Other' ? (agent.isMobile ? 'mobile' : 'desktop') : 'unknown'; // Đơn giản hóa logic phân loại
+    const userAgentString = req.headers['user-agent']?.toString() || '';
+    const isMobile = /mobile|iphone|ipod|android.*mobile|windows.*phone/i.test(userAgentString);
+    const isTablet = /ipad|android(?!.*mobile)/i.test(userAgentString);
+    const deviceType = isTablet ? 'tablet' : isMobile ? 'mobile' : 'desktop';
     const ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
     const referrer = req.get('Referrer') || '';
 
