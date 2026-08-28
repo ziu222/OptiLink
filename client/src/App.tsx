@@ -1,11 +1,11 @@
 import { ThemeProvider } from './contexts/ThemeContext';
-import { LayoutRenderer } from './components/layouts/LayoutRenderer';
+import { BuilderPage } from './pages/Builder/BuilderPage';
 import './App.css';
 
 function App() {
   return (
     <ThemeProvider>
-      <LayoutRenderer />
+      <BuilderPage />
     </ThemeProvider>
   );
 }
