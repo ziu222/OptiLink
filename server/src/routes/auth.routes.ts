@@ -1,5 +1,14 @@
 import { Router } from 'express';
 import { authController } from '../controllers/auth.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validate.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { authLimiter } from '../middleware/rateLimiter.js';
+import {
+  registerSchema,
+  loginSchema,
+  updateProfileSchema,
+} from '../validators/auth.validators.js';
 
 const router = Router();
 
@@ -22,6 +31,7 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [fullName, email, password, confirmPassword]
  *             properties:
  *               fullName:
  *                 type: string
@@ -37,15 +47,19 @@ const router = Router();
  *                 example: "StrongPass123!"
  *     responses:
  *       201:
- *         description: Đăng ký thành công
+ *         description: Đăng ký thành công. Trả về accessToken + user; refresh token đặt trong httpOnly cookie.
+ *       409:
+ *         description: Email đã tồn tại
+ *       422:
+ *         description: Dữ liệu không hợp lệ
  */
-router.post('/register', authController.register);
+router.post('/register', authLimiter, validate(registerSchema), asyncHandler(authController.register));
 
 /**
  * @swagger
  * /api/auth/verify-email:
  *   post:
- *     summary: Xác minh email bằng mã OTP
+ *     summary: Xác minh email bằng mã OTP (chưa triển khai - mock)
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -64,7 +78,7 @@ router.post('/register', authController.register);
  *       200:
  *         description: Email đã xác minh
  */
-router.post('/verify-email', authController.verifyEmail);
+router.post('/verify-email', asyncHandler(authController.verifyEmail));
 
 /**
  * @swagger
@@ -78,6 +92,7 @@ router.post('/verify-email', authController.verifyEmail);
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [email, password]
  *             properties:
  *               email:
  *                 type: string
@@ -87,35 +102,41 @@ router.post('/verify-email', authController.verifyEmail);
  *                 example: "StrongPass123!"
  *     responses:
  *       200:
- *         description: Đăng nhập thành công trả về JWT access token
+ *         description: Đăng nhập thành công. Trả về accessToken + user; refresh token đặt trong httpOnly cookie.
+ *       401:
+ *         description: Sai email hoặc mật khẩu
  */
-router.post('/login', authController.login);
+router.post('/login', authLimiter, validate(loginSchema), asyncHandler(authController.login));
 
 /**
  * @swagger
  * /api/auth/refresh:
  *   post:
- *     summary: Cấp lại access token bằng refresh token
+ *     summary: Cấp lại access token bằng refresh token (đọc từ httpOnly cookie)
  *     tags: [Auth]
  *     responses:
  *       200:
- *         description: Thành công
+ *         description: Trả về accessToken mới, xoay vòng refresh token cookie
+ *       401:
+ *         description: Refresh token thiếu hoặc không hợp lệ
  */
-router.post('/refresh', authController.refresh);
+router.post('/refresh', asyncHandler(authController.refresh));
 
 /**
  * @swagger
  * /api/auth/logout:
  *   post:
- *     summary: Đăng xuất tài khoản
+ *     summary: Đăng xuất tài khoản (thu hồi refresh token)
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Đăng xuất thành công
+ *       401:
+ *         description: Chưa đăng nhập
  */
-router.post('/logout', authController.logout);
+router.post('/logout', authenticate, asyncHandler(authController.logout));
 
 /**
  * @swagger
@@ -128,8 +149,10 @@ router.post('/logout', authController.logout);
  *     responses:
  *       200:
  *         description: Lấy thông tin thành công
+ *       401:
+ *         description: Chưa đăng nhập
  */
-router.get('/me', authController.getMe);
+router.get('/me', authenticate, asyncHandler(authController.getMe));
 
 /**
  * @swagger
@@ -155,14 +178,16 @@ router.get('/me', authController.getMe);
  *     responses:
  *       200:
  *         description: Cập nhật thành công
+ *       401:
+ *         description: Chưa đăng nhập
  */
-router.put('/profile', authController.updateProfile);
+router.put('/profile', authenticate, validate(updateProfileSchema), asyncHandler(authController.updateProfile));
 
 /**
  * @swagger
  * /api/auth/forgot-password:
  *   post:
- *     summary: Yêu cầu đặt lại mật khẩu (Gửi email)
+ *     summary: Yêu cầu đặt lại mật khẩu (chưa triển khai - mock)
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -177,13 +202,13 @@ router.put('/profile', authController.updateProfile);
  *       200:
  *         description: Đã gửi email reset
  */
-router.post('/forgot-password', authController.forgotPassword);
+router.post('/forgot-password', asyncHandler(authController.forgotPassword));
 
 /**
  * @swagger
  * /api/auth/reset-password:
  *   post:
- *     summary: Đặt lại mật khẩu bằng token
+ *     summary: Đặt lại mật khẩu bằng token (chưa triển khai - mock)
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -202,6 +227,6 @@ router.post('/forgot-password', authController.forgotPassword);
  *       200:
  *         description: Mật khẩu đã đặt lại thành công
  */
-router.post('/reset-password', authController.resetPassword);
+router.post('/reset-password', asyncHandler(authController.resetPassword));
 
 export const authRoutes = router;
