@@ -62,7 +62,7 @@ export class BioController {
    */
   async getBioByUsername(req: Request, res: Response): Promise<void> {
     try {
-      const { username } = req.params;
+      const username = req.params.username as string;
       const bio = await bioService.getBioByUsername(username);
 
       if (!bio) {
