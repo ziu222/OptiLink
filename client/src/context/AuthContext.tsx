@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import type { ReactNode } from 'react';
 import * as authApi from '../api/auth';
 import { setAccessToken } from '../lib/tokenStore';
-import type { RegisterPayload, User } from '../types/auth';
+import type { RegisterPayload, UpdateProfilePayload, User } from '../types/auth';
 
 type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -12,6 +12,7 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -70,8 +71,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('unauthenticated');
   }, []);
 
+  const updateProfile = useCallback(async (payload: UpdateProfilePayload) => {
+    const { user: current } = await authApi.updateProfile(payload);
+    setUser(current);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, status, login, register, logout }}>
+    <AuthContext.Provider value={{ user, status, login, register, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

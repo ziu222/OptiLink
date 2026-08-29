@@ -1,5 +1,5 @@
 import { api } from '../lib/axios';
-import type { LoginPayload, RegisterPayload, User } from '../types/auth';
+import type { LoginPayload, RegisterPayload, UpdateProfilePayload, User } from '../types/auth';
 
 interface AuthResult {
   accessToken: string;
@@ -28,4 +28,9 @@ export const me = async (): Promise<{ user: User }> => {
 
 export const logout = async (): Promise<void> => {
   await api.post('/auth/logout');
+};
+
+export const updateProfile = async (payload: UpdateProfilePayload): Promise<{ user: User }> => {
+  const res = await api.put('/auth/profile', payload);
+  return res.data.data;
 };

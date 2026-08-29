@@ -6,7 +6,11 @@ import { RouteErrorBoundary } from './routes/RouteErrorBoundary';
 import { HomePage } from './pages/Home/HomePage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
-import { DashboardPage } from './pages/DashboardPage';
+import { WorkspaceLayout } from './pages/Workspace/WorkspaceLayout';
+import { ShortenLinkPage } from './pages/Workspace/ShortenLinkPage';
+import { AnalyticsPage } from './pages/Workspace/AnalyticsPage';
+import { SettingsPage } from './pages/Workspace/SettingsPage';
+import { ProfilePage } from './pages/Workspace/ProfilePage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
 
@@ -20,7 +24,12 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<WorkspaceLayout />}>
+              <Route index element={<ShortenLinkPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+            </Route>
             <Route
               path="/builder"
               element={

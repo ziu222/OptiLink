@@ -1,0 +1,30 @@
+/* Bordered card with an optional fixed-height title bar, matching Thesis's
+   DashboardPanel — used to group content within a workspace page (which
+   already has its own PageHeader for the page-level title). */
+.content-panel {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.content-panel-header {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 3rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.content-panel-header h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.content-panel-body {
+  flex: 1;
+  padding: 1rem;
+}
