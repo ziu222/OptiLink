@@ -4,6 +4,7 @@ import './layouts.css';
 
 import { BioProfile } from '../bio/BioProfile';
 import { BioBlocks } from '../bio/BioBlocks';
+import { FallingEffect } from '../effects/FallingEffect';
 
 const LayoutOverlap = () => {
   const { bioData } = useTheme();
@@ -71,11 +72,8 @@ const LayoutFloating = () => {
   );
 };
 
-export const LayoutRenderer: React.FC = () => {
-  const { themeConfig } = useTheme();
-
-  // Chọn Layout dựa trên config
-  switch (themeConfig.layout) {
+const renderLayout = (layout: string | undefined) => {
+  switch (layout) {
     case 'left_aligned':
       return <LayoutLeftAligned />;
     case 'minimal_top':
@@ -88,4 +86,15 @@ export const LayoutRenderer: React.FC = () => {
     default:
       return <LayoutOverlap />;
   }
+};
+
+export const LayoutRenderer: React.FC = () => {
+  const { themeConfig } = useTheme();
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
+      <FallingEffect effect={themeConfig.effect} />
+      {renderLayout(themeConfig.layout)}
+    </div>
+  );
 };

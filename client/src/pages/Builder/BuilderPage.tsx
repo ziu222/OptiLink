@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './builder.css';
 import { Sidebar } from '../../components/workspace/Sidebar';
 import { BuilderSidebar } from '../../components/builder/BuilderSidebar';
 import { TabLinksAndBlocks } from '../../components/builder/TabLinksAndBlocks';
 import { TabDesign } from '../../components/builder/TabDesign';
+import { FallingEffect } from '../../components/effects/FallingEffect';
 import { useTheme } from '../../contexts/ThemeContext';
 import { saveBio } from '../../api/bio';
 
@@ -69,40 +70,6 @@ export function BuilderPage() {
       });
     }
   };
-
-  // Particles array
-  const [particles, setParticles] = useState<any[]>([]);
-
-  useEffect(() => {
-    let interval: any;
-    if (effect !== 'none') {
-      let spawnRate = 300;
-      if (['sakura', 'leaf', 'bubble'].includes(effect)) spawnRate = 600;
-      if (effect === 'rain') spawnRate = 100;
-
-      interval = setInterval(() => {
-        setParticles((prev) => {
-          let duration = Math.random() * 5 + 5;
-          if (effect === 'star') duration = Math.random() * 3 + 2;
-          else if (effect === 'snow') duration = Math.random() * 4 + 4;
-          else if (effect === 'rain') duration = Math.random() * 1 + 0.5;
-          else if (effect === 'bubble') duration = Math.random() * 4 + 4;
-
-          const newParticle = {
-            id: Date.now() + Math.random(),
-            left: Math.random() * 100 + '%',
-            duration: duration + 's',
-            delay: Math.random() * 2 + 's',
-          };
-          
-          return [...prev, newParticle].slice(-50); // Keep max 50 particles
-        });
-      }, spawnRate);
-    } else {
-      setParticles([]);
-    }
-    return () => clearInterval(interval);
-  }, [effect]);
 
   const wrapperStyle = {
     '--card-bg': cardBg === 'glass' ? 'rgba(255,255,255,0.3)' : cardBg,
@@ -179,15 +146,7 @@ export function BuilderPage() {
             <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
           )}
         </button>
-        <div className="bg-effect-layer">
-          {particles.map((p) => (
-            <div 
-              key={p.id} 
-              className={`particle ${effect}`} 
-              style={{ left: p.left, animationDuration: p.duration, animationDelay: p.delay }}
-            ></div>
-          ))}
-        </div>
+        <FallingEffect effect={effect} />
 
         <div className={`card-wrapper ${borderStyle === 'glow' ? 'border-glow' : ''}`} style={wrapperStyle}>
           <div className={`mock-bio-inner ${showBanner ? 'layout-banner-on' : 'layout-banner-off'}`} style={innerStyle}>
