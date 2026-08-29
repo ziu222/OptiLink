@@ -79,8 +79,20 @@ export function TabLinksAndBlocks({ bioData, setBioData, handleAddLink, handleDe
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text)', fontWeight: 600 }}>Huy hiệu hiển thị</label>
           <div className="badges-selector">
-            <label className="badge-check"><input type="checkbox" defaultChecked /> 🦅 Early</label>
-            <label className="badge-check"><input type="checkbox" defaultChecked /> 💎 PRO</label>
+            <label className="badge-check">
+              <input
+                type="checkbox"
+                checked={bioData?.badges?.early ?? false}
+                onChange={(e) => bioData && setBioData({ ...bioData, badges: { ...bioData.badges, early: e.target.checked } })}
+              /> Early
+            </label>
+            <label className="badge-check">
+              <input
+                type="checkbox"
+                checked={bioData?.badges?.pro ?? false}
+                onChange={(e) => bioData && setBioData({ ...bioData, badges: { ...bioData.badges, pro: e.target.checked } })}
+              /> PRO
+            </label>
           </div>
         </div>
       </div>

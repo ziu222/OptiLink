@@ -68,5 +68,9 @@ export interface IBioPage {
   };
   themeConfig: IThemeConfig;
   blocks: IBlock[];
+  badges?: {
+    early?: boolean;
+    pro?: boolean;
+  };
   isActive: boolean;
 }
