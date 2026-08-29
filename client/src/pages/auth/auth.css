@@ -1,0 +1,128 @@
+/* position:fixed so the page fills the viewport regardless of the
+   template's #root { width: 1126px } constraint in index.css */
+.auth-page {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0f172a;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px;
+  border-radius: 14px;
+  background: #1e293b;
+  color: #e2e8f0;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.auth-card h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.auth-field span {
+  color: #94a3b8;
+}
+
+.auth-field input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.auth-field input:focus {
+  border-color: #6366f1;
+}
+
+.auth-error {
+  color: #f87171;
+  font-style: normal;
+  font-size: 0.8rem;
+}
+
+.auth-form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+  font-size: 0.85rem;
+}
+
+.auth-card button[type='submit'],
+.dash-actions button {
+  padding: 11px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-card button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-alt {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.auth-alt a,
+.dash-link {
+  color: #a5b4fc;
+}
+
+/* Dashboard reuse */
+.dash-email {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.dash-meta {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.dash-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.route-status {
+  padding: 40px;
+  text-align: center;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #475569;
+}

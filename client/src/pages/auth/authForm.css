@@ -1,0 +1,225 @@
+/* Styles for the marketing-matched Login/Register pages. Named distinctly
+   from auth.css's .auth-* classes (shared by DashboardPage) to avoid
+   collisions, since plain CSS here is global regardless of which component
+   imports a file. */
+
+.authform-shell {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  font: 16px/145% var(--sans);
+}
+
+.authform-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 4rem 0;
+}
+
+.authform-layout {
+  display: grid;
+  gap: 3rem;
+  align-items: stretch;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.authform-frame {
+  display: none;
+}
+
+.authform-panel {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+}
+
+.authform-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-h);
+}
+
+.authform-error {
+  border: 1px solid #fca5a5;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.authform-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.authform-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.authform-label {
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.authform-hint-link {
+  font-size: 0.8125rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.authform-hint-link:hover {
+  text-decoration: underline;
+}
+
+.authform-input {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.authform-input:focus {
+  border-color: var(--text-h);
+}
+
+.authform-field-error {
+  font-style: normal;
+  font-size: 0.8125rem;
+  color: #dc2626;
+}
+
+.authform-submit {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--text-h);
+  background: var(--text-h);
+  color: var(--bg);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.authform-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.authform-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.25rem 0;
+}
+
+.authform-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.authform-divider-text {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.authform-oauth-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.authform-oauth-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.authform-oauth-button:hover {
+  background: var(--code-bg);
+}
+
+.authform-oauth-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.authform-oauth-notice {
+  margin: 0;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text);
+}
+
+.authform-footer {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.authform-footer a {
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.authform-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 1024px) {
+  .authform-layout {
+    grid-template-columns: 1fr auto;
+  }
+
+  .authform-frame {
+    display: flex;
+  }
+
+  .authform-panel {
+    margin: 0;
+    width: 28rem;
+    max-width: none;
+  }
+}
