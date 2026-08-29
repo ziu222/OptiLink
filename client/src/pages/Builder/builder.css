@@ -88,7 +88,9 @@
 .drag-icon { color: var(--text); font-size: 18px; cursor: grab; padding: 4px; }
 .block-info { flex: 1; }
 .block-type { font-size: 10px; font-weight: 700; color: #3b82f6; background: rgba(59, 130, 246, 0.15); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
-.block-name { font-weight: 600; font-size: 14px; color: var(--text-h); }
+.block-name-input { width: 100%; font-weight: 600; font-size: 14px; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 4px 6px; margin: -4px -6px; color: inherit; outline: none; transition: all 0.2s; }
+.block-name-input:hover { border-color: var(--border); }
+.block-name-input:focus { border-color: #3b82f6; background: var(--bg); }
 .block-actions { display: flex; align-items: center; gap: 8px; }
 .block-actions button { background: none; border: none; color: var(--text); cursor: pointer; font-size: 14px; padding: 4px 8px; }
 .block-actions button:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 4px; }
