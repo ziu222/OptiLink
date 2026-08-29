@@ -1,5 +1,5 @@
 import React from 'react';
-import { IBioPage } from '../../types/bio';
+import type { IBioPage } from '../../types/bio';
 import './bio.css';
 
 interface BioProfileProps {

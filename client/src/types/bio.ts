@@ -8,21 +8,38 @@ export interface IBackground {
 
 export interface IProfileConfig {
   avatarDecorationUrl?: string;
+  avatarFrame?: 'none' | 'neon' | 'discord' | 'image';
 }
 
 export interface IButtonStyle {
-  hoverEffect: 'scale_up' | 'glow' | 'shake' | '3d_pop' | 'none';
+  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow';
   borderRadius?: string;
   backgroundColor?: string;
   textColor?: string;
 }
 
+export interface ICardStyling {
+  background?: string;
+  borderStyle?: string;
+  borderColor?: string;
+  borderThickness?: string;
+  borderRadius?: string;
+}
+
 export interface IThemeConfig {
+  preset?: string;
   layout: 'overlap_center' | 'left_aligned' | 'minimal_top' | 'split_screen' | 'card_floating';
   background: IBackground;
+  heroBanner?: {
+    enabled: boolean;
+    url?: string;
+  };
+  cardStyling?: ICardStyling;
   profile: IProfileConfig;
-  effect: 'none' | 'sakura' | 'snow' | 'matrix' | 'confetti' | 'floating_particles' | 'rain' | 'shooting_stars';
+  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble';
   buttonStyle: IButtonStyle;
+  fontFamily?: string;
+  textColor?: string;
 }
 
 export interface IBlock {

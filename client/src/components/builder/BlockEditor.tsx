@@ -7,8 +7,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent
 } from '@dnd-kit/core';
+
 import {
   arrayMove,
   SortableContext,
@@ -17,7 +17,7 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { IBlock } from '../../types/bio';
+import type { IBlock } from '../../types/bio';
 
 // Từng item có thể kéo thả
 const SortableBlockItem = ({ block }: { block: IBlock }) => {
@@ -62,7 +62,7 @@ export const BlockEditor: React.FC = () => {
 
   if (!bioData) return null;
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = (event: any) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {

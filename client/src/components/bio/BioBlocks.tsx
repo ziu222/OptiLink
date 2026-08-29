@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IBlock } from '../../types/bio';
+import type { IBlock } from '../../types/bio';
 import './bio.css';
 
 interface BioBlocksProps {
