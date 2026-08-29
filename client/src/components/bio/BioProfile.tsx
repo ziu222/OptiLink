@@ -24,6 +24,7 @@ export const BioProfile: React.FC<BioProfileProps> = ({ bioData }) => {
         )}
       </div>
       <h1 className="bio-title">{bioData.title || `@${bioData.username}`}</h1>
+      {bioData.title && <p className="bio-username">@{bioData.username}</p>}
       {bioData.bio && <p className="bio-description">{bioData.bio}</p>}
       
       <div className="social-links">

@@ -210,6 +210,7 @@ export function BuilderPage() {
             </div>
 
             <h1 className="mock-title">{bioData?.title || 'Tên hiển thị'}</h1>
+            {bioData?.username && <p className="mock-username">@{bioData.username}</p>}
             <p className="mock-bio-text">{bioData?.bio || 'Mô tả ngắn của bạn...'}</p>
             
             {blocks.map(block => {
