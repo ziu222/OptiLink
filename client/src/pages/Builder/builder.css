@@ -3,6 +3,17 @@
 }
 
 .builder-layout {
+  /* The builder canvas is always dark (like an editor), independent of the
+     site-wide light/dark toggle. Re-declare the shared tokens the reused
+     <Sidebar> reads (index.css `:root.dark`) so it renders dark here too,
+     instead of following the user's light-mode preference and clashing
+     with the always-dark editor/preview next to it. */
+  --bg: #16171d;
+  --text: #9ca3af;
+  --text-h: #f3f4f6;
+  --border: #2e303a;
+  --code-bg: #1f2028;
+
   background-color: #0b0f19;
   color: #e2e8f0;
   height: 100vh;
