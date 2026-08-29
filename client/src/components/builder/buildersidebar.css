@@ -1,8 +1,8 @@
 .builder-sidebar {
   width: 180px;
   flex-shrink: 0;
-  background: #0f172a;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--bg);
+  border-right: 1px solid var(--border);
   padding: 24px 12px;
   z-index: 20;
   transition: width 0.2s;
@@ -27,7 +27,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #64748b;
+  color: var(--text);
 }
 
 .builder-sidebar-collapse-btn {
@@ -40,14 +40,14 @@
   border: none;
   border-radius: 6px;
   background: none;
-  color: #64748b;
+  color: var(--text);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .builder-sidebar-collapse-btn:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-h);
+  background: var(--border);
 }
 
 .builder-sidebar.is-collapsed .builder-sidebar-header {
@@ -68,7 +68,7 @@
   border: none;
   border-radius: 10px;
   background: none;
-  color: #94a3b8;
+  color: var(--text);
   font-size: 13px;
   font-weight: 500;
   text-align: left;
@@ -82,8 +82,8 @@
 }
 
 .builder-sidebar-link:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-h);
+  background: var(--border);
 }
 
 .builder-sidebar-link.is-active {
