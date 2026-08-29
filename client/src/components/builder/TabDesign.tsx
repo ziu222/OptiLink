@@ -1,6 +1,7 @@
 import React from 'react';
 import type { IThemeConfig } from '../../types/bio';
 import { uploadBioMedia } from '../../api/bio';
+import { extractGradientColors } from '../../utils/color';
 
 interface TabDesignProps {
   themeConfig: IThemeConfig;
@@ -8,13 +9,7 @@ interface TabDesignProps {
 }
 
 export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
-  // Helpers for extracting c1 and c2 from linear-gradient(135deg, c1, c2)
-  const extractColors = (gradient: string) => {
-    const match = gradient.match(/linear-gradient\([^,]+,\s*(#[a-f0-9]+|\w+),\s*(#[a-f0-9]+|\w+)\)/i);
-    return match ? { c1: match[1], c2: match[2] } : { c1: '#0f1115', c2: '#16181d' };
-  };
-
-  const { c1, c2 } = extractColors(themeConfig.background.value || '');
+  const { c1, c2 } = extractGradientColors(themeConfig.background.value || '');
 
   const handleUpdate = (updates: Partial<IThemeConfig>) => {
     setThemeConfig(prev => ({ ...prev, ...updates }));
@@ -71,12 +66,76 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       <h3 className="section-title">Bố cục & Nền (Layout & BG)</h3>
       <div className="card">
         <div className="input-group">
-          <label>Nền toàn trang (Gradient/Solid)</label>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
-            <input type="color" value={c1} onChange={(e) => handleUpdate({ background: { type: 'gradient', value: `linear-gradient(135deg, ${e.target.value}, ${c2})` } })} />
-            <input type="color" value={c2} onChange={(e) => handleUpdate({ background: { type: 'gradient', value: `linear-gradient(135deg, ${c1}, ${e.target.value})` } })} />
-          </div>
+          <label>Kiểu nền toàn trang (Background Type)</label>
+          <select
+            value={themeConfig.background.type}
+            onChange={(e) => {
+              const type = e.target.value as IThemeConfig['background']['type'];
+              if (type === 'gradient' || type === 'animated_gradient' || type === 'mesh') {
+                handleUpdate({ background: { type, value: themeConfig.background.value || 'linear-gradient(135deg, #0f1115, #16181d)' } });
+              } else if (type === 'color') {
+                handleUpdate({ background: { type, value: c1 } });
+              } else {
+                handleUpdate({ background: { type, url: themeConfig.background.url } });
+              }
+            }}
+          >
+            <option value="gradient">Gradient (2 màu)</option>
+            <option value="animated_gradient">Gradient chuyển động</option>
+            <option value="mesh">Mesh / Aurora Glow</option>
+            <option value="color">Màu đơn (Solid)</option>
+            <option value="image">Ảnh nền</option>
+            <option value="video">Video nền</option>
+            <option value="avatar_blur">Mờ nền từ Avatar</option>
+          </select>
         </div>
+
+        {(themeConfig.background.type === 'gradient' || themeConfig.background.type === 'animated_gradient' || themeConfig.background.type === 'mesh') && (
+          <div className="input-group">
+            <label>Màu nền (Gradient/Solid)</label>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+              <input type="color" value={c1} onChange={(e) => handleUpdate({ background: { type: themeConfig.background.type, value: `linear-gradient(135deg, ${e.target.value}, ${c2})` } })} />
+              <input type="color" value={c2} onChange={(e) => handleUpdate({ background: { type: themeConfig.background.type, value: `linear-gradient(135deg, ${c1}, ${e.target.value})` } })} />
+            </div>
+          </div>
+        )}
+
+        {themeConfig.background.type === 'color' && (
+          <div className="input-group">
+            <label>Màu nền (Solid)</label>
+            <input type="color" value={c1} onChange={(e) => handleUpdate({ background: { type: 'color', value: e.target.value } })} />
+          </div>
+        )}
+
+        {(themeConfig.background.type === 'image' || themeConfig.background.type === 'video') && (
+          <div className="input-group">
+            <label style={{
+              display: 'inline-block', padding: '8px 16px', background: 'var(--code-bg)',
+              borderRadius: '8px', fontSize: '12px', cursor: 'pointer', color: 'var(--text-h)', border: '1px solid var(--border)'
+            }}>
+              {themeConfig.background.type === 'video' ? 'Tải video nền' : 'Tải ảnh nền'}
+              <input
+                type="file"
+                accept={themeConfig.background.type === 'video' ? 'video/*' : 'image/*'}
+                style={{ display: 'none' }}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const bgType = themeConfig.background.type;
+                  const previewUrl = URL.createObjectURL(file);
+                  handleUpdate({ background: { type: bgType, url: previewUrl } });
+                  try {
+                    const url = await uploadBioMedia(file);
+                    setThemeConfig((prev) => ({ ...prev, background: { type: bgType, url } }));
+                  } catch (err) {
+                    console.error('Background media upload failed', err);
+                  }
+                }}
+              />
+            </label>
+          </div>
+        )}
+
         <div className="input-group">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <label style={{ margin: 0 }}>Ảnh bìa ngang (Hero Banner) 🖼️</label>
