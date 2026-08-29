@@ -20,41 +20,66 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
     setThemeConfig(prev => ({ ...prev, ...updates }));
   };
 
+  // ponytail: static lookup, not a factory — these are fixed presets, not user-configurable.
+  const PRESETS: Record<string, Partial<IThemeConfig>> = {
+    commerce: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #0f1115, #16181d)' },
+      heroBanner: { ...themeConfig.heroBanner, enabled: true },
+      cardStyling: { background: '#16181d', borderStyle: 'none', borderRadius: '40px' },
+      profile: { ...themeConfig.profile, avatarFrame: 'neon' },
+      fontFamily: "'Inter', sans-serif",
+      textColor: '#ffffff',
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px' }
+    },
+    anime: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #FFB7B2, #B5EAD7)' },
+      heroBanner: { ...themeConfig.heroBanner, enabled: false },
+      cardStyling: { background: 'glass', borderStyle: 'none', borderRadius: '40px' },
+      profile: { ...themeConfig.profile, avatarFrame: 'none' },
+      fontFamily: "'Outfit', sans-serif",
+      textColor: '#555555',
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-scale', borderRadius: '30px' }
+    },
+    discord: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #1a1a2e, #5865F2)' },
+      heroBanner: { ...themeConfig.heroBanner, enabled: true },
+      cardStyling: { background: '#1e2124', borderStyle: 'none', borderRadius: '16px' },
+      profile: { ...themeConfig.profile, avatarFrame: 'discord' },
+      fontFamily: "'Inter', sans-serif",
+      textColor: '#ffffff',
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px' }
+    },
+    minimal: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #fafafa, #f0f0f0)' },
+      heroBanner: { ...themeConfig.heroBanner, enabled: false },
+      cardStyling: { background: 'transparent', borderStyle: 'none', borderRadius: '8px' },
+      profile: { ...themeConfig.profile, avatarFrame: 'none' },
+      fontFamily: "'Inter', sans-serif",
+      textColor: '#111111',
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-lift', borderRadius: '8px' }
+    },
+    cyberpunk: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #0d0221, #ff2079)' },
+      heroBanner: { ...themeConfig.heroBanner, enabled: true },
+      cardStyling: { background: '#0d0221', borderStyle: 'glow', borderColor: '#00fff0', borderThickness: '2px', borderRadius: '4px' },
+      profile: { ...themeConfig.profile, avatarFrame: 'neon' },
+      fontFamily: "'Space Mono', monospace",
+      textColor: '#00fff0',
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-glow', borderRadius: '4px' }
+    },
+    y2k: {
+      background: { type: 'gradient', value: 'linear-gradient(135deg, #ff9ecd, #a0e7ff)' },
+      heroBanner: { ...themeConfig.heroBanner, enabled: true },
+      cardStyling: { background: 'glass', borderStyle: 'dashed', borderColor: '#ffffff', borderThickness: '3px', borderRadius: '40px' },
+      profile: { ...themeConfig.profile, avatarFrame: 'image' },
+      fontFamily: "'Comic Neue', cursive",
+      textColor: '#ff007f',
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-scale', borderRadius: '30px' }
+    },
+  };
+
   const handlePresetChange = (v: string) => {
-    if (v === 'anime') {
-      handleUpdate({
-        preset: v,
-        background: { type: 'gradient', value: 'linear-gradient(135deg, #FFB7B2, #B5EAD7)' },
-        heroBanner: { ...themeConfig.heroBanner, enabled: false },
-        cardStyling: { background: 'glass', borderStyle: 'none', borderRadius: '40px' },
-        profile: { ...themeConfig.profile, avatarFrame: 'none' },
-        fontFamily: "'Outfit', sans-serif",
-        textColor: '#555555',
-        buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-scale', borderRadius: '30px' }
-      });
-    } else if (v === 'discord') {
-      handleUpdate({
-        preset: v,
-        background: { type: 'gradient', value: 'linear-gradient(135deg, #1a1a2e, #5865F2)' },
-        heroBanner: { ...themeConfig.heroBanner, enabled: true },
-        cardStyling: { background: '#1e2124', borderStyle: 'none', borderRadius: '16px' },
-        profile: { ...themeConfig.profile, avatarFrame: 'discord' },
-        fontFamily: "'Inter', sans-serif",
-        textColor: '#ffffff',
-        buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px' }
-      });
-    } else {
-      handleUpdate({
-        preset: 'commerce',
-        background: { type: 'gradient', value: 'linear-gradient(135deg, #0f1115, #16181d)' },
-        heroBanner: { ...themeConfig.heroBanner, enabled: true },
-        cardStyling: { background: '#16181d', borderStyle: 'none', borderRadius: '40px' },
-        profile: { ...themeConfig.profile, avatarFrame: 'neon' },
-        fontFamily: "'Inter', sans-serif",
-        textColor: '#ffffff',
-        buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px' }
-      });
-    }
+    handleUpdate({ ...(PRESETS[v] ?? PRESETS.commerce), preset: v });
   };
 
   return (
@@ -65,6 +90,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
           <option value="commerce">Mặc định: Storefront (Thương mại)</option>
           <option value="anime">Anime Pastel (Thẻ kính)</option>
           <option value="discord">Discord Gamer</option>
+          <option value="minimal">Minimal (Tối giản)</option>
+          <option value="cyberpunk">Cyberpunk</option>
+          <option value="y2k">Y2K</option>
         </select>
       </div>
 
