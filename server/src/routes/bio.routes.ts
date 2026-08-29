@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { bioController } from '../controllers/bio.controller.js';
+import { validate } from '../middleware/validate';
+import { bioPageSchema } from '../validators/bio.validator';
 
 const router = Router();
 
@@ -28,7 +30,7 @@ const router = Router();
  *       200:
  *         description: Lưu trang Bio thành công
  */
-router.post('/', bioController.createOrUpdateBio);
+router.post('/', validate(bioPageSchema, 'body'), bioController.createOrUpdateBio);
 
 /**
  * @swagger
