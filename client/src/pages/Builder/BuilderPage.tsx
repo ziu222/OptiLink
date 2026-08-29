@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './builder.css';
+import { Sidebar } from '../../components/workspace/Sidebar';
+import { BuilderSidebar } from '../../components/builder/BuilderSidebar';
 import { TabLinksAndBlocks } from '../../components/builder/TabLinksAndBlocks';
 import { TabDesign } from '../../components/builder/TabDesign';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -9,6 +11,7 @@ export function BuilderPage() {
   const { themeConfig, setThemeConfig, bioData, setBioData } = useTheme();
   const [activeTab, setActiveTab] = useState('tab-links');
   const [publishState, setPublishState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [fullPreview, setFullPreview] = useState(false);
 
   const handlePublish = async () => {
     if (!bioData) return;
@@ -117,71 +120,65 @@ export function BuilderPage() {
   } as React.CSSProperties;
 
   return (
-    <div className="builder-layout">
-      {/* 1. SLIM NAV */}
-      <div className="slim-nav">
-        <div className="nav-logo">O</div>
-        <div 
-          className={`nav-item ${activeTab === 'tab-links' ? 'active' : ''}`}
-          data-tooltip="Links & Blocks"
-          onClick={() => setActiveTab('tab-links')}
-        >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </div>
-        <div 
-          className={`nav-item ${activeTab === 'tab-design' ? 'active' : ''}`}
-          data-tooltip="Appearance (Design)"
-          onClick={() => setActiveTab('tab-design')}
-        >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <div 
-          className={`nav-item ${activeTab === 'tab-analytics' ? 'active' : ''}`}
-          data-tooltip="Analytics"
-          onClick={() => setActiveTab('tab-analytics')}
-        >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-        </div>
-      </div>
+    <div className={`builder-layout${fullPreview ? ' is-full-preview' : ''}`}>
+      {!fullPreview && (
+        <>
+          {/* 1. APP NAV (shared with the rest of OptiLink) + BIO PAGE SUB-NAV */}
+          <Sidebar />
+          <BuilderSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* 2. EDITOR PANEL */}
-      <div className="editor-panel">
-        <div className="header">
-          <h2>{activeTab === 'tab-links' ? 'Links & Blocks' : activeTab === 'tab-design' ? 'Appearance (Design)' : 'Analytics'}</h2>
-          <button className="btn-save" onClick={handlePublish} disabled={publishState === 'saving'}>
-            {publishState === 'saving' ? 'Đang lưu...' : publishState === 'saved' ? 'Đã lưu ✓' : publishState === 'error' ? 'Lỗi, thử lại' : 'Publish'}
-          </button>
-        </div>
-        
-        <div className="content-area">
-          {/* TAB 1: LINKS & BLOCKS */}
-          <div className={`tab-content ${activeTab === 'tab-links' ? 'active' : ''}`}>
-            <TabLinksAndBlocks
-              bioData={bioData}
-              setBioData={setBioData}
-              handleAddLink={handleAddLink}
-              handleDeleteBlock={handleDeleteBlock}
-            />
-          </div>
+          {/* 2. EDITOR PANEL */}
+          <div className="editor-panel">
+            <div className="header">
+              <h2>{activeTab === 'tab-links' ? 'Links & Blocks' : activeTab === 'tab-design' ? 'Appearance (Design)' : 'Analytics'}</h2>
+              <button className="btn-save" onClick={handlePublish} disabled={publishState === 'saving'}>
+                {publishState === 'saving' ? 'Đang lưu...' : publishState === 'saved' ? 'Đã lưu ✓' : publishState === 'error' ? 'Lỗi, thử lại' : 'Publish'}
+              </button>
+            </div>
 
-          {/* TAB 2: DESIGN */}
-          <div className={`tab-content ${activeTab === 'tab-design' ? 'active' : ''}`}>
-            <TabDesign
-              themeConfig={themeConfig}
-              setThemeConfig={setThemeConfig}
-            />
+            <div className="content-area">
+              {/* TAB 1: LINKS & BLOCKS */}
+              <div className={`tab-content ${activeTab === 'tab-links' ? 'active' : ''}`}>
+                <TabLinksAndBlocks
+                  bioData={bioData}
+                  setBioData={setBioData}
+                  handleAddLink={handleAddLink}
+                  handleDeleteBlock={handleDeleteBlock}
+                />
+              </div>
+
+              {/* TAB 2: DESIGN */}
+              <div className={`tab-content ${activeTab === 'tab-design' ? 'active' : ''}`}>
+                <TabDesign
+                  themeConfig={themeConfig}
+                  setThemeConfig={setThemeConfig}
+                />
+              </div>
+
+              {/* TAB 3: ANALYTICS */}
+              <div className={`tab-content ${activeTab === 'tab-analytics' ? 'active' : ''}`}>
+                 <h3 className="section-title">Analytics (Coming Soon)</h3>
+                 <p style={{color: 'var(--text)', fontSize: '14px'}}>Tính năng thống kê sẽ được phát triển sau.</p>
+              </div>
+            </div>
           </div>
-          
-          {/* TAB 3: ANALYTICS */}
-          <div className={`tab-content ${activeTab === 'tab-analytics' ? 'active' : ''}`}>
-             <h3 className="section-title">Analytics (Coming Soon)</h3>
-             <p style={{color: '#94a3b8', fontSize: '14px'}}>Tính năng thống kê sẽ được phát triển sau.</p>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* 3. PREVIEW AREA */}
       <div className="preview-area" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
+        <button
+          type="button"
+          className="preview-toggle-btn"
+          onClick={() => setFullPreview((v) => !v)}
+          title={fullPreview ? 'Thoát xem toàn màn hình' : 'Xem toàn màn hình'}
+        >
+          {fullPreview ? (
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 9L4 4m0 0v4m0-4h4m7 5l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4m7-5l5 5m0 0v-4m0 4h-4"/></svg>
+          ) : (
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+          )}
+        </button>
         <div className="bg-effect-layer">
           {particles.map((p) => (
             <div 
@@ -213,6 +210,7 @@ export function BuilderPage() {
             </div>
 
             <h1 className="mock-title">{bioData?.title || 'Tên hiển thị'}</h1>
+            {bioData?.username && <p className="mock-username">@{bioData.username}</p>}
             <p className="mock-bio-text">{bioData?.bio || 'Mô tả ngắn của bạn...'}</p>
             
             {blocks.map(block => {

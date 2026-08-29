@@ -61,7 +61,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
     <>
       <h3 className="section-title">Templates (Giao diện cài sẵn)</h3>
       <div className="card" style={{ marginBottom: '16px' }}>
-        <select style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'rgba(15, 23, 42, 0.5)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }} value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
+        <select style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-h)', border: '1px solid var(--border)' }} value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
           <option value="commerce">Mặc định: Storefront (Thương mại)</option>
           <option value="anime">Anime Pastel (Thẻ kính)</option>
           <option value="discord">Discord Gamer</option>
@@ -81,14 +81,14 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <label style={{ margin: 0 }}>Ảnh bìa ngang (Hero Banner) 🖼️</label>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
-              <input type="checkbox" checked={themeConfig.heroBanner?.enabled} onChange={(e) => handleUpdate({ heroBanner: { ...themeConfig.heroBanner, enabled: e.target.checked } })} /> <span style={{ fontSize: '12px', color: '#cbd5e1' }}>Bật</span>
+              <input type="checkbox" checked={themeConfig.heroBanner?.enabled} onChange={(e) => handleUpdate({ heroBanner: { ...themeConfig.heroBanner, enabled: e.target.checked } })} /> <span style={{ fontSize: '12px', color: 'var(--text)' }}>Bật</span>
             </label>
           </div>
           {themeConfig.heroBanner?.enabled && (
             <div style={{ marginTop: '12px' }}>
               <label style={{
-                display: 'inline-block', padding: '8px 16px', background: 'rgba(255,255,255,0.1)', 
-                borderRadius: '8px', fontSize: '12px', cursor: 'pointer', color: '#fff', border: '1px solid rgba(255,255,255,0.2)'
+                display: 'inline-block', padding: '8px 16px', background: 'var(--code-bg)',
+                borderRadius: '8px', fontSize: '12px', cursor: 'pointer', color: 'var(--text-h)', border: '1px solid var(--border)'
               }}>
                 Tải ảnh bìa mới
                 <input 
