@@ -37,7 +37,7 @@ export interface IThemeConfig {
   };
   cardStyling?: ICardStyling;
   profile: IProfileConfig;
-  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble';
+  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble' | 'confetti' | 'hearts' | 'firefly' | 'glitter';
   buttonStyle: IButtonStyle;
   fontFamily?: string;
   textColor?: string;
@@ -162,7 +162,7 @@ const BioPageSchema = new Schema({
     },
     effect: { 
       type: String,
-      enum: ['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble'],
+      enum: ['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble', 'confetti', 'hearts', 'firefly', 'glitter'],
       default: 'none'
     },
     buttonStyle: {
