@@ -3,9 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { applyServerError } from '../../lib/formError';
+import { Header } from '../../components/Header/Header';
+import { Footer } from '../../components/Footer/Footer';
+import { PictureFrame } from '../../components/Home/PictureFrame';
+import { OAuthButtons } from './OAuthButtons';
 import { loginSchema } from './schemas';
 import type { LoginValues } from './schemas';
-import './auth.css';
+import './authForm.css';
 
 export function LoginPage() {
   const { status, login } = useAuth();
@@ -18,45 +22,68 @@ export function LoginPage() {
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
 
   if (status === 'authenticated') {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onSubmit = handleSubmit(async (values) => {
     try {
       await login(values.email, values.password);
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       applyServerError<LoginValues>(err, setError);
     }
   });
 
   return (
-    <div className="auth-page">
-      <form className="auth-card" onSubmit={onSubmit} noValidate>
-        <h1>Log in</h1>
+    <div className="authform-shell">
+      <Header />
 
-        {errors.root && <p className="auth-form-error">{errors.root.message}</p>}
+      <main className="authform-main">
+        <div className="authform-layout">
+          <PictureFrame className="authform-frame" />
 
-        <label className="auth-field">
-          <span>Email</span>
-          <input type="email" autoComplete="email" {...register('email')} />
-          {errors.email && <em className="auth-error">{errors.email.message}</em>}
-        </label>
+          <form className="authform-panel" onSubmit={onSubmit} noValidate>
+            <h1 className="authform-title">Welcome Back</h1>
 
-        <label className="auth-field">
-          <span>Password</span>
-          <input type="password" autoComplete="current-password" {...register('password')} />
-          {errors.password && <em className="auth-error">{errors.password.message}</em>}
-        </label>
+            {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Logging in…' : 'Log in'}
-        </button>
+            <label className="authform-field">
+              <span className="authform-label">Email</span>
+              <input type="email" autoComplete="email" className="authform-input" {...register('email')} />
+              {errors.email && <em className="authform-field-error">{errors.email.message}</em>}
+            </label>
 
-        <p className="auth-alt">
-          No account? <Link to="/register">Create one</Link>
-        </p>
-      </form>
+            <label className="authform-field">
+              <div className="authform-row">
+                <span className="authform-label">Password</span>
+                <a href="#" className="authform-hint-link">
+                  Forgot password?
+                </a>
+              </div>
+              <input
+                type="password"
+                autoComplete="current-password"
+                className="authform-input"
+                {...register('password')}
+              />
+              {errors.password && <em className="authform-field-error">{errors.password.message}</em>}
+            </label>
+
+            <button type="submit" disabled={isSubmitting} className="authform-submit">
+              {isSubmitting ? 'Logging in…' : 'Log in'}
+              {!isSubmitting && <span>→</span>}
+            </button>
+
+            <OAuthButtons />
+
+            <p className="authform-footer">
+              No account? <Link to="/register">Sign up for free</Link>
+            </p>
+          </form>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
