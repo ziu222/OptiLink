@@ -21,17 +21,18 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route
-              path="/builder"
-              element={
-                <RouteErrorBoundary>
-                  <Suspense fallback={<p className="route-status">Loading builder…</p>}>
-                    <BuilderRoute />
-                  </Suspense>
-                </RouteErrorBoundary>
-              }
-            />
           </Route>
+          
+          <Route
+            path="/builder"
+            element={
+              <RouteErrorBoundary>
+                <Suspense fallback={<p className="route-status">Loading builder…</p>}>
+                  <BuilderRoute />
+                </Suspense>
+              </RouteErrorBoundary>
+            }
+          />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

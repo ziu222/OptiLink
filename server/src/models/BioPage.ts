@@ -8,11 +8,12 @@ export interface IBackground {
 }
 
 export interface IProfileConfig {
-  avatarDecorationUrl?: string; // Khung avatar
+  avatarDecorationUrl?: string; // Khung avatar (custom image)
+  avatarFrame?: 'none' | 'neon' | 'discord' | 'image'; // CSS frames
 }
 
 export interface IButtonStyle {
-  hoverEffect: 'scale_up' | 'glow' | 'shake' | '3d_pop' | 'none';
+  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow';
   borderRadius?: string;
   backgroundColor?: string;
   textColor?: string;
@@ -21,6 +22,8 @@ export interface IButtonStyle {
 export interface ICardStyling {
   background?: string;
   borderStyle?: string;
+  borderColor?: string;
+  borderThickness?: string;
   borderRadius?: string;
 }
 
@@ -34,9 +37,10 @@ export interface IThemeConfig {
   };
   cardStyling?: ICardStyling;
   profile: IProfileConfig;
-  effect: 'none' | 'sakura' | 'snow' | 'matrix' | 'confetti' | 'floating_particles' | 'rain' | 'shooting_stars';
+  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble';
   buttonStyle: IButtonStyle;
   fontFamily?: string;
+  textColor?: string;
 }
 
 // 2. Interfaces cho Block
@@ -142,29 +146,33 @@ const BioPageSchema = new Schema({
       url: { type: String, default: '' }
     },
     cardStyling: {
-      background: { type: String, default: '' },
-      borderStyle: { type: String, default: '' },
-      borderRadius: { type: String, default: '' }
+      background: { type: String, default: '#16181d' },
+      borderStyle: { type: String, default: 'none' },
+      borderColor: { type: String, default: '#ff007f' },
+      borderThickness: { type: String, default: '2px' },
+      borderRadius: { type: String, default: '40px' }
     },
     profile: {
-      avatarDecorationUrl: { type: String, default: '' }
+      avatarDecorationUrl: { type: String, default: '' },
+      avatarFrame: { type: String, enum: ['none', 'neon', 'discord', 'image'], default: 'neon' }
     },
     effect: { 
       type: String,
-      enum: ['none', 'sakura', 'snow', 'matrix', 'confetti', 'floating_particles', 'rain', 'shooting_stars'],
+      enum: ['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble'],
       default: 'none'
     },
     buttonStyle: {
       hoverEffect: { 
         type: String,
-        enum: ['scale_up', 'glow', 'shake', '3d_pop', 'none'],
-        default: 'scale_up'
+        enum: ['hover-color', 'hover-scale', 'hover-lift', 'hover-glow'],
+        default: 'hover-color'
       },
       borderRadius: { type: String, default: '12px' },
       backgroundColor: { type: String, default: '#ffffff' },
       textColor: { type: String, default: '#000000' }
     },
-    fontFamily: { type: String, default: 'Outfit' }
+    fontFamily: { type: String, default: 'Inter' },
+    textColor: { type: String, default: '#ffffff' }
   },
   
   blocks: [BlockSchema],

@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { bioController } from '../controllers/bio.controller.js';
 import { validate } from '../middleware/validate';
 import { bioPageSchema } from '../validators/bio.validator';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { uploadImage } from '../middleware/upload.middleware.js';
 
 const router = Router();
 
@@ -30,7 +32,7 @@ const router = Router();
  *       200:
  *         description: Lưu trang Bio thành công
  */
-router.post('/', validate(bioPageSchema, 'body'), bioController.createOrUpdateBio);
+router.post('/', authenticate, validate(bioPageSchema, 'body'), bioController.createOrUpdateBio);
 
 /**
  * @swagger
@@ -44,12 +46,7 @@ router.post('/', validate(bioPageSchema, 'body'), bioController.createOrUpdateBi
  *       200:
  *         description: Trả về URL của ảnh đã upload
  */
-// TODO: Tích hợp multer middleware ở đây
-router.post('/upload-media', (req, res, next) => {
-  // Mock multer behavior by manually attaching a file object if needed or just passing through
-  (req as any).file = { originalname: 'test-upload.png' };
-  next();
-}, bioController.uploadMedia);
+router.post('/upload-media', authenticate, uploadImage, bioController.uploadMedia);
 
 /**
  * @swagger
@@ -63,7 +60,7 @@ router.post('/upload-media', (req, res, next) => {
  *       200:
  *         description: Trả về thông tin trang Bio
  */
-router.get('/user', bioController.getBioForUser);
+router.get('/user', authenticate, bioController.getBioForUser);
 
 /**
  * @swagger
@@ -97,6 +94,6 @@ router.get('/:username', bioController.getBioByUsername);
  *       200:
  *         description: Xóa thành công
  */
-router.delete('/', bioController.deleteBio);
+router.delete('/', authenticate, bioController.deleteBio);
 
 export const bioRoutes = router;

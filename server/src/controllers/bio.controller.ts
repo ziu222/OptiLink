@@ -8,16 +8,15 @@ export class BioController {
    */
   async createOrUpdateBio(req: Request, res: Response): Promise<void> {
     try {
-      // Giả sử req.user chứa thông tin user sau khi qua auth middleware
-      const userId = (req as any).user?.id || req.body.userId; // Tạm fallback để test
-      
+      const userId = req.user?.id;
+
       if (!userId) {
         res.status(401).json({ success: false, message: 'Unauthorized' });
         return;
       }
 
       const bioData = req.body;
-      const updatedBio = await bioService.upsertBio(userId, bioData);
+      const updatedBio = await bioService.upsertBio(userId, bioData, req.user?.email);
 
       res.status(200).json({
         success: true,
@@ -34,19 +33,18 @@ export class BioController {
    */
   async uploadMedia(req: Request, res: Response): Promise<void> {
     try {
-      // Mock logic: Trong thực tế sẽ dùng multer và cloudinary
       const file = (req as any).file;
       if (!file) {
         res.status(400).json({ success: false, message: 'No file uploaded' });
         return;
       }
-      
-      const mockUrl = `https://example.com/uploads/${file.originalname || 'mock-image.png'}`;
-      
+
+      const url = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`;
+
       res.status(200).json({
         success: true,
         message: 'Upload thành công',
-        data: { url: mockUrl }
+        data: { url }
       });
     } catch (error: any) {
       res.status(500).json({ success: false, message: error.message });
@@ -58,8 +56,8 @@ export class BioController {
    */
   async getBioForUser(req: Request, res: Response): Promise<void> {
     try {
-      const userId = (req as any).user?.id || req.query.userId;
-      
+      const userId = req.user?.id;
+
       if (!userId) {
         res.status(401).json({ success: false, message: 'Unauthorized' });
         return;
@@ -108,7 +106,13 @@ export class BioController {
    */
   async deleteBio(req: Request, res: Response): Promise<void> {
     try {
-      const userId = (req as any).user?.id || req.body.userId;
+      const userId = req.user?.id;
+
+      if (!userId) {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+        return;
+      }
+
       const success = await bioService.deleteBio(userId);
 
       if (!success) {

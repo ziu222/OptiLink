@@ -1,20 +1,33 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { IBioPage, IThemeConfig } from '../types/bio';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import type { IBioPage, IThemeConfig } from '../types/bio';
+import { getMyBio } from '../api/bio';
 
 // Cấu hình mặc định nếu API chưa trả về
 const defaultTheme: IThemeConfig = {
+  preset: 'commerce',
   layout: 'overlap_center',
-  background: { type: 'avatar_blur' },
-  profile: {},
+  background: { type: 'gradient', value: 'linear-gradient(135deg, #0f1115, #16181d)' },
+  heroBanner: { enabled: true, url: 'https://images.unsplash.com/photo-1616150143891-b3b320d36780?auto=format&fit=crop&w=500&q=80' },
+  cardStyling: {
+    background: '#16181d',
+    borderStyle: 'none',
+    borderColor: '#ff007f',
+    borderThickness: '2',
+    borderRadius: '40px'
+  },
+  profile: { avatarFrame: 'neon' },
   effect: 'none',
-  buttonStyle: { hoverEffect: 'scale_up', borderRadius: '12px', backgroundColor: '#fff', textColor: '#000' }
+  buttonStyle: { hoverEffect: 'hover-color', borderRadius: '12px', backgroundColor: '#fff', textColor: '#000' },
+  fontFamily: "'Inter', sans-serif",
+  textColor: '#ffffff'
 };
 
 interface ThemeContextType {
   themeConfig: IThemeConfig;
-  setThemeConfig: (config: IThemeConfig) => void;
+  setThemeConfig: React.Dispatch<React.SetStateAction<IThemeConfig>>;
   bioData: IBioPage | null;
-  setBioData: (data: IBioPage | null) => void;
+  setBioData: React.Dispatch<React.SetStateAction<IBioPage | null>>;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -92,6 +105,19 @@ const mockBioData: IBioPage = {
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [themeConfig, setThemeConfig] = useState<IThemeConfig>(defaultTheme);
   const [bioData, setBioData] = useState<IBioPage | null>(mockBioData);
+
+  useEffect(() => {
+    getMyBio()
+      .then((bio) => {
+        if (bio) {
+          setBioData(bio);
+          setThemeConfig(bio.themeConfig);
+        }
+      })
+      .catch(() => {
+        // Not logged in or no saved bio yet — keep the demo defaults.
+      });
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ themeConfig, setThemeConfig, bioData, setBioData }}>
