@@ -22,7 +22,7 @@ export class BioService {
    * Tạo hoặc Cập nhật trang Bio
    * Tích hợp tự động tạo Short Link cho các thẻ PRODUCT_CARD
    */
-  async upsertBio(userId: string, bioData: Partial<IBioPage>): Promise<IBioPage> {
+  async upsertBio(userId: string, bioData: Partial<IBioPage>, userEmail?: string): Promise<IBioPage> {
     // 1. Tiền xử lý các blocks để tự động tạo Short Link cho Affiliate Products & Custom Links
     if (bioData.blocks && Array.isArray(bioData.blocks)) {
       for (const block of bioData.blocks) {
@@ -58,13 +58,29 @@ export class BioService {
         { new: true, runValidators: true }
       ).exec() as IBioPage;
     } else {
-      // Tạo mới
+      // Tạo mới: cần username duy nhất nếu client chưa cung cấp
+      const username = bioData.username || await this.generateUsername(userEmail || userId);
       const newBio = new BioPage({
         ...bioData,
-        userId
+        userId,
+        username
       });
       return await newBio.save();
     }
+  }
+
+  /**
+   * Sinh username duy nhất từ email (hoặc userId) khi user chưa chọn username
+   */
+  private async generateUsername(seed: string): Promise<string> {
+    const base = seed.split('@')[0].replace(/[^a-zA-Z0-9_.-]/g, '').toLowerCase() || 'user';
+    let candidate = base;
+    let suffix = 0;
+    while (await BioPage.exists({ username: candidate })) {
+      suffix += 1;
+      candidate = `${base}${suffix}`;
+    }
+    return candidate;
   }
 
   /**

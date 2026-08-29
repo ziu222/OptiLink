@@ -17,19 +17,23 @@ export const themeConfigSchema = z.object({
   cardStyling: z.object({
     background: z.string().optional(),
     borderStyle: z.string().optional(),
+    borderColor: z.string().optional(),
+    borderThickness: z.string().optional(),
     borderRadius: z.string().optional()
   }).optional(),
   profile: z.object({
-    avatarDecorationUrl: z.string().optional()
+    avatarDecorationUrl: z.string().optional(),
+    avatarFrame: z.enum(['none', 'neon', 'discord', 'image']).optional()
   }).optional(),
-  effect: z.enum(['none', 'sakura', 'snow', 'matrix', 'confetti', 'floating_particles', 'rain', 'shooting_stars']).optional(),
+  effect: z.enum(['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble']).optional(),
   buttonStyle: z.object({
-    hoverEffect: z.enum(['scale_up', 'glow', 'shake', '3d_pop', 'none']).optional(),
+    hoverEffect: z.enum(['hover-color', 'hover-scale', 'hover-lift', 'hover-glow']).optional(),
     borderRadius: z.string().optional(),
     backgroundColor: z.string().optional(),
     textColor: z.string().optional()
   }).optional(),
-  fontFamily: z.string().optional()
+  fontFamily: z.string().optional(),
+  textColor: z.string().optional()
 });
 
 export const blockSchema = z.object({
@@ -42,6 +46,7 @@ export const blockSchema = z.object({
 });
 
 export const bioPageSchema = z.object({
+  username: z.string().min(1).max(50).regex(/^[a-zA-Z0-9_.-]+$/).optional(),
   title: z.string().min(1).max(100).optional(),
   bio: z.string().max(500).optional(),
   avatarUrl: z.string().url().optional().or(z.literal('')),

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { IThemeConfig } from '../../types/bio';
+import { uploadBioMedia } from '../../api/bio';
 
 interface TabDesignProps {
   themeConfig: IThemeConfig;
@@ -94,10 +95,16 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
                   type="file" 
                   accept="image/*" 
                   style={{ display: 'none' }} 
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      const url = URL.createObjectURL(e.target.files[0]);
-                      handleUpdate({ heroBanner: { ...themeConfig.heroBanner, enabled: true, url: url } });
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const previewUrl = URL.createObjectURL(file);
+                    handleUpdate({ heroBanner: { ...themeConfig.heroBanner, enabled: true, url: previewUrl } });
+                    try {
+                      const url = await uploadBioMedia(file);
+                      setThemeConfig((prev) => ({ ...prev, heroBanner: { ...prev.heroBanner, enabled: true, url } }));
+                    } catch (err) {
+                      console.error('Hero banner upload failed', err);
                     }
                   }}
                 />

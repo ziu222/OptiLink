@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { IBioPage, IThemeConfig } from '../types/bio';
+import { getMyBio } from '../api/bio';
 
 // Cấu hình mặc định nếu API chưa trả về
 const defaultTheme: IThemeConfig = {
@@ -104,6 +105,19 @@ const mockBioData: IBioPage = {
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [themeConfig, setThemeConfig] = useState<IThemeConfig>(defaultTheme);
   const [bioData, setBioData] = useState<IBioPage | null>(mockBioData);
+
+  useEffect(() => {
+    getMyBio()
+      .then((bio) => {
+        if (bio) {
+          setBioData(bio);
+          setThemeConfig(bio.themeConfig);
+        }
+      })
+      .catch(() => {
+        // Not logged in or no saved bio yet — keep the demo defaults.
+      });
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ themeConfig, setThemeConfig, bioData, setBioData }}>

@@ -3,10 +3,26 @@ import './builder.css';
 import { TabLinksAndBlocks } from '../../components/builder/TabLinksAndBlocks';
 import { TabDesign } from '../../components/builder/TabDesign';
 import { useTheme } from '../../contexts/ThemeContext';
+import { saveBio } from '../../api/bio';
 
 export function BuilderPage() {
   const { themeConfig, setThemeConfig, bioData, setBioData } = useTheme();
   const [activeTab, setActiveTab] = useState('tab-links');
+  const [publishState, setPublishState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+  const handlePublish = async () => {
+    if (!bioData) return;
+    setPublishState('saving');
+    try {
+      const saved = await saveBio({ ...bioData, themeConfig });
+      setBioData(saved);
+      setPublishState('saved');
+      setTimeout(() => setPublishState('idle'), 2000);
+    } catch (err) {
+      console.error('Publish failed', err);
+      setPublishState('error');
+    }
+  };
 
   // Helpers to parse gradient
   const extractColors = (gradient: string) => {
@@ -132,7 +148,9 @@ export function BuilderPage() {
       <div className="editor-panel">
         <div className="header">
           <h2>{activeTab === 'tab-links' ? 'Links & Blocks' : activeTab === 'tab-design' ? 'Appearance (Design)' : 'Analytics'}</h2>
-          <button className="btn-save">Publish</button>
+          <button className="btn-save" onClick={handlePublish} disabled={publishState === 'saving'}>
+            {publishState === 'saving' ? 'Đang lưu...' : publishState === 'saved' ? 'Đã lưu ✓' : publishState === 'error' ? 'Lỗi, thử lại' : 'Publish'}
+          </button>
         </div>
         
         <div className="content-area">

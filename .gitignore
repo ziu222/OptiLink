@@ -13,6 +13,9 @@ dist/
 build/
 .next/
 
+# Uploaded media
+server/uploads/
+
 # Logs
 logs/
 *.log

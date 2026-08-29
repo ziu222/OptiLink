@@ -1,8 +1,10 @@
+import React from 'react';
 import type { IBioPage } from '../../types/bio';
+import { uploadBioMedia } from '../../api/bio';
 
 interface TabLinksAndBlocksProps {
   bioData: IBioPage | null;
-  setBioData: (data: IBioPage | null) => void;
+  setBioData: React.Dispatch<React.SetStateAction<IBioPage | null>>;
   handleAddLink: () => void;
   handleDeleteBlock: (id: string) => void;
 }
@@ -22,10 +24,16 @@ export function TabLinksAndBlocks({ bioData, setBioData, handleAddLink, handleDe
                 type="file" 
                 accept="image/*" 
                 style={{ display: 'none' }} 
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0] && bioData) {
-                    const url = URL.createObjectURL(e.target.files[0]);
-                    setBioData({ ...bioData, avatarUrl: url });
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file || !bioData) return;
+                  const previewUrl = URL.createObjectURL(file);
+                  setBioData({ ...bioData, avatarUrl: previewUrl });
+                  try {
+                    const url = await uploadBioMedia(file);
+                    setBioData((prev) => (prev ? { ...prev, avatarUrl: url } : prev));
+                  } catch (err) {
+                    console.error('Avatar upload failed', err);
                   }
                 }}
               />
