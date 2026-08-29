@@ -23,6 +23,12 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface UpdateProfilePayload {
+  fullName?: string;
+  avatarUrl?: string;
+  timezone?: string;
+}
+
 /** Shape of the backend error body: { success: false, error: { code, message, details? } }. */
 export interface ApiErrorBody {
   success: false;
