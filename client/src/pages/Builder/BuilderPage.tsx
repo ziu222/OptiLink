@@ -11,6 +11,7 @@ export function BuilderPage() {
   const { themeConfig, setThemeConfig, bioData, setBioData } = useTheme();
   const [activeTab, setActiveTab] = useState('tab-links');
   const [publishState, setPublishState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [fullPreview, setFullPreview] = useState(false);
 
   const handlePublish = async () => {
     if (!bioData) return;
@@ -119,49 +120,65 @@ export function BuilderPage() {
   } as React.CSSProperties;
 
   return (
-    <div className="builder-layout">
-      {/* 1. APP NAV (shared with the rest of OptiLink) + BIO PAGE SUB-NAV */}
-      <Sidebar />
-      <BuilderSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className={`builder-layout${fullPreview ? ' is-full-preview' : ''}`}>
+      {!fullPreview && (
+        <>
+          {/* 1. APP NAV (shared with the rest of OptiLink) + BIO PAGE SUB-NAV */}
+          <Sidebar />
+          <BuilderSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      {/* 2. EDITOR PANEL */}
-      <div className="editor-panel">
-        <div className="header">
-          <h2>{activeTab === 'tab-links' ? 'Links & Blocks' : activeTab === 'tab-design' ? 'Appearance (Design)' : 'Analytics'}</h2>
-          <button className="btn-save" onClick={handlePublish} disabled={publishState === 'saving'}>
-            {publishState === 'saving' ? 'Đang lưu...' : publishState === 'saved' ? 'Đã lưu ✓' : publishState === 'error' ? 'Lỗi, thử lại' : 'Publish'}
-          </button>
-        </div>
-        
-        <div className="content-area">
-          {/* TAB 1: LINKS & BLOCKS */}
-          <div className={`tab-content ${activeTab === 'tab-links' ? 'active' : ''}`}>
-            <TabLinksAndBlocks
-              bioData={bioData}
-              setBioData={setBioData}
-              handleAddLink={handleAddLink}
-              handleDeleteBlock={handleDeleteBlock}
-            />
-          </div>
+          {/* 2. EDITOR PANEL */}
+          <div className="editor-panel">
+            <div className="header">
+              <h2>{activeTab === 'tab-links' ? 'Links & Blocks' : activeTab === 'tab-design' ? 'Appearance (Design)' : 'Analytics'}</h2>
+              <button className="btn-save" onClick={handlePublish} disabled={publishState === 'saving'}>
+                {publishState === 'saving' ? 'Đang lưu...' : publishState === 'saved' ? 'Đã lưu ✓' : publishState === 'error' ? 'Lỗi, thử lại' : 'Publish'}
+              </button>
+            </div>
 
-          {/* TAB 2: DESIGN */}
-          <div className={`tab-content ${activeTab === 'tab-design' ? 'active' : ''}`}>
-            <TabDesign
-              themeConfig={themeConfig}
-              setThemeConfig={setThemeConfig}
-            />
+            <div className="content-area">
+              {/* TAB 1: LINKS & BLOCKS */}
+              <div className={`tab-content ${activeTab === 'tab-links' ? 'active' : ''}`}>
+                <TabLinksAndBlocks
+                  bioData={bioData}
+                  setBioData={setBioData}
+                  handleAddLink={handleAddLink}
+                  handleDeleteBlock={handleDeleteBlock}
+                />
+              </div>
+
+              {/* TAB 2: DESIGN */}
+              <div className={`tab-content ${activeTab === 'tab-design' ? 'active' : ''}`}>
+                <TabDesign
+                  themeConfig={themeConfig}
+                  setThemeConfig={setThemeConfig}
+                />
+              </div>
+
+              {/* TAB 3: ANALYTICS */}
+              <div className={`tab-content ${activeTab === 'tab-analytics' ? 'active' : ''}`}>
+                 <h3 className="section-title">Analytics (Coming Soon)</h3>
+                 <p style={{color: 'var(--text)', fontSize: '14px'}}>Tính năng thống kê sẽ được phát triển sau.</p>
+              </div>
+            </div>
           </div>
-          
-          {/* TAB 3: ANALYTICS */}
-          <div className={`tab-content ${activeTab === 'tab-analytics' ? 'active' : ''}`}>
-             <h3 className="section-title">Analytics (Coming Soon)</h3>
-             <p style={{color: '#94a3b8', fontSize: '14px'}}>Tính năng thống kê sẽ được phát triển sau.</p>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* 3. PREVIEW AREA */}
       <div className="preview-area" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
+        <button
+          type="button"
+          className="preview-toggle-btn"
+          onClick={() => setFullPreview((v) => !v)}
+          title={fullPreview ? 'Thoát xem toàn màn hình' : 'Xem toàn màn hình'}
+        >
+          {fullPreview ? (
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 9L4 4m0 0v4m0-4h4m7 5l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4m7-5l5 5m0 0v-4m0 4h-4"/></svg>
+          ) : (
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+          )}
+        </button>
         <div className="bg-effect-layer">
           {particles.map((p) => (
             <div 

@@ -98,6 +98,30 @@
 /* 5. Vùng Preview - CSS Variables cho sự linh hoạt cao nhất */
 .preview-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; transition: background 0.5s; position: relative; overflow: hidden; }
 
+.preview-toggle-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 30;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s;
+}
+
+.preview-toggle-btn:hover {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 /* Thay đổi từ device-frame sang card-wrapper linh hoạt hơn */
 .card-wrapper { 
   width: 100%; max-width: 420px; height: 95%; max-height: 850px; 
