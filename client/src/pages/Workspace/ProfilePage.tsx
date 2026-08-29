@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { applyServerError } from '../../lib/formError';
 import { PageHeader } from '../../components/workspace/PageHeader';
 import { ContentPanel } from '../../components/workspace/ContentPanel';
