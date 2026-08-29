@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './builder.css';
+import { Sidebar } from '../../components/workspace/Sidebar';
+import { BuilderSidebar } from '../../components/builder/BuilderSidebar';
 import { TabLinksAndBlocks } from '../../components/builder/TabLinksAndBlocks';
 import { TabDesign } from '../../components/builder/TabDesign';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -118,31 +120,9 @@ export function BuilderPage() {
 
   return (
     <div className="builder-layout">
-      {/* 1. SLIM NAV */}
-      <div className="slim-nav">
-        <div className="nav-logo">O</div>
-        <div 
-          className={`nav-item ${activeTab === 'tab-links' ? 'active' : ''}`}
-          data-tooltip="Links & Blocks"
-          onClick={() => setActiveTab('tab-links')}
-        >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </div>
-        <div 
-          className={`nav-item ${activeTab === 'tab-design' ? 'active' : ''}`}
-          data-tooltip="Appearance (Design)"
-          onClick={() => setActiveTab('tab-design')}
-        >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <div 
-          className={`nav-item ${activeTab === 'tab-analytics' ? 'active' : ''}`}
-          data-tooltip="Analytics"
-          onClick={() => setActiveTab('tab-analytics')}
-        >
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-        </div>
-      </div>
+      {/* 1. APP NAV (shared with the rest of OptiLink) + BIO PAGE SUB-NAV */}
+      <Sidebar />
+      <BuilderSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* 2. EDITOR PANEL */}
       <div className="editor-panel">
