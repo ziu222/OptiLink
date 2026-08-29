@@ -45,6 +45,7 @@ const mockBioData: IBioPage = {
     tiktok: '#'
   },
   themeConfig: defaultTheme,
+  badges: { early: true, pro: true },
   isActive: true,
   blocks: [
     {

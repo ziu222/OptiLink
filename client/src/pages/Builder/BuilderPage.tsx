@@ -204,10 +204,12 @@ export function BuilderPage() {
               <img src={bioData?.avatarUrl || "https://i.pravatar.cc/150"} className="mock-avatar" alt="Avatar" />
             </div>
             
-            <div className="mock-badges">
-              <div className="mock-badge">🦅 Early</div>
-              <div className="mock-badge">💎 PRO</div>
-            </div>
+            {(bioData?.badges?.early || bioData?.badges?.pro) && (
+              <div className="mock-badges">
+                {bioData?.badges?.early && <div className="mock-badge">Early</div>}
+                {bioData?.badges?.pro && <div className="mock-badge">PRO</div>}
+              </div>
+            )}
 
             <h1 className="mock-title">{bioData?.title || 'Tên hiển thị'}</h1>
             {bioData?.username && <p className="mock-username">@{bioData.username}</p>}

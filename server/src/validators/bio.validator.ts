@@ -60,5 +60,9 @@ export const bioPageSchema = z.object({
   }).optional(),
   themeConfig: themeConfigSchema.optional(),
   blocks: z.array(blockSchema).optional(),
+  badges: z.object({
+    early: z.boolean().optional(),
+    pro: z.boolean().optional()
+  }).optional(),
   isActive: z.boolean().optional()
 });

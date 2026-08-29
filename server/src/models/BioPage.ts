@@ -76,7 +76,11 @@ export interface IBioPage extends Document {
   
   themeConfig: IThemeConfig;
   blocks: IBlock[];
-  
+  badges?: {
+    early?: boolean;
+    pro?: boolean;
+  };
+
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -176,7 +180,12 @@ const BioPageSchema = new Schema({
   },
   
   blocks: [BlockSchema],
-  
+
+  badges: {
+    early: { type: Boolean, default: false },
+    pro: { type: Boolean, default: false }
+  },
+
   isActive: { type: Boolean, default: true }
 }, {
   timestamps: true
