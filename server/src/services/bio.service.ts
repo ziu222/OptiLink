@@ -1,4 +1,5 @@
 import BioPage, { IBioPage } from '../models/BioPage';
+import Link from '../models/Link';
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,19 +23,25 @@ export class BioService {
    * Tích hợp tự động tạo Short Link cho các thẻ PRODUCT_CARD
    */
   async upsertBio(userId: string, bioData: Partial<IBioPage>): Promise<IBioPage> {
-    // 1. Tiền xử lý các blocks để tự động tạo Short Link cho Affiliate Products
+    // 1. Tiền xử lý các blocks để tự động tạo Short Link cho Affiliate Products & Custom Links
     if (bioData.blocks && Array.isArray(bioData.blocks)) {
       for (const block of bioData.blocks) {
-        if (block.type === 'PRODUCT_CARD') {
-          // Giả lập logic: Nếu thẻ sản phẩm chưa có link rút gọn, tạo mới ngầm
+        if ((block.type === 'PRODUCT_CARD' || block.type === 'LINK') && block.content) {
+          // Nếu có link gốc mà chưa có shortLinkId, tạo mới Link trong DB
           if (!block.content.shortLinkId && block.content.originalUrl) {
-            // TODO: Tích hợp gọi sang LinkService thực tế ở đây
-            // const shortLink = await LinkService.createShortLink(userId, block.content.originalUrl);
-            const mockShortId = new mongoose.Types.ObjectId().toHexString();
-            const mockSlug = uuidv4().substring(0, 6);
-            
-            block.content.shortLinkId = mockShortId;
-            block.content.clickUrl = `https://opti.link/s/${mockSlug}`;
+            const mockSlug = uuidv4().substring(0, 6); // Rút gọn UUID làm slug ngẫu nhiên
+            const shortUrl = `https://opti.link/s/${mockSlug}`; // Tùy biến domain theo env sau
+
+            const newLink = new Link({
+              userId,
+              originalUrl: block.content.originalUrl,
+              slug: mockSlug,
+              shortUrl
+            });
+            await newLink.save();
+
+            block.content.shortLinkId = newLink._id.toString();
+            block.content.clickUrl = shortUrl;
           }
         }
       }
