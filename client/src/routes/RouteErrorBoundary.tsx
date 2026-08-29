@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
+import './routeStatus.css';
 
 interface Props {
   children: ReactNode;

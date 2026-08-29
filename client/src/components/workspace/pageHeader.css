@@ -1,0 +1,18 @@
+/* Bleeds edge-to-edge by canceling .workspace-main's 2.5rem padding
+   (pages/Workspace/workspace.css), matching Thesis's User.jsx title bar. */
+.page-header {
+  margin: -2.5rem -2.5rem 2rem;
+  padding: 0 2.5rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
