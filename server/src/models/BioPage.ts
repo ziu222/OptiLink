@@ -18,12 +18,25 @@ export interface IButtonStyle {
   textColor?: string;
 }
 
+export interface ICardStyling {
+  background?: string;
+  borderStyle?: string;
+  borderRadius?: string;
+}
+
 export interface IThemeConfig {
+  preset?: string;
   layout: 'overlap_center' | 'left_aligned' | 'minimal_top' | 'split_screen' | 'card_floating';
   background: IBackground;
+  heroBanner?: {
+    enabled: boolean;
+    url?: string;
+  };
+  cardStyling?: ICardStyling;
   profile: IProfileConfig;
   effect: 'none' | 'sakura' | 'snow' | 'matrix' | 'confetti' | 'floating_particles' | 'rain' | 'shooting_stars';
   buttonStyle: IButtonStyle;
+  fontFamily?: string;
 }
 
 // 2. Interfaces cho Block
@@ -109,6 +122,7 @@ const BioPageSchema = new Schema({
   },
   
   themeConfig: {
+    preset: { type: String, default: 'custom' },
     layout: { 
       type: String, 
       enum: ['overlap_center', 'left_aligned', 'minimal_top', 'split_screen', 'card_floating'],
@@ -122,6 +136,15 @@ const BioPageSchema = new Schema({
       },
       url: { type: String, default: '' },
       value: { type: String, default: '' }
+    },
+    heroBanner: {
+      enabled: { type: Boolean, default: true },
+      url: { type: String, default: '' }
+    },
+    cardStyling: {
+      background: { type: String, default: '' },
+      borderStyle: { type: String, default: '' },
+      borderRadius: { type: String, default: '' }
     },
     profile: {
       avatarDecorationUrl: { type: String, default: '' }
@@ -140,7 +163,8 @@ const BioPageSchema = new Schema({
       borderRadius: { type: String, default: '12px' },
       backgroundColor: { type: String, default: '#ffffff' },
       textColor: { type: String, default: '#000000' }
-    }
+    },
+    fontFamily: { type: String, default: 'Outfit' }
   },
   
   blocks: [BlockSchema],

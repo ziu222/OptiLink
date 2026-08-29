@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { bioController } from '../controllers/bio.controller.js';
+import { validate } from '../middleware/validate';
+import { bioPageSchema } from '../validators/bio.validator';
 
 const router = Router();
 
@@ -28,7 +30,26 @@ const router = Router();
  *       200:
  *         description: Lưu trang Bio thành công
  */
-router.post('/', bioController.createOrUpdateBio);
+router.post('/', validate(bioPageSchema, 'body'), bioController.createOrUpdateBio);
+
+/**
+ * @swagger
+ * /api/bio/upload-media:
+ *   post:
+ *     summary: Upload ảnh (Banner / Avatar)
+ *     tags: [BioPages]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Trả về URL của ảnh đã upload
+ */
+// TODO: Tích hợp multer middleware ở đây
+router.post('/upload-media', (req, res, next) => {
+  // Mock multer behavior by manually attaching a file object if needed or just passing through
+  (req as any).file = { originalname: 'test-upload.png' };
+  next();
+}, bioController.uploadMedia);
 
 /**
  * @swagger
