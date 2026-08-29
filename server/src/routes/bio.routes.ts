@@ -32,6 +32,25 @@ router.post('/', bioController.createOrUpdateBio);
 
 /**
  * @swagger
+ * /api/bio/upload-media:
+ *   post:
+ *     summary: Upload ảnh (Banner / Avatar)
+ *     tags: [BioPages]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Trả về URL của ảnh đã upload
+ */
+// TODO: Tích hợp multer middleware ở đây
+router.post('/upload-media', (req, res, next) => {
+  // Mock multer behavior by manually attaching a file object if needed or just passing through
+  (req as any).file = { originalname: 'test-upload.png' };
+  next();
+}, bioController.uploadMedia);
+
+/**
+ * @swagger
  * /api/bio/user:
  *   get:
  *     summary: Lấy trang Bio của user đang đăng nhập để chỉnh sửa (Owner Panel)

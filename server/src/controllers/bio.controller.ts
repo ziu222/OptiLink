@@ -30,6 +30,30 @@ export class BioController {
   }
 
   /**
+   * Upload ảnh (Avatar / Banner)
+   */
+  async uploadMedia(req: Request, res: Response): Promise<void> {
+    try {
+      // Mock logic: Trong thực tế sẽ dùng multer và cloudinary
+      const file = (req as any).file;
+      if (!file) {
+        res.status(400).json({ success: false, message: 'No file uploaded' });
+        return;
+      }
+      
+      const mockUrl = `https://example.com/uploads/${file.originalname || 'mock-image.png'}`;
+      
+      res.status(200).json({
+        success: true,
+        message: 'Upload thành công',
+        data: { url: mockUrl }
+      });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
+  /**
    * Lấy trang Bio cho User chỉnh sửa (Owner Panel)
    */
   async getBioForUser(req: Request, res: Response): Promise<void> {
