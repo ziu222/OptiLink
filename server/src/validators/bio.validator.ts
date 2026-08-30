@@ -25,7 +25,7 @@ export const themeConfigSchema = z.object({
     avatarDecorationUrl: z.string().optional(),
     avatarFrame: z.enum(['none', 'neon', 'discord', 'image']).optional()
   }).optional(),
-  effect: z.enum(['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble']).optional(),
+  effect: z.enum(['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble', 'confetti', 'hearts', 'firefly', 'glitter']).optional(),
   buttonStyle: z.object({
     hoverEffect: z.enum(['hover-color', 'hover-scale', 'hover-lift', 'hover-glow']).optional(),
     borderRadius: z.string().optional(),

@@ -247,6 +247,10 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="rain">🌧️ Mưa (Rain)</option>
             <option value="leaf">🍂 Lá mùa thu (Autumn Leaves)</option>
             <option value="bubble">🫧 Bong bóng nổi (Bubbles)</option>
+            <option value="confetti">🎊 Confetti</option>
+            <option value="hearts">❤️ Trái tim (Hearts)</option>
+            <option value="firefly">🌟 Đom đóm (Firefly)</option>
+            <option value="glitter">✨ Lấp lánh (Glitter)</option>
           </select>
         </div>
       </div>
