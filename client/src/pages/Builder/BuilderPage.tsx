@@ -49,11 +49,22 @@ export function BuilderPage() {
   // Temporary local state for blocks (until we connect drag and drop to bioData)
   const blocks = bioData?.blocks || [];
   
-  const handleAddLink = () => {
+  const handleAddBlock = (type: string = 'LINK') => {
     if (bioData) {
+      let initialContent = {};
+      if (type === 'LINK') initialContent = { title: '🔗 Liên kết mới', url: '' };
+      if (type === 'TEXT') initialContent = { title: '📝 Khối văn bản', text: '' };
+      if (type === 'IMAGE') initialContent = { title: '🖼️ Hình ảnh', imageUrl: '' };
+      
       setBioData({
         ...bioData,
-        blocks: [...blocks, { id: Date.now().toString(), type: 'LINK', isHidden: false, order: blocks.length, content: { title: '🔗 Liên kết mới' } } as any]
+        blocks: [...blocks, { 
+          id: Date.now().toString(), 
+          type, 
+          isHidden: false, 
+          order: blocks.length, 
+          content: initialContent 
+        } as any]
       });
     }
   };
@@ -112,7 +123,7 @@ export function BuilderPage() {
                 <TabLinksAndBlocks
                   bioData={bioData}
                   setBioData={setBioData}
-                  handleAddLink={handleAddLink}
+                  handleAddBlock={handleAddBlock}
                   handleDeleteBlock={handleDeleteBlock}
                 />
               </div>
