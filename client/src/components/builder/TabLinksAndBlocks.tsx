@@ -196,7 +196,7 @@ export function TabLinksAndBlocks({ bioData, setBioData, handleAddBlock, handleD
           </button>
           
           {showAddMenu && (
-            <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
+            <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
               <button onClick={() => { handleAddBlock('LINK'); setShowAddMenu(false); }} style={{ padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--text-h)', textAlign: 'left', cursor: 'pointer', borderRadius: '4px' }}>🔗 Link (Liên kết)</button>
               <button onClick={() => { handleAddBlock('TEXT'); setShowAddMenu(false); }} style={{ padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--text-h)', textAlign: 'left', cursor: 'pointer', borderRadius: '4px' }}>📝 Text (Văn bản)</button>
               <button onClick={() => { handleAddBlock('IMAGE'); setShowAddMenu(false); }} style={{ padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--text-h)', textAlign: 'left', cursor: 'pointer', borderRadius: '4px' }}>🖼️ Image (Hình ảnh)</button>
