@@ -13,7 +13,7 @@ export interface IProfileConfig {
 }
 
 export interface IButtonStyle {
-  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow';
+  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow' | 'hover-tilt' | 'hover-shine';
   borderRadius?: string;
   backgroundColor?: string;
   textColor?: string;
@@ -168,7 +168,7 @@ const BioPageSchema = new Schema({
     buttonStyle: {
       hoverEffect: { 
         type: String,
-        enum: ['hover-color', 'hover-scale', 'hover-lift', 'hover-glow'],
+        enum: ['hover-color', 'hover-scale', 'hover-lift', 'hover-glow', 'hover-tilt', 'hover-shine'],
         default: 'hover-color'
       },
       borderRadius: { type: String, default: '12px' },
