@@ -122,13 +122,13 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px' }
     },
     minimal: {
-      background: { type: 'gradient', value: 'linear-gradient(135deg, #fafafa, #f0f0f0)' },
+      background: { type: 'color', value: '#fafafa' },
       heroBanner: { ...themeConfig.heroBanner, enabled: false },
       cardStyling: { background: 'transparent', borderStyle: 'none', borderRadius: '8px' },
       profile: { ...themeConfig.profile, avatarFrame: 'none' },
       fontFamily: "'Inter', sans-serif",
       textColor: '#111111',
-      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-lift', borderRadius: '8px' }
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-lift', borderRadius: '8px', backgroundColor: '#111111', textColor: '#ffffff' }
     },
     cyberpunk: {
       background: { type: 'gradient', value: 'linear-gradient(135deg, #0d0221, #ff2079)' },

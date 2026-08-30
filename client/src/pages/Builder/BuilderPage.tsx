@@ -45,6 +45,8 @@ export function BuilderPage() {
   const avatarFrame = themeConfig.profile?.avatarFrame || 'neon';
   const btnShape = themeConfig.buttonStyle?.borderRadius || '12px';
   const btnHover = themeConfig.buttonStyle?.hoverEffect || 'hover-color';
+  const btnBg = themeConfig.buttonStyle?.backgroundColor;
+  const btnTextColor = themeConfig.buttonStyle?.textColor;
   const effect = themeConfig.effect || 'none';
 
   // Temporary local state for blocks (until we connect drag and drop to bioData)
@@ -93,6 +95,8 @@ export function BuilderPage() {
   const innerStyle = {
     '--text-main': textColor,
     '--btn-radius': btnShape,
+    '--btn-bg': btnBg,
+    '--btn-text': btnTextColor,
     fontFamily: fontFamily,
   } as React.CSSProperties;
 
