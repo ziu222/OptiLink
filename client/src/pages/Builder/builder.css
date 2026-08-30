@@ -37,6 +37,19 @@
 
 .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text); font-weight: 700; margin-bottom: 16px; margin-top: 12px; }
 .card { background: var(--code-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+
+/* Accordion sections for the Design tab: one icon + one open section at a time,
+   instead of a long scroll of identical gray cards. */
+.design-section { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: var(--code-bg); }
+.design-section-header { width: 100%; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: transparent; border: none; cursor: pointer; text-align: left; font: inherit; color: var(--text-h); }
+.design-section-header:hover { background: rgba(59, 130, 246, 0.06); }
+.design-section-icon { display: flex; color: #3b82f6; flex-shrink: 0; }
+.design-section-title { flex: 1; font-weight: 600; font-size: 14px; }
+.design-section-chevron { display: flex; color: var(--text); transition: transform 0.2s; }
+.design-section.open .design-section-chevron { transform: rotate(180deg); }
+.design-section.open .design-section-header { border-bottom: 1px solid var(--border); }
+.design-section-body { padding: 16px; }
+.design-section-body .input-group:last-child { margin-bottom: 0; }
 .input-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
 .input-group label { display: block; font-size: 13px; color: var(--text); margin-bottom: 0px; font-weight: 500; }
 

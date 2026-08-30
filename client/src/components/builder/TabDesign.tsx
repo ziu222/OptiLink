@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { IThemeConfig } from '../../types/bio';
 import { uploadBioMedia } from '../../api/bio';
 import { extractGradientColors } from '../../utils/color';
@@ -20,8 +20,73 @@ const GRADIENT_PALETTES: { name: string; value: string }[] = [
   { name: 'Charcoal Mono', value: 'linear-gradient(135deg, #232526, #414345)' },
 ];
 
+const iconProps = { width: 18, height: 18, fill: 'none' as const, stroke: 'currentColor', strokeWidth: 2 };
+
+// ponytail: one small icon per section so sections read as distinct at a glance, not a repeating list of gray boxes.
+const SECTION_ICONS: Record<string, React.ReactNode> = {
+  templates: (
+    <svg {...iconProps}>
+      <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />
+    </svg>
+  ),
+  layout: (
+    <svg {...iconProps}>
+      <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" />
+    </svg>
+  ),
+  card: (
+    <svg {...iconProps}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l9 5-9 5-9-5 9-5z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l9 5 9-5" />
+    </svg>
+  ),
+  typography: (
+    <svg {...iconProps}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 5h14M12 5v14" />
+    </svg>
+  ),
+  avatar: (
+    <svg {...iconProps}>
+      <circle cx="12" cy="8" r="4" /><path strokeLinecap="round" d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+    </svg>
+  ),
+  buttons: (
+    <svg {...iconProps}>
+      <rect x="3" y="8" width="18" height="8" rx="4" />
+    </svg>
+  ),
+  effects: (
+    <svg {...iconProps}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+    </svg>
+  ),
+};
+
+function Section({
+  id, title, openId, setOpenId, children,
+}: {
+  id: keyof typeof SECTION_ICONS; title: string;
+  openId: string; setOpenId: (id: string) => void; children: React.ReactNode;
+}) {
+  const isOpen = openId === id;
+  return (
+    <div className={`design-section ${isOpen ? 'open' : ''}`}>
+      <button type="button" className="design-section-header" onClick={() => setOpenId(isOpen ? '' : id)}>
+        <span className="design-section-icon">{SECTION_ICONS[id]}</span>
+        <span className="design-section-title">{title}</span>
+        <span className="design-section-chevron">
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" /></svg>
+        </span>
+      </button>
+      {isOpen && <div className="design-section-body">{children}</div>}
+    </div>
+  );
+}
+
 export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
   const { c1, c2 } = extractGradientColors(themeConfig.background.value || '');
+  const [openId, setOpenId] = useState('templates');
 
   const handleUpdate = (updates: Partial<IThemeConfig>) => {
     setThemeConfig(prev => ({ ...prev, ...updates }));
@@ -91,8 +156,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
 
   return (
     <>
-      <h3 className="section-title">Templates (Giao diện cài sẵn)</h3>
-      <div className="card" style={{ marginBottom: '16px' }}>
+      <Section id="templates" title="Templates (Giao diện cài sẵn)" openId={openId} setOpenId={setOpenId}>
         <select className="preset-select" value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
           <option value="commerce">Mặc định: Storefront (Thương mại)</option>
           <option value="anime">Anime Pastel (Thẻ kính)</option>
@@ -101,10 +165,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
           <option value="cyberpunk">Cyberpunk</option>
           <option value="y2k">Y2K</option>
         </select>
-      </div>
+      </Section>
 
-      <h3 className="section-title">Bố cục & Nền (Layout & BG)</h3>
-      <div className="card">
+      <Section id="layout" title="Bố cục & Nền (Layout & BG)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
           <label>Kiểu nền toàn trang (Background Type)</label>
           <select
@@ -202,10 +265,10 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
                 borderRadius: '8px', fontSize: '12px', cursor: 'pointer', color: 'var(--text-h)', border: '1px solid var(--border)'
               }}>
                 Tải ảnh bìa mới
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  style={{ display: 'none' }} 
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -223,10 +286,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             </div>
           )}
         </div>
-      </div>
+      </Section>
 
-      <h3 className="section-title">Thẻ Bio & Viền (Card Styling)</h3>
-      <div className="card">
+      <Section id="card" title="Thẻ Bio & Viền (Card Styling)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
           <label>Nền Thẻ Bio (Card Background)</label>
           <select value={themeConfig.cardStyling?.background} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, background: e.target.value } })}>
@@ -276,10 +338,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="40px">Tròn (40px)</option>
           </select>
         </div>
-      </div>
+      </Section>
 
-      <h3 className="section-title">Phông chữ & Văn bản (Typography)</h3>
-      <div className="card">
+      <Section id="typography" title="Phông chữ & Văn bản (Typography)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
           <label>Google Font Family</label>
           <select value={themeConfig.fontFamily} onChange={(e) => handleUpdate({ fontFamily: e.target.value })}>
@@ -294,10 +355,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
           <label>Màu chữ (Text Color)</label>
           <input type="color" value={themeConfig.textColor} onChange={(e) => handleUpdate({ textColor: e.target.value })} />
         </div>
-      </div>
+      </Section>
 
-      <h3 className="section-title">Avatar Styling</h3>
-      <div className="card">
+      <Section id="avatar" title="Avatar Styling" openId={openId} setOpenId={setOpenId}>
         <div className="input-group" style={{ marginBottom: '0' }}>
           <label>Khung viền Avatar (Frames)</label>
           <select value={themeConfig.profile.avatarFrame} onChange={(e) => handleUpdate({ profile: { ...themeConfig.profile, avatarFrame: e.target.value as any } })}>
@@ -307,10 +367,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="image">Khung ảnh Custom (Game/Tai thỏ)</option>
           </select>
         </div>
-      </div>
+      </Section>
 
-      <h3 className="section-title">Kiểu dáng Nút bấm (Link Buttons)</h3>
-      <div className="card">
+      <Section id="buttons" title="Kiểu dáng Nút bấm (Link Buttons)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
           <label>Độ bo góc (Shape)</label>
           <div className="options-grid">
@@ -330,10 +389,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="hover-shine">Ánh sáng lướt (Shine)</option>
           </select>
         </div>
-      </div>
+      </Section>
 
-      <h3 className="section-title">Hiệu ứng rơi (Falling Effects)</h3>
-      <div className="card">
+      <Section id="effects" title="Hiệu ứng rơi (Falling Effects)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group" style={{ marginBottom: '0' }}>
           <select value={themeConfig.effect} onChange={(e) => handleUpdate({ effect: e.target.value as any })}>
             <option value="none">Không có</option>
@@ -349,7 +407,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="glitter">✨ Lấp lánh (Glitter)</option>
           </select>
         </div>
-      </div>
+      </Section>
     </>
   );
 }
