@@ -7,6 +7,7 @@ import { TabDesign } from '../../components/builder/TabDesign';
 import { FallingEffect } from '../../components/effects/FallingEffect';
 import { useTheme } from '../../contexts/ThemeContext';
 import { saveBio } from '../../api/bio';
+import { extractGradientColors } from '../../utils/color';
 
 export function BuilderPage() {
   const { themeConfig, setThemeConfig, bioData, setBioData } = useTheme();
@@ -28,13 +29,8 @@ export function BuilderPage() {
     }
   };
 
-  // Helpers to parse gradient
-  const extractColors = (gradient: string) => {
-    const match = gradient.match(/linear-gradient\([^,]+,\s*(#[a-f0-9]+|\w+),\s*(#[a-f0-9]+|\w+)\)/i);
-    return match ? { c1: match[1], c2: match[2] } : { c1: '#0f1115', c2: '#16181d' };
-  };
-
-  const { c1, c2 } = extractColors(themeConfig.background.value || '');
+  const { c1, c2 } = extractGradientColors(themeConfig.background.value || '');
+  const bgType = themeConfig.background.type;
 
   // Derived states for preview
   const showBanner = themeConfig.heroBanner?.enabled ?? true;
@@ -86,6 +82,13 @@ export function BuilderPage() {
     fontFamily: fontFamily,
   } as React.CSSProperties;
 
+  const bgStyle = {
+    '--bg-c1': c1,
+    '--bg-c2': c2,
+    '--bg-image': bgType === 'image' ? `url('${themeConfig.background.url || ''}')` : 'none',
+    '--bg-avatar': `url('${themeConfig.background.url || bioData?.avatarUrl || ''}')`,
+  } as React.CSSProperties;
+
   return (
     <div className={`builder-layout${fullPreview ? ' is-full-preview' : ''}`}>
       {!fullPreview && (
@@ -133,7 +136,17 @@ export function BuilderPage() {
       )}
 
       {/* 3. PREVIEW AREA */}
-      <div className="preview-area" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
+      <div className={`preview-area bg-${bgType}`} style={bgStyle}>
+        {bgType === 'video' && themeConfig.background.url && (
+          <video
+            className="preview-bg-video"
+            src={themeConfig.background.url}
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        )}
         <button
           type="button"
           className="preview-toggle-btn"

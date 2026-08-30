@@ -100,6 +100,32 @@
 /* 5. Vùng Preview - CSS Variables cho sự linh hoạt cao nhất */
 .preview-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; transition: background 0.5s; position: relative; overflow: hidden; }
 
+/* Background types (Phase 2) */
+.preview-area.bg-color { background: var(--bg-c1); }
+.preview-area.bg-gradient { background: linear-gradient(135deg, var(--bg-c1), var(--bg-c2)); }
+.preview-area.bg-animated_gradient { background: linear-gradient(135deg, var(--bg-c1), var(--bg-c2)); background-size: 200% 200%; animation: gradient-shift 8s ease infinite; }
+.preview-area.bg-image { background-image: var(--bg-image); background-size: cover; background-position: center; }
+.preview-area.bg-video { background: linear-gradient(135deg, var(--bg-c1), var(--bg-c2)); }
+.preview-area.bg-mesh {
+  background:
+    radial-gradient(at 20% 20%, var(--bg-c1) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, var(--bg-c2) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, var(--bg-c2) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, var(--bg-c1) 0px, transparent 50%);
+}
+.preview-area.bg-avatar_blur { background-image: var(--bg-avatar); background-size: cover; background-position: center; }
+.preview-area.bg-avatar_blur::before {
+  content: ''; position: absolute; inset: 0; backdrop-filter: blur(40px) brightness(0.6); z-index: 0;
+}
+
+.preview-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .preview-toggle-btn {
   position: absolute;
   top: 20px;

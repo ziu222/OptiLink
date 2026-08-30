@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const backgroundSchema = z.object({
-  type: z.enum(['avatar_blur', 'color', 'gradient', 'image', 'gif']),
+  type: z.enum(['avatar_blur', 'color', 'gradient', 'image', 'gif', 'video', 'mesh', 'animated_gradient']),
   url: z.string().optional(),
   value: z.string().optional()
 });

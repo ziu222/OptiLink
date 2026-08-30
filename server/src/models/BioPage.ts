@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 // 1. Interfaces cho Theme Config
 export interface IBackground {
-  type: 'avatar_blur' | 'color' | 'gradient' | 'image' | 'gif';
+  type: 'avatar_blur' | 'color' | 'gradient' | 'image' | 'gif' | 'video' | 'mesh' | 'animated_gradient';
   url?: string;
   value?: string; // For color or gradient value
 }
@@ -139,7 +139,7 @@ const BioPageSchema = new Schema({
     background: {
       type: { 
         type: String, 
-        enum: ['avatar_blur', 'color', 'gradient', 'image', 'gif'],
+        enum: ['avatar_blur', 'color', 'gradient', 'image', 'gif', 'video', 'mesh', 'animated_gradient'],
         default: 'avatar_blur'
       },
       url: { type: String, default: '' },
