@@ -101,7 +101,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       profile: { ...themeConfig.profile, avatarFrame: 'neon' },
       fontFamily: "'Inter', sans-serif",
       textColor: '#ffffff',
-      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px' }
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px', backgroundColor: undefined, textColor: undefined }
     },
     anime: {
       background: { type: 'gradient', value: 'linear-gradient(135deg, #FFB7B2, #B5EAD7)' },
@@ -110,7 +110,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       profile: { ...themeConfig.profile, avatarFrame: 'none' },
       fontFamily: "'Outfit', sans-serif",
       textColor: '#555555',
-      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-scale', borderRadius: '30px' }
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-scale', borderRadius: '30px', backgroundColor: undefined, textColor: undefined }
     },
     discord: {
       background: { type: 'gradient', value: 'linear-gradient(135deg, #1a1a2e, #5865F2)' },
@@ -119,7 +119,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       profile: { ...themeConfig.profile, avatarFrame: 'discord' },
       fontFamily: "'Inter', sans-serif",
       textColor: '#ffffff',
-      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px' }
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-color', borderRadius: '12px', backgroundColor: undefined, textColor: undefined }
     },
     minimal: {
       background: { type: 'color', value: '#fafafa' },
@@ -137,7 +137,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       profile: { ...themeConfig.profile, avatarFrame: 'neon' },
       fontFamily: "'Space Mono', monospace",
       textColor: '#00fff0',
-      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-glow', borderRadius: '4px' }
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-glow', borderRadius: '4px', backgroundColor: undefined, textColor: undefined }
     },
     y2k: {
       background: { type: 'gradient', value: 'linear-gradient(135deg, #ff9ecd, #a0e7ff)' },
@@ -146,7 +146,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       profile: { ...themeConfig.profile, avatarFrame: 'image' },
       fontFamily: "'Comic Neue', cursive",
       textColor: '#ff007f',
-      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-scale', borderRadius: '30px' }
+      buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: 'hover-scale', borderRadius: '30px', backgroundColor: undefined, textColor: undefined }
     },
   };
 
