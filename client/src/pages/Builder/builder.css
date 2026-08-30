@@ -167,17 +167,18 @@
 }
 
 /* Thay đổi từ device-frame sang card-wrapper linh hoạt hơn */
-.card-wrapper { 
-  width: 100%; max-width: 420px; height: 95%; max-height: 850px; 
-  border-radius: var(--card-border-radius, 40px); 
-  overflow: hidden; position: relative; z-index: 10; 
+.card-wrapper {
+  width: 100%; max-width: 420px; min-height: 500px; max-height: min(95%, 850px);
+  border-radius: var(--card-border-radius, 40px);
+  overflow-y: auto; overflow-x: hidden; position: relative; z-index: 10;
   background: var(--card-bg, #16181d);
   border: var(--card-border-thickness, 0px) var(--card-border-style, solid) var(--card-border-color, transparent);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
   /* Backdrop filter nằm ở wrapper */
   backdrop-filter: var(--card-backdrop, none);
 }
+.card-wrapper::-webkit-scrollbar { display: none; }
 
 /* Hiệu ứng viền sáng Glow */
 .card-wrapper.border-glow {
@@ -201,14 +202,13 @@
   .card-wrapper.border-led { animation: none; }
 }
 
-.mock-bio-inner { 
-  height: 100%; position: relative; overflow-y: auto; text-align: center; 
+.mock-bio-inner {
+  position: relative; text-align: center;
   --text-main: #ffffff;
   --btn-radius: 12px;
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
 }
-.mock-bio-inner::-webkit-scrollbar { display: none; }
 
 /* Layout Configurations */
 .layout-banner-on { padding: 100px 20px 20px; }
