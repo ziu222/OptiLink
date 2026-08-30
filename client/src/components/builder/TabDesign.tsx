@@ -166,7 +166,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
 
         <div className="input-group">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <label style={{ margin: 0 }}>Ảnh bìa ngang (Hero Banner) 🖼️</label>
+            <label style={{ margin: 0 }}>Ảnh bìa ngang (Hero Banner)</label>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
               <input type="checkbox" checked={themeConfig.heroBanner?.enabled} onChange={(e) => handleUpdate({ heroBanner: { ...themeConfig.heroBanner, enabled: e.target.checked } })} /> <span style={{ fontSize: '12px', color: 'var(--text)' }}>Bật</span>
             </label>
