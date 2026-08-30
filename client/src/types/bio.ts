@@ -22,6 +22,7 @@ export interface ICardStyling {
   background?: string;
   borderStyle?: string;
   borderColor?: string;
+  borderColor2?: string;
   borderThickness?: string;
   borderRadius?: string;
 }

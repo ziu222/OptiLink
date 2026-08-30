@@ -8,6 +8,18 @@ interface TabDesignProps {
   setThemeConfig: React.Dispatch<React.SetStateAction<IThemeConfig>>;
 }
 
+// ponytail: static lookup of curated gradients, not user-editable — a starting point, not a config surface.
+const GRADIENT_PALETTES: { name: string; value: string }[] = [
+  { name: 'Cyberpunk Neon', value: 'linear-gradient(135deg, #0d0221, #ff2079)' },
+  { name: 'Sunset Ember', value: 'linear-gradient(135deg, #d35400, #6c3483)' },
+  { name: 'Ocean Deep', value: 'linear-gradient(135deg, #0f2027, #2c5364)' },
+  { name: 'Forest Mist', value: 'linear-gradient(135deg, #134e5e, #71b280)' },
+  { name: 'Emerald Glow', value: 'linear-gradient(135deg, #003c3c, #00b894)' },
+  { name: 'Midnight Violet', value: 'linear-gradient(135deg, #1a1a2e, #6c5ce7)' },
+  { name: 'Minimal Mono', value: 'linear-gradient(135deg, #fafafa, #e0e0e0)' },
+  { name: 'Charcoal Mono', value: 'linear-gradient(135deg, #232526, #414345)' },
+];
+
 export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
   const { c1, c2 } = extractGradientColors(themeConfig.background.value || '');
 
@@ -56,7 +68,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
     cyberpunk: {
       background: { type: 'gradient', value: 'linear-gradient(135deg, #0d0221, #ff2079)' },
       heroBanner: { ...themeConfig.heroBanner, enabled: true },
-      cardStyling: { background: '#0d0221', borderStyle: 'glow', borderColor: '#00fff0', borderThickness: '2px', borderRadius: '4px' },
+      cardStyling: { background: '#0d0221', borderStyle: 'led', borderColor: '#00fff0', borderColor2: '#ff2079', borderThickness: '3px', borderRadius: '16px' },
       profile: { ...themeConfig.profile, avatarFrame: 'neon' },
       fontFamily: "'Space Mono', monospace",
       textColor: '#00fff0',
@@ -124,6 +136,18 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
               <input type="color" value={c1} onChange={(e) => handleUpdate({ background: { type: themeConfig.background.type, value: `linear-gradient(135deg, ${e.target.value}, ${c2})` } })} />
               <input type="color" value={c2} onChange={(e) => handleUpdate({ background: { type: themeConfig.background.type, value: `linear-gradient(135deg, ${c1}, ${e.target.value})` } })} />
+            </div>
+            <label>Gợi ý bảng màu</label>
+            <div className="gradient-swatches">
+              {GRADIENT_PALETTES.map((p) => (
+                <div
+                  key={p.name}
+                  className={`swatch ${themeConfig.background.value === p.value ? 'active' : ''}`}
+                  style={{ background: p.value }}
+                  title={p.name}
+                  onClick={() => handleUpdate({ background: { type: themeConfig.background.type, value: p.value } })}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -219,14 +243,25 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="solid">Viền Liền (Solid)</option>
             <option value="dashed">Viền Đứt (Dashed)</option>
             <option value="glow">Phát sáng (Neon Glow)</option>
+            <option value="led">Viền LED chạy (2 màu)</option>
           </select>
         </div>
         {themeConfig.cardStyling?.borderStyle !== 'none' && (
           <>
-            <div className="input-group">
-              <label>Màu viền (Border Color)</label>
-              <input type="color" value={themeConfig.cardStyling?.borderColor} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderColor: e.target.value } })} />
-            </div>
+            {themeConfig.cardStyling?.borderStyle === 'led' ? (
+              <div className="input-group">
+                <label>Màu LED (2 màu chạy dọc)</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input type="color" value={themeConfig.cardStyling?.borderColor || '#ff007f'} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderColor: e.target.value } })} />
+                  <input type="color" value={themeConfig.cardStyling?.borderColor2 || '#00fff0'} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderColor2: e.target.value } })} />
+                </div>
+              </div>
+            ) : (
+              <div className="input-group">
+                <label>Màu viền (Border Color)</label>
+                <input type="color" value={themeConfig.cardStyling?.borderColor} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderColor: e.target.value } })} />
+              </div>
+            )}
             <div className="input-group">
               <label>Độ dày viền (Border Thickness): <span style={{ color: '#3b82f6' }}>{themeConfig.cardStyling?.borderThickness}px</span></label>
               <input type="range" min="1" max="10" value={parseInt(themeConfig.cardStyling?.borderThickness || '2')} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderThickness: e.target.value + 'px' } })} />

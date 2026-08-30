@@ -37,6 +37,7 @@ export function BuilderPage() {
   const cardBg = themeConfig.cardStyling?.background || '#16181d';
   const borderStyle = themeConfig.cardStyling?.borderStyle || 'none';
   const borderColor = themeConfig.cardStyling?.borderColor || '#ff007f';
+  const borderColor2 = themeConfig.cardStyling?.borderColor2 || '#00fff0';
   const borderThickness = themeConfig.cardStyling?.borderThickness || '2px';
   const borderRadius = themeConfig.cardStyling?.borderRadius || '40px';
   const fontFamily = themeConfig.fontFamily || "'Inter', sans-serif";
@@ -81,10 +82,12 @@ export function BuilderPage() {
   const wrapperStyle = {
     '--card-bg': cardBg === 'glass' ? 'rgba(255,255,255,0.3)' : cardBg,
     '--card-backdrop': cardBg === 'glass' ? 'blur(25px)' : 'none',
-    '--card-border-style': borderStyle === 'glow' ? 'solid' : borderStyle,
+    '--card-border-style': borderStyle === 'glow' || borderStyle === 'led' ? 'solid' : borderStyle,
     '--card-border-color': borderColor,
-    '--card-border-thickness': borderThickness + 'px',
+    '--card-border-thickness': borderThickness,
     '--card-border-radius': borderRadius,
+    '--led-c1': borderColor,
+    '--led-c2': borderColor2,
   } as React.CSSProperties;
 
   const innerStyle = {
@@ -172,7 +175,7 @@ export function BuilderPage() {
         </button>
         <FallingEffect effect={effect} />
 
-        <div className={`card-wrapper ${borderStyle === 'glow' ? 'border-glow' : ''}`} style={wrapperStyle}>
+        <div className={`card-wrapper ${borderStyle === 'glow' ? 'border-glow' : ''} ${borderStyle === 'led' ? 'border-led' : ''}`} style={wrapperStyle}>
           <div className={`mock-bio-inner ${showBanner ? 'layout-banner-on' : 'layout-banner-off'}`} style={innerStyle}>
             
             {showBanner && (
