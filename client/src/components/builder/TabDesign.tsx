@@ -81,7 +81,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
     <>
       <h3 className="section-title">Templates (Giao diện cài sẵn)</h3>
       <div className="card" style={{ marginBottom: '16px' }}>
-        <select style={{ width: '100%', padding: '12px', borderRadius: '8px', background: 'var(--bg)', color: 'var(--text-h)', border: '1px solid var(--border)' }} value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
+        <select className="preset-select" value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
           <option value="commerce">Mặc định: Storefront (Thương mại)</option>
           <option value="anime">Anime Pastel (Thẻ kính)</option>
           <option value="discord">Discord Gamer</option>
@@ -291,6 +291,8 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="hover-scale">Phóng to nhẹ (Soft Scale)</option>
             <option value="hover-lift">Nổi lên (Float Up)</option>
             <option value="hover-glow">Phát sáng (Neon Glow)</option>
+            <option value="hover-tilt">Nghiêng nhẹ (Tilt 3D)</option>
+            <option value="hover-shine">Ánh sáng lướt (Shine)</option>
           </select>
         </div>
       </div>

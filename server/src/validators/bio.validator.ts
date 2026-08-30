@@ -27,7 +27,7 @@ export const themeConfigSchema = z.object({
   }).optional(),
   effect: z.enum(['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble', 'confetti', 'hearts', 'firefly', 'glitter']).optional(),
   buttonStyle: z.object({
-    hoverEffect: z.enum(['hover-color', 'hover-scale', 'hover-lift', 'hover-glow']).optional(),
+    hoverEffect: z.enum(['hover-color', 'hover-scale', 'hover-lift', 'hover-glow', 'hover-tilt', 'hover-shine']).optional(),
     borderRadius: z.string().optional(),
     backgroundColor: z.string().optional(),
     textColor: z.string().optional()

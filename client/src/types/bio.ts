@@ -12,7 +12,7 @@ export interface IProfileConfig {
 }
 
 export interface IButtonStyle {
-  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow';
+  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow' | 'hover-tilt' | 'hover-shine';
   borderRadius?: string;
   backgroundColor?: string;
   textColor?: string;

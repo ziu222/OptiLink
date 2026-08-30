@@ -51,6 +51,9 @@
 .profile-inputs input[type="text"]:focus, .bio-textarea:focus {
   border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
+.card select:hover { border-color: #3b82f6; cursor: pointer; }
+.preset-select { width: 100%; padding: 12px; border-radius: 8px; background: var(--bg); color: var(--text-h); border: 1px solid var(--border); transition: border-color 0.2s; }
+.preset-select:hover { border-color: #3b82f6; cursor: pointer; }
 
 /* Range Slider Styling */
 .input-group input[type="range"] {
@@ -211,6 +214,18 @@
 .hover-scale:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(0,0,0,0.15); } /* Nhẹ nhàng hơn, không lắc */
 .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.4); } /* Trôi nổi lên */
 .hover-glow:hover { box-shadow: 0 0 15px currentColor; border-color: currentColor; }
+.hover-tilt:hover { transform: perspective(600px) rotateX(8deg) translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+.hover-shine.mock-link { overflow: hidden; }
+.hover-shine::before {
+  content: '';
+  position: absolute; top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+.hover-shine:hover::before { left: 125%; }
 
 .mock-product { border-radius: var(--btn-radius); padding: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; backdrop-filter: blur(10px); position: relative; z-index: 2; text-align: left; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.15); color: var(--text-main);}
 .mock-product img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
