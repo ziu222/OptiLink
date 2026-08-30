@@ -18,6 +18,7 @@ export const themeConfigSchema = z.object({
     background: z.string().optional(),
     borderStyle: z.string().optional(),
     borderColor: z.string().optional(),
+    borderColor2: z.string().optional(),
     borderThickness: z.string().optional(),
     borderRadius: z.string().optional()
   }).optional(),

@@ -23,6 +23,7 @@ export interface ICardStyling {
   background?: string;
   borderStyle?: string;
   borderColor?: string;
+  borderColor2?: string;
   borderThickness?: string;
   borderRadius?: string;
 }
@@ -153,6 +154,7 @@ const BioPageSchema = new Schema({
       background: { type: String, default: '#16181d' },
       borderStyle: { type: String, default: 'none' },
       borderColor: { type: String, default: '#ff007f' },
+      borderColor2: { type: String, default: '' },
       borderThickness: { type: String, default: '2px' },
       borderRadius: { type: String, default: '40px' }
     },
