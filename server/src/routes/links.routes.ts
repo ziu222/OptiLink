@@ -1,5 +1,13 @@
 import { Router } from 'express';
 import { linksController } from '../controllers/links.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validate.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import {
+  createLinkSchema,
+  listLinksQuerySchema,
+  updateLinkSchema,
+} from '../validators/links.validators.js';
 
 const router = Router();
 
@@ -24,21 +32,25 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [originalUrl]
  *             properties:
  *               originalUrl:
  *                 type: string
- *               customSlug:
+ *               title:
  *                 type: string
- *               password:
+ *               slug:
  *                 type: string
  *               expiresAt:
  *                 type: string
  *                 format: date-time
+ *               redirectMode:
+ *                 type: string
+ *                 enum: [standard, splash]
  *     responses:
  *       201:
  *         description: Tạo thành công
  */
-router.post('/', linksController.createLink);
+router.post('/', authenticate, validate(createLinkSchema), asyncHandler(linksController.createLink));
 
 /**
  * @swagger
@@ -61,7 +73,7 @@ router.post('/', linksController.createLink);
  *       200:
  *         description: Lấy danh sách thành công
  */
-router.get('/', linksController.getLinks);
+router.get('/', authenticate, validate(listLinksQuerySchema, 'query'), asyncHandler(linksController.getLinks));
 
 /**
  * @swagger
@@ -81,7 +93,7 @@ router.get('/', linksController.getLinks);
  *       200:
  *         description: Lấy thành công
  */
-router.get('/:id', linksController.getLinkById);
+router.get('/:id', authenticate, asyncHandler(linksController.getLinkById));
 
 /**
  * @swagger
@@ -104,16 +116,24 @@ router.get('/:id', linksController.getLinkById);
  *           schema:
  *             type: object
  *             properties:
+ *               title:
+ *                 type: string
  *               originalUrl:
  *                 type: string
  *               status:
  *                 type: string
  *                 enum: [active, inactive]
+ *               redirectMode:
+ *                 type: string
+ *                 enum: [standard, splash]
+ *               expiresAt:
+ *                 type: string
+ *                 format: date-time
  *     responses:
  *       200:
  *         description: Cập nhật thành công
  */
-router.put('/:id', linksController.updateLink);
+router.put('/:id', authenticate, validate(updateLinkSchema), asyncHandler(linksController.updateLink));
 
 /**
  * @swagger
@@ -133,6 +153,6 @@ router.put('/:id', linksController.updateLink);
  *       200:
  *         description: Xóa thành công
  */
-router.delete('/:id', linksController.deleteLink);
+router.delete('/:id', authenticate, asyncHandler(linksController.deleteLink));
 
 export const linksRoutes = router;

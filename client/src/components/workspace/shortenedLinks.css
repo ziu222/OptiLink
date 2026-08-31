@@ -113,6 +113,69 @@
   color: var(--text);
 }
 
+.link-config {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+  margin: 0 0 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .link-config {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.link-config-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.link-config-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.link-config-item--full {
+  grid-column: 1 / -1;
+}
+
+.link-config-readonly:disabled {
+  background: transparent;
+}
+
+.link-password-frame {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: border-color 0.15s;
+}
+
+.link-password-frame:focus-within {
+  border-color: var(--text-h);
+}
+
+.link-password-frame .profile-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+}
+
+.link-password-sep {
+  width: 1px;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+.link-password-frame:focus-within .link-password-sep {
+  background: var(--text-h);
+}
+
 @media (max-width: 640px) {
   .link-row {
     grid-template-columns: minmax(0, 1fr) auto;

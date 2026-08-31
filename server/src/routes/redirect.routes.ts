@@ -1,5 +1,9 @@
 import { Router } from 'express';
 import { linksController } from '../controllers/links.controller.js';
+import { validate } from '../middleware/validate.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { redirectLimiter } from '../middleware/rateLimiter.js';
+import { verifyLinkSchema } from '../validators/links.validators.js';
 
 const router = Router();
 
@@ -48,15 +52,23 @@ router.get('/:slug', linksController.redirectLink);
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [password]
  *             properties:
  *               password:
  *                 type: string
- *               captchaToken:
- *                 type: string
  *     responses:
  *       200:
- *         description: Mật khẩu / Captcha hợp lệ
+ *         description: Mật khẩu hợp lệ — trả về data.originalUrl
+ *       401:
+ *         description: Sai mật khẩu
+ *       404:
+ *         description: Không tìm thấy link
  */
-router.post('/:slug/verify', linksController.verifyLinkProtection);
+router.post(
+  '/:slug/verify',
+  redirectLimiter,
+  validate(verifyLinkSchema),
+  asyncHandler(linksController.verifyLinkProtection),
+);
 
 export const redirectRoutes = router;

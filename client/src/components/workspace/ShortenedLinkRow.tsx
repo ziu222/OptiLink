@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Menu } from '../Menu';
 import type { MenuItem } from '../Menu';
 import { copyText } from '../../lib/clipboard';
@@ -6,13 +7,15 @@ import type { ShortenedLink } from '../../api/links';
 
 interface ShortenedLinkRowProps {
   link: ShortenedLink;
+  showViewDetail?: boolean;
 }
 
 // One row of the Shortened Links list: a 3-column grid (left / center / right),
 // each column stacking a main / sub / extra slot.
-export function ShortenedLinkRow({ link }: ShortenedLinkRowProps) {
+export function ShortenedLinkRow({ link, showViewDetail = true }: ShortenedLinkRowProps) {
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
-  const name = link.title || link.slug;
+  const name = link.title || 'Untitle';
   const isActive = link.isActive ?? true;
 
   const handleCopy = async () => {
@@ -22,6 +25,15 @@ export function ShortenedLinkRow({ link }: ShortenedLinkRowProps) {
   };
 
   const menuItems: MenuItem[] = [
+    ...(showViewDetail
+      ? [
+          {
+            key: 'detail',
+            label: 'View Detail',
+            onSelect: () => navigate(`/dashboard/links/${link.id}`),
+          },
+        ]
+      : []),
     { key: 'copy', label: 'Copy short link', onSelect: handleCopy },
   ];
 

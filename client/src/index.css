@@ -103,3 +103,9 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Mask password fields with square dots instead of round bullets
+   (Chromium / Safari; Firefox falls back to its default bullet). */
+input[type='password'] {
+  -webkit-text-security: square;
+}

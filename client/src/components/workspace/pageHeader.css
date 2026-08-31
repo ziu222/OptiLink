@@ -16,3 +16,22 @@
   font-weight: 700;
   color: var(--text-h);
 }
+
+.page-header-crumb {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.page-header-crumb:hover {
+  color: var(--text-h);
+}
+
+.page-header-sep {
+  margin: 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}

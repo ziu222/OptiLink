@@ -6,8 +6,10 @@ import { RouteErrorBoundary } from './routes/RouteErrorBoundary';
 import { HomePage } from './pages/Home/HomePage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
+import { LinkGatePage } from './pages/LinkGatePage';
 import { WorkspaceLayout } from './pages/Workspace/WorkspaceLayout';
 import { ShortenLinkPage } from './pages/Workspace/ShortenLinkPage';
+import { LinkDetailPage } from './pages/Workspace/LinkDetailPage';
 import { AnalyticsPage } from './pages/Workspace/AnalyticsPage';
 import { SettingsPage } from './pages/Workspace/SettingsPage';
 import { ProfilePage } from './pages/Workspace/ProfilePage';
@@ -22,10 +24,12 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/s/:slug" element={<LinkGatePage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<WorkspaceLayout />}>
               <Route index element={<ShortenLinkPage />} />
+              <Route path="links/:id" element={<LinkDetailPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="profile" element={<ProfilePage />} />

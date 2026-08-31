@@ -3,6 +3,28 @@
   display: inline-flex;
 }
 
+.menu-button {
+  position: relative;
+  display: inline-flex;
+}
+
+.menu-button-trigger {
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.menu-button-trigger:hover,
+.menu-button-trigger[aria-expanded='true'] {
+  color: var(--text-h);
+}
+
 .menu-trigger {
   display: flex;
   align-items: center;
