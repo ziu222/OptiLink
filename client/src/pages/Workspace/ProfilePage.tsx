@@ -39,9 +39,9 @@ export function ProfilePage() {
 
   return (
     <>
-      <PageHeader title="My Profile" />
+      <PageHeader title="Account Information" />
       <section className="profile-page">
-        <ContentPanel title="Account Information" className="profile-panel">
+        <ContentPanel title="My Profile" className="profile-panel">
           <form onSubmit={onSubmit} className="profile-form">
             {errors.root && <p className="profile-error">{errors.root.message}</p>}
 
