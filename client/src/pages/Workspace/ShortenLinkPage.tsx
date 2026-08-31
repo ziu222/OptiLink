@@ -180,7 +180,12 @@ export function ShortenLinkPage() {
 
               <label className="profile-field">
                 <span className="profile-label">Expires</span>
-                <input type="datetime-local" className="profile-input" {...register('expiresAt')} />
+                <input
+                  type="datetime-local"
+                  lang="en-GB"
+                  className="profile-input"
+                  {...register('expiresAt')}
+                />
                 {errors.expiresAt && <em className="profile-field-error">{errors.expiresAt.message}</em>}
               </label>
             </div>

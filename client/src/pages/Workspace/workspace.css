@@ -178,8 +178,18 @@
 
 .profile-input:disabled {
   color: var(--text);
-  background: var(--code-bg);
+  background: transparent;
   cursor: not-allowed;
+}
+
+/* datetime-local shows its mm/dd/yyyy format text in the input's own color;
+   mute it while empty so it reads like the other fields' placeholders. */
+.profile-input[type='datetime-local']:placeholder-shown {
+  color: var(--text);
+}
+
+.profile-input[type='datetime-local']:placeholder-shown:focus {
+  color: var(--text-h);
 }
 
 .profile-field-error {
