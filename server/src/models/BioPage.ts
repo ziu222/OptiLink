@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 // 1. Interfaces cho Theme Config
 export interface IBackground {
-  type: 'avatar_blur' | 'color' | 'gradient' | 'image' | 'gif';
+  type: 'avatar_blur' | 'color' | 'gradient' | 'image' | 'gif' | 'video' | 'mesh' | 'animated_gradient';
   url?: string;
   value?: string; // For color or gradient value
 }
@@ -13,7 +13,7 @@ export interface IProfileConfig {
 }
 
 export interface IButtonStyle {
-  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow';
+  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow' | 'hover-tilt' | 'hover-shine';
   borderRadius?: string;
   backgroundColor?: string;
   textColor?: string;
@@ -23,6 +23,7 @@ export interface ICardStyling {
   background?: string;
   borderStyle?: string;
   borderColor?: string;
+  borderColor2?: string;
   borderThickness?: string;
   borderRadius?: string;
 }
@@ -37,7 +38,7 @@ export interface IThemeConfig {
   };
   cardStyling?: ICardStyling;
   profile: IProfileConfig;
-  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble';
+  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble' | 'confetti' | 'hearts' | 'firefly' | 'glitter';
   buttonStyle: IButtonStyle;
   fontFamily?: string;
   textColor?: string;
@@ -139,7 +140,7 @@ const BioPageSchema = new Schema({
     background: {
       type: { 
         type: String, 
-        enum: ['avatar_blur', 'color', 'gradient', 'image', 'gif'],
+        enum: ['avatar_blur', 'color', 'gradient', 'image', 'gif', 'video', 'mesh', 'animated_gradient'],
         default: 'avatar_blur'
       },
       url: { type: String, default: '' },
@@ -153,6 +154,7 @@ const BioPageSchema = new Schema({
       background: { type: String, default: '#16181d' },
       borderStyle: { type: String, default: 'none' },
       borderColor: { type: String, default: '#ff007f' },
+      borderColor2: { type: String, default: '' },
       borderThickness: { type: String, default: '2px' },
       borderRadius: { type: String, default: '40px' }
     },
@@ -162,13 +164,13 @@ const BioPageSchema = new Schema({
     },
     effect: { 
       type: String,
-      enum: ['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble'],
+      enum: ['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble', 'confetti', 'hearts', 'firefly', 'glitter'],
       default: 'none'
     },
     buttonStyle: {
       hoverEffect: { 
         type: String,
-        enum: ['hover-color', 'hover-scale', 'hover-lift', 'hover-glow'],
+        enum: ['hover-color', 'hover-scale', 'hover-lift', 'hover-glow', 'hover-tilt', 'hover-shine'],
         default: 'hover-color'
       },
       borderRadius: { type: String, default: '12px' },

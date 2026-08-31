@@ -37,6 +37,19 @@
 
 .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text); font-weight: 700; margin-bottom: 16px; margin-top: 12px; }
 .card { background: var(--code-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+
+/* Accordion sections for the Design tab: one icon + one open section at a time,
+   instead of a long scroll of identical gray cards. */
+.design-section { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: var(--code-bg); }
+.design-section-header { width: 100%; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: transparent; border: none; cursor: pointer; text-align: left; font: inherit; color: var(--text-h); }
+.design-section-header:hover { background: rgba(59, 130, 246, 0.06); }
+.design-section-icon { display: flex; color: #3b82f6; flex-shrink: 0; }
+.design-section-title { flex: 1; font-weight: 600; font-size: 14px; }
+.design-section-chevron { display: flex; color: var(--text); transition: transform 0.2s; }
+.design-section.open .design-section-chevron { transform: rotate(180deg); }
+.design-section.open .design-section-header { border-bottom: 1px solid var(--border); }
+.design-section-body { padding: 16px; }
+.design-section-body .input-group:last-child { margin-bottom: 0; }
 .input-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
 .input-group label { display: block; font-size: 13px; color: var(--text); margin-bottom: 0px; font-weight: 500; }
 
@@ -51,6 +64,9 @@
 .profile-inputs input[type="text"]:focus, .bio-textarea:focus {
   border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
+.card select:hover { border-color: #3b82f6; cursor: pointer; }
+.preset-select { width: 100%; padding: 12px; border-radius: 8px; background: var(--bg); color: var(--text-h); border: 1px solid var(--border); transition: border-color 0.2s; }
+.preset-select:hover { border-color: #3b82f6; cursor: pointer; }
 
 /* Range Slider Styling */
 .input-group input[type="range"] {
@@ -100,6 +116,32 @@
 /* 5. Vùng Preview - CSS Variables cho sự linh hoạt cao nhất */
 .preview-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; transition: background 0.5s; position: relative; overflow: hidden; }
 
+/* Background types (Phase 2) */
+.preview-area.bg-color { background: var(--bg-c1); }
+.preview-area.bg-gradient { background: linear-gradient(135deg, var(--bg-c1), var(--bg-c2)); }
+.preview-area.bg-animated_gradient { background: linear-gradient(135deg, var(--bg-c1), var(--bg-c2)); background-size: 200% 200%; animation: gradient-shift 8s ease infinite; }
+.preview-area.bg-image { background-image: var(--bg-image); background-size: cover; background-position: center; }
+.preview-area.bg-video { background: linear-gradient(135deg, var(--bg-c1), var(--bg-c2)); }
+.preview-area.bg-mesh {
+  background:
+    radial-gradient(at 20% 20%, var(--bg-c1) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, var(--bg-c2) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, var(--bg-c2) 0px, transparent 50%),
+    radial-gradient(at 80% 100%, var(--bg-c1) 0px, transparent 50%);
+}
+.preview-area.bg-avatar_blur { background-image: var(--bg-avatar); background-size: cover; background-position: center; }
+.preview-area.bg-avatar_blur::before {
+  content: ''; position: absolute; inset: 0; backdrop-filter: blur(40px) brightness(0.6); z-index: 0;
+}
+
+.preview-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 .preview-toggle-btn {
   position: absolute;
   top: 20px;
@@ -125,31 +167,48 @@
 }
 
 /* Thay đổi từ device-frame sang card-wrapper linh hoạt hơn */
-.card-wrapper { 
-  width: 100%; max-width: 420px; height: 95%; max-height: 850px; 
-  border-radius: var(--card-border-radius, 40px); 
-  overflow: hidden; position: relative; z-index: 10; 
+.card-wrapper {
+  width: 100%; max-width: 420px; min-height: 500px; max-height: min(95%, 850px);
+  border-radius: var(--card-border-radius, 40px);
+  overflow-y: auto; overflow-x: hidden; position: relative; z-index: 10;
   background: var(--card-bg, #16181d);
   border: var(--card-border-thickness, 0px) var(--card-border-style, solid) var(--card-border-color, transparent);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
   /* Backdrop filter nằm ở wrapper */
   backdrop-filter: var(--card-backdrop, none);
 }
+.card-wrapper::-webkit-scrollbar { display: none; }
 
 /* Hiệu ứng viền sáng Glow */
 .card-wrapper.border-glow {
   box-shadow: 0 0 25px var(--card-border-color), inset 0 0 15px var(--card-border-color), 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-.mock-bio-inner { 
-  height: 100%; position: relative; overflow-y: auto; text-align: center; 
+/* Viền LED chạy dọc 2 màu (Cyberpunk). Dùng background-clip 2 lớp thay vì
+   border-image vì kỹ thuật này tôn trọng border-radius, còn border-image thì không. */
+.card-wrapper.border-led {
+  border: var(--card-border-thickness, 3px) solid transparent;
+  background:
+    linear-gradient(var(--card-bg, #16181d), var(--card-bg, #16181d)) padding-box,
+    linear-gradient(180deg, var(--led-c1, #00fff0), var(--led-c2, #ff2079), var(--led-c1, #00fff0)) border-box;
+  background-size: 100% 100%, 100% 300%;
+  animation: led-run 3s linear infinite;
+}
+@keyframes led-run {
+  to { background-position: 0 0, 0 -200%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-wrapper.border-led { animation: none; }
+}
+
+.mock-bio-inner {
+  position: relative; text-align: center;
   --text-main: #ffffff;
   --btn-radius: 12px;
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
 }
-.mock-bio-inner::-webkit-scrollbar { display: none; }
 
 /* Layout Configurations */
 .layout-banner-on { padding: 100px 20px 20px; }
@@ -178,13 +237,25 @@
 .mock-spoiler { background: rgba(128,128,128,0.3); color: transparent; padding: 0 4px; border-radius: 4px; }
 
 /* Dynamic Buttons */
-.mock-link { border-radius: var(--btn-radius); padding: 14px; margin-bottom: 12px; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 2; cursor: pointer; background: rgba(128,128,128,0.15); border: 1px solid rgba(128,128,128,0.2); color: var(--text-main); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.mock-link { border-radius: var(--btn-radius); padding: 14px; margin-bottom: 12px; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 2; cursor: pointer; background: var(--btn-bg, rgba(128,128,128,0.15)); border: 1px solid rgba(128,128,128,0.2); color: var(--btn-text, var(--text-main)); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
 /* Cập nhật Button Hover Animations nhẹ nhàng hơn */
 .hover-color:hover { background: var(--text-main); color: var(--card-bg, #000); }
 .hover-scale:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(0,0,0,0.15); } /* Nhẹ nhàng hơn, không lắc */
 .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.15); border-color: rgba(255,255,255,0.4); } /* Trôi nổi lên */
 .hover-glow:hover { box-shadow: 0 0 15px currentColor; border-color: currentColor; }
+.hover-tilt:hover { transform: perspective(600px) rotateX(8deg) translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+.hover-shine.mock-link { overflow: hidden; }
+.hover-shine::before {
+  content: '';
+  position: absolute; top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+.hover-shine:hover::before { left: 125%; }
 
 .mock-product { border-radius: var(--btn-radius); padding: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; backdrop-filter: blur(10px); position: relative; z-index: 2; text-align: left; background: rgba(128,128,128,0.05); border: 1px solid rgba(128,128,128,0.15); color: var(--text-main);}
 .mock-product img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const backgroundSchema = z.object({
-  type: z.enum(['avatar_blur', 'color', 'gradient', 'image', 'gif']),
+  type: z.enum(['avatar_blur', 'color', 'gradient', 'image', 'gif', 'video', 'mesh', 'animated_gradient']),
   url: z.string().optional(),
   value: z.string().optional()
 });
@@ -18,6 +18,7 @@ export const themeConfigSchema = z.object({
     background: z.string().optional(),
     borderStyle: z.string().optional(),
     borderColor: z.string().optional(),
+    borderColor2: z.string().optional(),
     borderThickness: z.string().optional(),
     borderRadius: z.string().optional()
   }).optional(),
@@ -25,9 +26,9 @@ export const themeConfigSchema = z.object({
     avatarDecorationUrl: z.string().optional(),
     avatarFrame: z.enum(['none', 'neon', 'discord', 'image']).optional()
   }).optional(),
-  effect: z.enum(['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble']).optional(),
+  effect: z.enum(['none', 'sakura', 'snow', 'star', 'rain', 'leaf', 'bubble', 'confetti', 'hearts', 'firefly', 'glitter']).optional(),
   buttonStyle: z.object({
-    hoverEffect: z.enum(['hover-color', 'hover-scale', 'hover-lift', 'hover-glow']).optional(),
+    hoverEffect: z.enum(['hover-color', 'hover-scale', 'hover-lift', 'hover-glow', 'hover-tilt', 'hover-shine']).optional(),
     borderRadius: z.string().optional(),
     backgroundColor: z.string().optional(),
     textColor: z.string().optional()

@@ -1,7 +1,7 @@
 export type BlockType = 'LINK' | 'TAB_GROUP' | 'PRODUCT_CARD' | 'SEARCH_BAR' | 'CATEGORY_FILTER' | 'TEXT' | 'IMAGE';
 
 export interface IBackground {
-  type: 'avatar_blur' | 'color' | 'gradient' | 'image' | 'gif';
+  type: 'avatar_blur' | 'color' | 'gradient' | 'image' | 'gif' | 'video' | 'mesh' | 'animated_gradient';
   url?: string;
   value?: string;
 }
@@ -12,7 +12,7 @@ export interface IProfileConfig {
 }
 
 export interface IButtonStyle {
-  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow';
+  hoverEffect: 'hover-color' | 'hover-scale' | 'hover-lift' | 'hover-glow' | 'hover-tilt' | 'hover-shine';
   borderRadius?: string;
   backgroundColor?: string;
   textColor?: string;
@@ -22,6 +22,7 @@ export interface ICardStyling {
   background?: string;
   borderStyle?: string;
   borderColor?: string;
+  borderColor2?: string;
   borderThickness?: string;
   borderRadius?: string;
 }
@@ -36,7 +37,7 @@ export interface IThemeConfig {
   };
   cardStyling?: ICardStyling;
   profile: IProfileConfig;
-  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble';
+  effect: 'none' | 'sakura' | 'snow' | 'star' | 'rain' | 'leaf' | 'bubble' | 'confetti' | 'hearts' | 'firefly' | 'glitter';
   buttonStyle: IButtonStyle;
   fontFamily?: string;
   textColor?: string;
