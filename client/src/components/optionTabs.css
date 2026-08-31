@@ -1,0 +1,38 @@
+.option-tabs {
+  display: inline-flex;
+  align-items: stretch; /* separators span full height */
+  align-self: flex-start;
+  border: 1px solid var(--border);
+  /* no padding, no gap — tabs sit flush */
+}
+
+.option-tab {
+  padding: 0.5rem 0.875rem; /* click target only; not container chrome */
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.option-tab + .option-tab {
+  border-left: 1px solid var(--border); /* separator between tabs, meets outer border */
+}
+
+.option-tab:hover {
+  color: var(--text-h);
+}
+
+.option-tab.is-active,
+.option-tab.is-active:hover {
+  background: var(--text-h);
+  color: var(--bg);
+}
+
+/* keep separators clean around the filled/inverted tab */
+.option-tab.is-active,
+.option-tab.is-active + .option-tab {
+  border-left-color: transparent;
+}

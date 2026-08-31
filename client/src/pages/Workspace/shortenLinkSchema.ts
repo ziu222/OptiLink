@@ -13,6 +13,8 @@ export const shortenLinkSchema = z
       .or(z.literal('')),
     password: z.string().min(6, 'Password must be at least 6 characters').optional().or(z.literal('')),
     expiresAt: z.string().optional().or(z.literal('')),
+    redirectMode: z.enum(['standard', 'splash']),
+    status: z.enum(['active', 'inactive']),
   })
   .refine((data) => !data.expiresAt || new Date(data.expiresAt) > new Date(), {
     message: 'Expiration must be in the future',

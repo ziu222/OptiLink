@@ -3,15 +3,51 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PageHeader } from '../../components/workspace/PageHeader';
 import { ContentPanel } from '../../components/workspace/ContentPanel';
+import { OptionTabs } from '../../components/OptionTabs';
+import { MenuSelect } from '../../components/MenuSelect';
+import { ShortenedLinksPanel } from '../../components/workspace/ShortenedLinksPanel';
 import { shortenLinkSchema } from './shortenLinkSchema';
 import type { ShortenLinkValues } from './shortenLinkSchema';
+import type { ShortenedLink } from '../../api/links';
 import './workspace.css';
 
 type OptionTab = 'none' | 'basic' | 'access';
 
-const TAB_ITEMS: { id: Exclude<OptionTab, 'none'>; label: string }[] = [
+const TAB_ITEMS: { id: OptionTab; label: string }[] = [
+  { id: 'none', label: 'None' },
   { id: 'basic', label: 'Basic' },
   { id: 'access', label: 'Access Control' },
+];
+
+// Placeholder rows until the list is wired to GET /api/links.
+const SAMPLE_LINKS: ShortenedLink[] = [
+  {
+    id: '1',
+    title: 'Spring campaign landing page',
+    originalUrl: 'https://example.com/marketing/spring-2026/landing?utm_source=newsletter&utm_medium=email',
+    shortUrl: 'https://opti.link/spring',
+    slug: 'spring',
+    clicks: 1284,
+    isActive: true,
+  },
+  {
+    id: '2',
+    title: 'Docs — getting started',
+    originalUrl: 'https://docs.example.com/guides/getting-started/introduction',
+    shortUrl: 'https://opti.link/docs-start',
+    slug: 'docs-start',
+    clicks: 342,
+    isActive: true,
+  },
+  {
+    id: '3',
+    title: 'Old promo (retired)',
+    originalUrl: 'https://example.com/promo/black-friday-2025',
+    shortUrl: 'https://opti.link/bf25',
+    slug: 'bf25',
+    clicks: 57,
+    isActive: false,
+  },
 ];
 
 export function ShortenLinkPage() {
@@ -19,6 +55,8 @@ export function ShortenLinkPage() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<ShortenLinkValues>({
     resolver: zodResolver(shortenLinkSchema),
@@ -29,6 +67,8 @@ export function ShortenLinkPage() {
       slug: '',
       password: '',
       expiresAt: '',
+      redirectMode: 'standard',
+      status: 'active',
     },
   });
 
@@ -58,53 +98,72 @@ export function ShortenLinkPage() {
             {errors.url && <em className="profile-field-error">{errors.url.message}</em>}
           </div>
 
-          <div className="shorten-tabs">
-            <button
-              type="button"
-              className={`shorten-tab${activeTab === 'none' ? ' is-active' : ''}`}
-              onClick={() => setActiveTab('none')}
-            >
-              None
-            </button>
-            {TAB_ITEMS.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                className={`shorten-tab${activeTab === id ? ' is-active' : ''}`}
-                onClick={() => setActiveTab((current) => (current === id ? 'none' : id))}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <OptionTabs
+            items={TAB_ITEMS}
+            value={activeTab}
+            ariaLabel="Optional link settings"
+            onChange={(id) =>
+              setActiveTab((current) => (id !== 'none' && current === id ? 'none' : id))
+            }
+          />
 
           {activeTab === 'basic' && (
-            <div className="shorten-tab-content">
-              <label className="profile-field">
-                <span className="profile-label">Title</span>
-                <input
-                  type="text"
-                  placeholder="Spring campaign landing page"
-                  className="profile-input"
-                  {...register('title')}
-                />
-                {errors.title && <em className="profile-field-error">{errors.title.message}</em>}
-              </label>
-
-              <label className="profile-field">
-                <span className="profile-label">Slug</span>
-                <div className="shorten-slug-frame">
-                  <span className="shorten-slug-prefix">opti.link/</span>
+            <>
+              <div className="shorten-tab-content">
+                <label className="profile-field">
+                  <span className="profile-label">Title</span>
                   <input
                     type="text"
-                    placeholder="my-promo"
-                    className="shorten-slug-input"
-                    {...register('slug')}
+                    placeholder="Spring campaign landing page"
+                    className="profile-input"
+                    {...register('title')}
+                  />
+                  {errors.title && <em className="profile-field-error">{errors.title.message}</em>}
+                </label>
+
+                <label className="profile-field">
+                  <span className="profile-label">Slug</span>
+                  <div className="shorten-slug-frame">
+                    <span className="shorten-slug-prefix">opti.link/</span>
+                    <input
+                      type="text"
+                      placeholder="my-promo"
+                      className="shorten-slug-input"
+                      {...register('slug')}
+                    />
+                  </div>
+                  {errors.slug && <em className="profile-field-error">{errors.slug.message}</em>}
+                </label>
+              </div>
+
+              <div className="shorten-tab-content">
+                <div className="profile-field">
+                  <span className="profile-label">Redirect Mode</span>
+                  <MenuSelect
+                    ariaLabel="Redirect mode"
+                    value={watch('redirectMode')}
+                    onChange={(value) => setValue('redirectMode', value)}
+                    options={[
+                      { value: 'standard', label: 'Standard' },
+                      { value: 'splash', label: 'Splash' },
+                    ]}
                   />
                 </div>
-                {errors.slug && <em className="profile-field-error">{errors.slug.message}</em>}
-              </label>
-            </div>
+
+                <div className="profile-field">
+                  <span className="profile-label">Status</span>
+                  <MenuSelect
+                    ariaLabel="Status"
+                    value={watch('status')}
+                    onChange={(value) => setValue('status', value)}
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                  />
+                </div>
+              </div>
+            </>
           )}
 
           {activeTab === 'access' && (
@@ -133,6 +192,8 @@ export function ShortenLinkPage() {
           )}
         </form>
       </ContentPanel>
+
+      <ShortenedLinksPanel links={SAMPLE_LINKS} />
     </>
   );
 }

@@ -1,0 +1,131 @@
+.menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.menu-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.menu-trigger:hover,
+.menu-trigger[aria-expanded='true'] {
+  color: var(--text-h);
+  background: transparent;
+  border-color: var(--text-h);
+}
+
+.menu-popup {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 10rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+
+.menu-popup--right {
+  right: 0;
+}
+
+.menu-popup--left {
+  left: 0;
+}
+
+.menu-item {
+  padding: 0.5rem 0.625rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.menu-item:hover:not(:disabled),
+.menu-item:focus-visible:not(:disabled) {
+  background: transparent;
+  border-color: var(--text-h);
+  outline: none;
+}
+
+.menu-item:disabled {
+  color: var(--text);
+  cursor: not-allowed;
+}
+
+.menu-select-root {
+  position: relative;
+}
+
+/* Mirrors .profile-input (workspace.css) so the closed control reads as the
+   same field frame as the other form fields. */
+.menu-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.menu-select:focus-visible,
+.menu-select[aria-expanded='true'] {
+  border-color: var(--text-h);
+  outline: none;
+}
+
+.menu-select-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-select-chevron {
+  flex-shrink: 0;
+  color: var(--text);
+  transition: transform 0.15s;
+}
+
+.menu-select[aria-expanded='true'] .menu-select-chevron {
+  transform: rotate(180deg);
+}
+
+.menu-select-popup {
+  left: 0;
+  right: 0;
+  min-width: 0;
+}
+
+.menu-select-popup .menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.menu-select-popup .menu-item[aria-selected='true'] {
+  border-color: var(--text-h);
+}

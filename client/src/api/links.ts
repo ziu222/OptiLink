@@ -6,6 +6,8 @@ export interface ShortenedLink {
   shortUrl: string;
   slug: string;
   clicks: number;
+  title?: string;
+  isActive?: boolean;
 }
 
 export const createLink = async (originalUrl: string): Promise<ShortenedLink> => {
