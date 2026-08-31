@@ -1,21 +1,30 @@
-import Link from '../models/Link';
+import bcrypt from 'bcryptjs';
+import Link, { ILink } from '../models/Link';
 import Analytics from '../models/Analytics';
 import { Request } from 'express';
-import useragent from 'useragent';
 
 export class RedirectService {
-  
   /**
-   * Theo dõi click và lấy URL đích
+   * Look up an active, non-expired link by slug. No side effects.
+   * `passwordHash` is selected so callers can gate on it.
    */
-  async trackAndGetTargetUrl(slug: string, req: Request): Promise<string | null> {
-    const link = await Link.findOne({ slug, isActive: true });
-    
-    if (!link) {
-      return null;
-    }
+  async getActiveLink(slug: string): Promise<ILink | null> {
+    const link = await Link.findOne({ slug, isActive: true }).select('+passwordHash');
+    if (!link) return null;
+    if (link.expiresAt && link.expiresAt.getTime() < Date.now()) return null;
+    return link;
+  }
 
-    // 1. Phân tích Request (IP, Thiết bị)
+  /** Compare a plaintext password against a link's stored hash. */
+  async verifyPassword(link: ILink, password: string): Promise<boolean> {
+    return bcrypt.compare(password, link.passwordHash ?? '');
+  }
+
+  /**
+   * Record a click: write an Analytics doc and bump the click counter.
+   * Fire-and-forget — never blocks the redirect.
+   */
+  recordHit(link: ILink, req: Request): void {
     const userAgentString = req.headers['user-agent']?.toString() || '';
     const isMobile = /mobile|iphone|ipod|android.*mobile|windows.*phone/i.test(userAgentString);
     const isTablet = /ipad|android(?!.*mobile)/i.test(userAgentString);
@@ -23,22 +32,18 @@ export class RedirectService {
     const ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
     const referrer = req.get('Referrer') || '';
 
-    // 2. Ghi nhận Analytics không chặn luồng chính (Lưu bất đồng bộ)
     const analytics = new Analytics({
       linkId: link._id,
       ipAddress,
-      userAgent: req.headers['user-agent']?.toString() || 'unknown',
+      userAgent: userAgentString || 'unknown',
       deviceType,
-      referrer
+      referrer,
     });
-    
-    // Fire and forget (Tối ưu tốc độ Redirect)
-    analytics.save().catch(err => console.error('Error saving analytics:', err));
-    
-    // 3. Tăng biến đếm Clicks
-    Link.updateOne({ _id: link._id }, { $inc: { clicks: 1 } }).catch(err => console.error('Error updating clicks:', err));
 
-    return link.originalUrl;
+    analytics.save().catch((err) => console.error('Error saving analytics:', err));
+    Link.updateOne({ _id: link._id }, { $inc: { clicks: 1 } }).catch((err) =>
+      console.error('Error updating clicks:', err),
+    );
   }
 }
 

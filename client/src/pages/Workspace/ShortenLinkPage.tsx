@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PageHeader } from '../../components/workspace/PageHeader';
@@ -6,6 +7,8 @@ import { ContentPanel } from '../../components/workspace/ContentPanel';
 import { OptionTabs } from '../../components/OptionTabs';
 import { MenuSelect } from '../../components/MenuSelect';
 import { ShortenedLinksPanel } from '../../components/workspace/ShortenedLinksPanel';
+import { applyServerError } from '../../lib/formError';
+import { createLink, listLinks } from '../../api/links';
 import { shortenLinkSchema } from './shortenLinkSchema';
 import type { ShortenLinkValues } from './shortenLinkSchema';
 import type { ShortenedLink } from '../../api/links';
@@ -19,45 +22,19 @@ const TAB_ITEMS: { id: OptionTab; label: string }[] = [
   { id: 'access', label: 'Access Control' },
 ];
 
-// Placeholder rows until the list is wired to GET /api/links.
-const SAMPLE_LINKS: ShortenedLink[] = [
-  {
-    id: '1',
-    title: 'Spring campaign landing page',
-    originalUrl: 'https://example.com/marketing/spring-2026/landing?utm_source=newsletter&utm_medium=email',
-    shortUrl: 'https://opti.link/spring',
-    slug: 'spring',
-    clicks: 1284,
-    isActive: true,
-  },
-  {
-    id: '2',
-    title: 'Docs — getting started',
-    originalUrl: 'https://docs.example.com/guides/getting-started/introduction',
-    shortUrl: 'https://opti.link/docs-start',
-    slug: 'docs-start',
-    clicks: 342,
-    isActive: true,
-  },
-  {
-    id: '3',
-    title: 'Old promo (retired)',
-    originalUrl: 'https://example.com/promo/black-friday-2025',
-    shortUrl: 'https://opti.link/bf25',
-    slug: 'bf25',
-    clicks: 57,
-    isActive: false,
-  },
-];
-
 export function ShortenLinkPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<OptionTab>('none');
+  const [links, setLinks] = useState<ShortenedLink[]>([]);
+  const [loadingLinks, setLoadingLinks] = useState(true);
   const {
     register,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
+    setError,
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm<ShortenLinkValues>({
     resolver: zodResolver(shortenLinkSchema),
     shouldUnregister: false,
@@ -72,8 +49,30 @@ export function ShortenLinkPage() {
     },
   });
 
-  const onSubmit = handleSubmit(async () => {
-    // TODO: wire to POST /api/links once the backend route exists.
+  useEffect(() => {
+    listLinks()
+      .then((result) => setLinks(result.links))
+      .catch(() => {
+        /* keep an empty list if the request fails */
+      })
+      .finally(() => setLoadingLinks(false));
+  }, []);
+
+  const onSubmit = handleSubmit(async (values) => {
+    try {
+      const link = await createLink({
+        originalUrl: values.url,
+        title: values.title || undefined,
+        slug: values.slug || undefined,
+        expiresAt: values.expiresAt || undefined,
+        redirectMode: values.redirectMode,
+        password: values.password || undefined,
+      });
+      reset();
+      navigate(`/dashboard/links/${link.id}`);
+    } catch (err) {
+      applyServerError<ShortenLinkValues>(err, setError);
+    }
   });
 
   return (
@@ -187,13 +186,16 @@ export function ShortenLinkPage() {
             </div>
           )}
 
-          {isSubmitSuccessful && !errors.root && (
-            <span className="profile-saved">Link created (stub).</span>
-          )}
         </form>
       </ContentPanel>
 
-      <ShortenedLinksPanel links={SAMPLE_LINKS} />
+      {loadingLinks ? (
+        <ContentPanel title="Shortened Links" className="shorten-list-panel">
+          <p className="link-list-empty">Loading…</p>
+        </ContentPanel>
+      ) : (
+        <ShortenedLinksPanel links={links} />
+      )}
     </>
   );
 }

@@ -9,12 +9,18 @@ const navLinks = [
   { label: 'FAQ', to: '/#faq' },
 ];
 
-export function Header() {
+interface HeaderProps {
+  /** Always render the logged-out actions (Login / Register), even if a user is signed in. */
+  forceGuest?: boolean;
+}
+
+export function Header({ forceGuest = false }: HeaderProps) {
   const { user, status, logout } = useAuth();
   const navigate = useNavigate();
 
-  const navItems =
-    status === 'authenticated' ? [...navLinks, { label: 'Dashboard', to: '/dashboard' }] : navLinks;
+  const authed = status === 'authenticated' && !forceGuest;
+
+  const navItems = authed ? [...navLinks, { label: 'Dashboard', to: '/dashboard' }] : navLinks;
 
   const handleLogout = async () => {
     await logout();
@@ -36,7 +42,7 @@ export function Header() {
           ))}
         </nav>
 
-        {status === 'authenticated' ? (
+        {authed ? (
           <div className="site-header__actions">
             <DarkModeSwitch compact />
             <button type="button" onClick={handleLogout} className="site-header__logout">
