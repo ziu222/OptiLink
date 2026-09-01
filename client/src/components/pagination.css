@@ -1,0 +1,69 @@
+/* Fills a ContentPanel's footer slot (which supplies the top border); mirrors
+   the Toolbar's height and button styling. */
+.pagination {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  height: 3rem;
+  background: var(--bg);
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: stretch;
+}
+
+.pagination-sep {
+  width: 1px;
+  flex-shrink: 0;
+  background: var(--border);
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  color: var(--text-h);
+}
+
+.pagination-btn:disabled {
+  color: var(--border);
+  cursor: not-allowed;
+}
+
+.pagination-btn.is-current {
+  color: var(--text-h);
+  font-weight: 700;
+}
+
+/* The … is a button that opens the page-jump input; keep its horizontal
+   footprint tight so swapping to the input doesn't shift the bar much. */
+.pagination-gap {
+  padding: 0 0.5rem;
+}
+
+.pagination-input {
+  width: 3rem;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  outline: none;
+}
+
+.pagination-input::placeholder {
+  color: var(--text);
+}

@@ -54,6 +54,9 @@ export const createLink = async (input: CreateLinkInput | string): Promise<Short
 export const listLinks = async (params?: {
   page?: number;
   limit?: number;
+  search?: string;
+  status?: 'all' | 'active' | 'inactive';
+  sort?: 'newest' | 'oldest' | 'clicks';
 }): Promise<ListLinksResult> => {
   const res = await api.get('/links', { params });
   return res.data.data;

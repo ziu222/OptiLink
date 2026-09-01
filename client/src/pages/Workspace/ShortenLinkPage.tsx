@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,6 +6,8 @@ import { PageHeader } from '../../components/workspace/PageHeader';
 import { ContentPanel } from '../../components/workspace/ContentPanel';
 import { OptionTabs } from '../../components/OptionTabs';
 import { MenuSelect } from '../../components/MenuSelect';
+import { Toolbar } from '../../components/Toolbar';
+import { Pagination } from '../../components/Pagination';
 import { ShortenedLinksPanel } from '../../components/workspace/ShortenedLinksPanel';
 import { applyServerError } from '../../lib/formError';
 import { createLink, listLinks } from '../../api/links';
@@ -15,6 +17,20 @@ import type { ShortenedLink } from '../../api/links';
 import './workspace.css';
 
 type OptionTab = 'none' | 'basic' | 'access';
+type LinkStatus = 'all' | 'active' | 'inactive';
+type LinkSort = 'newest' | 'oldest' | 'clicks';
+
+const SORT_OPTIONS: { value: LinkSort; label: string }[] = [
+  { value: 'newest', label: 'Newest' },
+  { value: 'oldest', label: 'Oldest' },
+  { value: 'clicks', label: 'Most clicks' },
+];
+
+const STATUS_OPTIONS: { value: LinkStatus; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'inactive', label: 'Inactive' },
+];
 
 const TAB_ITEMS: { id: OptionTab; label: string }[] = [
   { id: 'none', label: 'None' },
@@ -22,11 +38,20 @@ const TAB_ITEMS: { id: OptionTab; label: string }[] = [
   { id: 'access', label: 'Access Control' },
 ];
 
+const PAGE_SIZE = 5;
+
 export function ShortenLinkPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<OptionTab>('none');
   const [links, setLinks] = useState<ShortenedLink[]>([]);
   const [loadingLinks, setLoadingLinks] = useState(true);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [status, setStatus] = useState<LinkStatus>('all');
+  const [sort, setSort] = useState<LinkSort>('newest');
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const pageCount = Math.max(1, Math.ceil((total || 0) / PAGE_SIZE));
   const {
     register,
     handleSubmit,
@@ -50,13 +75,41 @@ export function ShortenLinkPage() {
   });
 
   useEffect(() => {
-    listLinks()
-      .then((result) => setLinks(result.links))
-      .catch(() => {
-        /* keep an empty list if the request fails */
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const fetchLinks = useCallback(() => {
+    let cancelled = false;
+    listLinks({ search: debouncedSearch || undefined, status, sort, page, limit: PAGE_SIZE })
+      .then((result) => {
+        if (cancelled) return;
+        setLinks(result.links);
+        setTotal(result.total ?? result.links.length);
       })
-      .finally(() => setLoadingLinks(false));
-  }, []);
+      .catch(() => {
+        /* keep the current list if the request fails */
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingLinks(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearch, status, sort, page]);
+
+  useEffect(() => fetchLinks(), [fetchLinks]);
+
+  // If the current page emptied out (last row deleted, or a filter narrowed
+  // the results), step back a page.
+  useEffect(() => {
+    if (!loadingLinks && links.length === 0 && page > 1) {
+      setPage((current) => current - 1);
+    }
+  }, [loadingLinks, links, page]);
 
   const onSubmit = handleSubmit(async (values) => {
     try {
@@ -194,16 +247,54 @@ export function ShortenLinkPage() {
         </form>
       </ContentPanel>
 
-      {loadingLinks ? (
-        <ContentPanel title="Shortened Links" className="shorten-list-panel">
-          <p className="link-list-empty">Loading…</p>
-        </ContentPanel>
-      ) : (
-        <ShortenedLinksPanel
-          links={links}
-          onDeleted={(id) => setLinks((cur) => cur.filter((l) => l.id !== id))}
-        />
-      )}
+      <ShortenedLinksPanel
+        links={links}
+        isLoading={loadingLinks}
+        emptyLabel={
+          search || status !== 'all' ? 'No links match your filters.' : undefined
+        }
+        onDeleted={() => fetchLinks()}
+        toolbar={
+          <Toolbar
+            search={search}
+            onSearchChange={setSearch}
+            searchPlaceholder="Search links"
+            menus={[
+              {
+                ariaLabel: 'Filter by status',
+                value: status,
+                onChange: (value) => {
+                  setStatus(value as LinkStatus);
+                  setPage(1);
+                },
+                options: STATUS_OPTIONS,
+              },
+              {
+                ariaLabel: 'Sort links',
+                value: sort,
+                onChange: (value) => {
+                  setSort(value as LinkSort);
+                  setPage(1);
+                },
+                options: SORT_OPTIONS,
+              },
+            ]}
+            actions={[
+              {
+                key: 'multi',
+                label: 'Select multiple',
+                disabled: true,
+                onSelect: () => {},
+              },
+            ]}
+          />
+        }
+        pagination={
+          !loadingLinks && total > 0 ? (
+            <Pagination page={page} pageCount={pageCount} onChange={setPage} />
+          ) : undefined
+        }
+      />
     </>
   );
 }

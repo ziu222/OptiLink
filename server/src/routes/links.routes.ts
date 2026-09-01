@@ -69,6 +69,21 @@ router.post('/', authenticate, validate(createLinkSchema), asyncHandler(linksCon
  *         name: limit
  *         schema:
  *           type: integer
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Lọc theo tiêu đề, URL gốc hoặc slug
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [all, active, inactive]
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [newest, oldest, clicks]
  *     responses:
  *       200:
  *         description: Lấy danh sách thành công

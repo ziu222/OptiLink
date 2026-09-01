@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { linksService } from '../services/links.service.js';
 import { redirectService } from '../services/redirect.service.js';
 import { AppError } from '../utils/AppError.js';
+import type { ListLinksQuery } from '../validators/links.validators.js';
 
 export class LinksController {
   async createLink(req: Request, res: Response): Promise<void> {
@@ -14,8 +15,10 @@ export class LinksController {
   }
 
   async getLinks(req: Request, res: Response): Promise<void> {
-    const { page, limit } = req.query as unknown as { page: number; limit: number };
-    const data = await linksService.listLinks(req.user!.id, page, limit);
+    const data = await linksService.listLinks(
+      req.user!.id,
+      req.query as unknown as ListLinksQuery,
+    );
     res.status(200).json({
       success: true,
       message: 'Links retrieved successfully',

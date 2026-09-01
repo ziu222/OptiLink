@@ -26,6 +26,9 @@ export const verifyLinkSchema = z.object({
 export const listLinksQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
+  search: z.string().trim().max(200).optional(),
+  status: z.enum(['all', 'active', 'inactive']).default('all'),
+  sort: z.enum(['newest', 'oldest', 'clicks']).default('newest'),
 });
 
 export const updateLinkSchema = z
@@ -52,3 +55,4 @@ export const updateLinkSchema = z
 
 export type CreateLinkInput = z.infer<typeof createLinkSchema>;
 export type UpdateLinkInput = z.infer<typeof updateLinkSchema>;
+export type ListLinksQuery = z.infer<typeof listLinksQuerySchema>;
