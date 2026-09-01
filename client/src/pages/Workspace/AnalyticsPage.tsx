@@ -1,4 +1,4 @@
-import { PageHeader } from '../../components/workspace/PageHeader';
+import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
 import './workspace.css';
 
 export function AnalyticsPage() {

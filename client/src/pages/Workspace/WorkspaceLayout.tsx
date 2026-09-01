@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from '../../components/workspace/Sidebar';
+import { Sidebar } from '../../components/workspace/Sidebar/Sidebar';
 import './workspace.css';
 
 export function WorkspaceLayout() {

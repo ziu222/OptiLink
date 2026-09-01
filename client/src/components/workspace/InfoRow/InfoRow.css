@@ -1,0 +1,125 @@
+/* Frame */
+.info-row {
+  display: grid;
+  gap: 0.5rem 1.5rem;
+  align-items: start;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row[data-columns='2'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.info-row[data-columns='3'] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.info-row[data-columns='4'] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.info-row.is-selectable {
+  cursor: pointer;
+}
+
+/* Selected row: a thick left rule drawn inside the padding (inset shadow, so it
+   adds no width and never shifts the row content). */
+.info-row.is-selected {
+  box-shadow: inset 3px 0 0 var(--text-h);
+}
+
+/* Cell */
+.info-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.info-cell--end {
+  align-items: flex-end;
+}
+
+/* Cell content */
+.info-cell-main {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-h);
+  overflow-wrap: anywhere;
+}
+
+a.info-cell-main {
+  text-decoration: none;
+}
+
+a.info-cell-main:hover {
+  text-decoration: underline;
+}
+
+.info-cell-sub {
+  display: block;
+  max-width: 100%;
+  font-size: 0.8125rem;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.info-cell-sub:hover {
+  text-decoration: underline;
+}
+
+.info-cell-extra {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--text);
+}
+
+.info-sep {
+  width: 0.25rem;
+  height: 0.25rem;
+  flex-shrink: 0;
+  background: currentColor;
+}
+
+.info-status {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+.info-status.is-active {
+  color: #16a34a;
+}
+
+.info-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Responsive: mobileLayout="stack" collapses the row to a flexible primary
+   column + an auto trailing column, with mobileSpan cells dropping full-width
+   below. Placed after the [data-columns] rules so it wins on equal specificity. */
+@media (max-width: 640px) {
+  .info-row[data-mobile='stack'] {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .info-row[data-mobile='stack'] .info-cell--mobile-span {
+    grid-column: 1 / -1;
+  }
+}

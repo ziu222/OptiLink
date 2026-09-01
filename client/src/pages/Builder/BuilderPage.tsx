@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './builder.css';
-import { Sidebar } from '../../components/workspace/Sidebar';
+import { Sidebar } from '../../components/workspace/Sidebar/Sidebar';
 import { BuilderSidebar } from '../../components/builder/BuilderSidebar';
 import { TabLinksAndBlocks } from '../../components/builder/TabLinksAndBlocks';
 import { TabDesign } from '../../components/builder/TabDesign';

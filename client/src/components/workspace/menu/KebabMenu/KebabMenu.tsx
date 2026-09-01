@@ -1,17 +1,10 @@
 import { useCallback, useId, useRef, useState } from 'react';
-import { useDismiss } from '../lib/useDismiss';
-import './menu.css';
+import { useDismiss } from '../../../../lib/useDismiss';
+import { MenuPopup } from '../MenuPopup/MenuPopup';
+import type { MenuItem } from '../MenuPopup/MenuPopup';
+import './KebabMenu.css';
 
-export interface MenuItem {
-  key: string;
-  label: string;
-  onSelect: () => void;
-  disabled?: boolean;
-  /** Render as a destructive action (red text + border). */
-  danger?: boolean;
-}
-
-interface MenuProps {
+interface KebabMenuProps {
   items: MenuItem[];
   ariaLabel: string;
   align?: 'left' | 'right';
@@ -19,7 +12,7 @@ interface MenuProps {
 
 // Icon-button trigger that toggles a small popup list of actions. Closes on
 // outside click, on Escape, and after any item fires.
-export function Menu({ items, ariaLabel, align = 'right' }: MenuProps) {
+export function KebabMenu({ items, ariaLabel, align = 'right' }: KebabMenuProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
@@ -56,23 +49,7 @@ export function Menu({ items, ariaLabel, align = 'right' }: MenuProps) {
       </button>
 
       {open && (
-        <div className={`menu-popup menu-popup--${align}`} id={menuId} role="menu">
-          {items.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              role="menuitem"
-              className={`menu-item${item.danger ? ' menu-item--danger' : ''}`}
-              disabled={item.disabled}
-              onClick={() => {
-                item.onSelect();
-                setOpen(false);
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
+        <MenuPopup items={items} align={align} id={menuId} onClose={() => setOpen(false)} />
       )}
     </div>
   );

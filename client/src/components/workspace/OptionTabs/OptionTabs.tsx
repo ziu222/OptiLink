@@ -1,4 +1,4 @@
-import './optionTabs.css';
+import './OptionTabs.css';
 
 interface OptionTabsItem<T extends string> {
   id: T;

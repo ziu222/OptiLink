@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { Header } from '../components/Header/Header';
 import { Footer } from '../components/Footer/Footer';
-import { ContentPanel } from '../components/workspace/ContentPanel';
+import { ContentPanel } from '../components/workspace/panels/ContentPanel/ContentPanel';
 import { applyServerError } from '../lib/formError';
 import { verifyLinkPassword } from '../api/links';
 import './auth/authForm.css';

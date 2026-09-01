@@ -1,7 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
-import { useDismiss } from '../lib/useDismiss';
-import type { MenuItem } from './Menu';
-import './menu.css';
+import { useDismiss } from '../../../../lib/useDismiss';
+import { MenuPopup } from '../MenuPopup/MenuPopup';
+import type { MenuItem } from '../MenuPopup/MenuPopup';
+import './MenuButton.css';
 
 interface MenuButtonProps {
   label: string;
@@ -34,25 +35,7 @@ export function MenuButton({ label, items, ariaLabel, align = 'right' }: MenuBut
         {label}
       </button>
 
-      {open && (
-        <div className={`menu-popup menu-popup--${align}`} role="menu">
-          {items.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              role="menuitem"
-              className={`menu-item${item.danger ? ' menu-item--danger' : ''}`}
-              disabled={item.disabled}
-              onClick={() => {
-                item.onSelect();
-                setOpen(false);
-              }}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      )}
+      {open && <MenuPopup items={items} align={align} onClose={() => setOpen(false)} />}
     </div>
   );
 }

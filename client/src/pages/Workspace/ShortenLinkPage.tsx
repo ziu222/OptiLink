@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PageHeader } from '../../components/workspace/PageHeader';
-import { ContentPanel } from '../../components/workspace/ContentPanel';
-import { OptionTabs } from '../../components/OptionTabs';
-import { MenuSelect } from '../../components/MenuSelect';
-import { Toolbar } from '../../components/Toolbar';
-import { Pagination } from '../../components/Pagination';
-import type { MenuItem } from '../../components/Menu';
-import { ShortenedLinksPanel } from '../../components/workspace/ShortenedLinksPanel';
+import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
+import { ContentPanel } from '../../components/workspace/panels/ContentPanel/ContentPanel';
+import { OptionTabs } from '../../components/workspace/OptionTabs/OptionTabs';
+import { InputSelect } from '../../components/workspace/menu/InputSelect/InputSelect';
+import { Toolbar } from '../../components/workspace/Toolbar/Toolbar';
+import { Pagination } from '../../components/workspace/Pagination/Pagination';
+import type { MenuItem } from '../../components/workspace/menu/MenuPopup/MenuPopup';
+import { ShortenedLinksPanel } from '../../components/workspace/panels/ShortenedLinksPanel/ShortenedLinksPanel';
 import { applyServerError } from '../../lib/formError';
 import { createLink, deleteLink, listLinks } from '../../api/links';
 import { shortenLinkSchema } from './shortenLinkSchema';
@@ -261,7 +261,7 @@ export function ShortenLinkPage() {
               <div className="shorten-tab-content">
                 <div className="profile-field">
                   <span className="profile-label">Redirect Mode</span>
-                  <MenuSelect
+                  <InputSelect
                     ariaLabel="Redirect mode"
                     value={watch('redirectMode')}
                     onChange={(value) => setValue('redirectMode', value)}
@@ -274,7 +274,7 @@ export function ShortenLinkPage() {
 
                 <div className="profile-field">
                   <span className="profile-label">Status</span>
-                  <MenuSelect
+                  <InputSelect
                     ariaLabel="Status"
                     value={watch('status')}
                     onChange={(value) => setValue('status', value)}

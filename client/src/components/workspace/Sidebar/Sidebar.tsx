@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import './sidebar.css';
+import { useAuth } from '../../../contexts/AuthContext';
+import './Sidebar.css';
 
 const iconProps = {
   className: 'sidebar-icon',

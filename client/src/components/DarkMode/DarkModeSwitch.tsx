@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { getTheme, setTheme } from '../lib/theme';
+import { getTheme, setTheme } from '../../lib/theme';
 import { SegmentedToggle } from './SegmentedToggle';
-import './darkmode.css';
+import './DarkMode.css';
 
 interface DarkModeSwitchProps {
   compact?: boolean;

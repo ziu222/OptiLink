@@ -1,29 +1,30 @@
 import { useCallback, useRef, useState } from 'react';
-import { useDismiss } from '../lib/useDismiss';
-import './menu.css';
+import { useDismiss } from '../../../../lib/useDismiss';
+import '../MenuPopup/MenuPopup.css';
+import './InputSelect.css';
 
-interface MenuSelectOption<T extends string> {
+interface InputSelectOption<T extends string> {
   value: T;
   label: string;
 }
 
-interface MenuSelectProps<T extends string> {
+interface InputSelectProps<T extends string> {
   value: T;
   onChange: (value: T) => void;
-  options: MenuSelectOption<T>[];
+  options: InputSelectOption<T>[];
   ariaLabel: string;
   id?: string;
 }
 
 // Select-style control that opens the shared Menu popup as a listbox. The closed
 // trigger is styled to match the .profile-input field frame.
-export function MenuSelect<T extends string>({
+export function InputSelect<T extends string>({
   value,
   onChange,
   options,
   ariaLabel,
   id,
-}: MenuSelectProps<T>) {
+}: InputSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -36,19 +37,19 @@ export function MenuSelect<T extends string>({
   const selected = options.find((option) => option.value === value);
 
   return (
-    <div className="menu-select-root" ref={rootRef}>
+    <div className="input-select-root" ref={rootRef}>
       <button
         type="button"
-        className="menu-select"
+        className="input-select"
         id={id}
         aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
       >
-        <span className="menu-select-value">{selected?.label ?? ''}</span>
+        <span className="input-select-value">{selected?.label ?? ''}</span>
         <svg
-          className="menu-select-chevron"
+          className="input-select-chevron"
           width="16"
           height="16"
           viewBox="0 0 24 24"
@@ -62,7 +63,7 @@ export function MenuSelect<T extends string>({
       </button>
 
       {open && (
-        <div className="menu-popup menu-select-popup" role="listbox">
+        <div className="menu-popup input-select-popup" role="listbox">
           {options.map((option) => (
             <button
               key={option.value}

@@ -1,0 +1,29 @@
+.shorten-list-panel {
+  margin-top: 1.5rem;
+}
+
+/* Bleeds ContentPanel's 1rem body padding (ContentPanel/ContentPanel.css) so the
+   row separators reach the panel's border instead of stopping at the padding —
+   the project's standing divider convention (see .profile-grid /
+   .profile-actions in workspace.css). The row's own 1rem padding
+   (.info-row, InfoRow/InfoRow.css) re-applies the inset. */
+.link-list {
+  margin: -1rem;
+}
+
+/* When a toolbar precedes the list, drop the list's top pull-up so the first
+   row sits directly under the toolbar border — the row's own 1rem padding
+   then matches its left/right inset (keep the side/bottom bleed). */
+.toolbar + .link-list {
+  margin-top: 0;
+}
+
+.toolbar + .link-list-empty {
+  margin-top: 1rem;
+}
+
+.link-list-empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text);
+}

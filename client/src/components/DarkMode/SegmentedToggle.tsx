@@ -1,4 +1,4 @@
-import './darkmode.css';
+import './DarkMode.css';
 
 interface Option<T> {
   value: T;

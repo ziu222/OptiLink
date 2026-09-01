@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { ContentPanel } from './ContentPanel';
-import { ShortenedLinkRow } from './ShortenedLinkRow';
-import type { ShortenedLink } from '../../api/links';
-import './shortenedLinks.css';
+import { ContentPanel } from '../ContentPanel/ContentPanel';
+import { ShortenedLinkRow } from '../../ShortenedLinkRow/ShortenedLinkRow';
+import type { ShortenedLink } from '../../../../api/links';
+import './ShortenedLinksPanel.css';
 
 interface ShortenedLinksPanelProps {
   links: ShortenedLink[];
