@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ContentPanel } from './ContentPanel';
-import { MenuSelect } from '../MenuSelect';
-import { MenuButton } from '../MenuButton';
-import { applyServerError } from '../../lib/formError';
-import { updateLink } from '../../api/links';
-import type { ShortenedLink } from '../../api/links';
-import './shortenedLinks.css';
+import { ContentPanel } from '../ContentPanel/ContentPanel';
+import { InputSelect } from '../../menu/InputSelect/InputSelect';
+import { MenuButton } from '../../menu/MenuButton/MenuButton';
+import { applyServerError } from '../../../../lib/formError';
+import { updateLink } from '../../../../api/links';
+import type { ShortenedLink } from '../../../../api/links';
+import './LinkConfigPanel.css';
 
 interface LinkConfigPanelProps {
   link: ShortenedLink;
@@ -118,7 +118,7 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
 
           <div className="link-config-item">
             <span className="link-config-label">Status</span>
-            <MenuSelect
+            <InputSelect
               ariaLabel="Status"
               value={watch('status')}
               onChange={(value) => setValue('status', value)}
@@ -131,7 +131,7 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
 
           <div className="link-config-item">
             <span className="link-config-label">Redirect mode</span>
-            <MenuSelect
+            <InputSelect
               ariaLabel="Redirect mode"
               value={watch('redirectMode')}
               onChange={(value) => setValue('redirectMode', value)}

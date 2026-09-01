@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import './pageHeader.css';
+import './PageHeader.css';
 
 interface PageHeaderProps {
   title: string;

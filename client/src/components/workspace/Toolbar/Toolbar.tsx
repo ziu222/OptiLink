@@ -1,6 +1,6 @@
-import { MenuButton } from './MenuButton';
-import type { MenuItem } from './Menu';
-import './toolbar.css';
+import { MenuButton } from '../menu/MenuButton/MenuButton';
+import type { MenuItem } from '../menu/MenuPopup/MenuPopup';
+import './Toolbar.css';
 
 export interface ToolbarMenu {
   ariaLabel: string;

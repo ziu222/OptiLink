@@ -1,0 +1,61 @@
+.input-select-root {
+  position: relative;
+}
+
+/* Mirrors .profile-input (workspace.css) so the closed control reads as the
+   same field frame as the other form fields. */
+.input-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.input-select:focus-visible,
+.input-select[aria-expanded='true'] {
+  border-color: var(--text-h);
+  outline: none;
+}
+
+.input-select-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.input-select-chevron {
+  flex-shrink: 0;
+  color: var(--text);
+  transition: transform 0.15s;
+}
+
+.input-select[aria-expanded='true'] .input-select-chevron {
+  transform: rotate(180deg);
+}
+
+.input-select-popup {
+  left: 0;
+  right: 0;
+  min-width: 0;
+}
+
+.input-select-popup .menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.input-select-popup .menu-item[aria-selected='true'] {
+  border-color: var(--text-h);
+}

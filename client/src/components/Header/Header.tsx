@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { DarkModeSwitch } from '../DarkModeSwitch';
+import { DarkModeSwitch } from '../DarkMode/DarkModeSwitch';
 import './header.css';
 
 const navLinks = [

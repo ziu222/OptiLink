@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import './pagination.css';
+import './Pagination.css';
 
 interface PaginationProps {
   /** 1-based current page. */

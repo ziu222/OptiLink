@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import './contentPanel.css';
+import './ContentPanel.css';
 
 interface ContentPanelProps {
   title?: string;

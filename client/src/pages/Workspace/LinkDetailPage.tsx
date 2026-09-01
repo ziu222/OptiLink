@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageHeader } from '../../components/workspace/PageHeader';
-import { ShortenedLinksPanel } from '../../components/workspace/ShortenedLinksPanel';
-import { LinkConfigPanel } from '../../components/workspace/LinkConfigPanel';
+import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
+import { ShortenedLinksPanel } from '../../components/workspace/panels/ShortenedLinksPanel/ShortenedLinksPanel';
+import { LinkConfigPanel } from '../../components/workspace/panels/LinkConfigPanel/LinkConfigPanel';
 import { getLink } from '../../api/links';
 import type { ShortenedLink } from '../../api/links';
 import './workspace.css';
