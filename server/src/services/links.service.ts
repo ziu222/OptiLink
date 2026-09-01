@@ -3,10 +3,12 @@ import bcrypt from 'bcryptjs';
 import { customAlphabet } from 'nanoid';
 import Link, { ILink } from '../models/Link.js';
 import { AppError } from '../utils/AppError.js';
-import type { UpdateLinkInput } from '../validators/links.validators.js';
+import type { ListLinksQuery, UpdateLinkInput } from '../validators/links.validators.js';
 
 const SLUG_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const generateSlug = customAlphabet(SLUG_ALPHABET, 7);
+
+const escapeRegex = (input: string): string => input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const baseUrl = (): string => (process.env.BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
 
@@ -32,6 +34,22 @@ export interface LinkDTO {
   hasPassword: boolean;
   createdAt: string;
 }
+
+/**
+ * Lazily reconcile a link's `isActive` flag with its expiry: if it is past
+ * `expiresAt` but still marked active, flip it off in memory and persist the
+ * change (fire-and-forget). Returns whether the link is currently expired.
+ */
+export const syncExpiryState = (link: ILink): boolean => {
+  const expired = link.expiresAt != null && link.expiresAt.getTime() < Date.now();
+  if (expired && link.isActive) {
+    link.isActive = false;
+    Link.updateOne({ _id: link._id }, { isActive: false }).catch((err) =>
+      console.error('Error deactivating expired link:', err),
+    );
+  }
+  return expired;
+};
 
 const serialize = (link: ILink): LinkDTO => ({
   id: link._id.toString(),
@@ -71,10 +89,13 @@ export class LinksService {
     if (!mongoose.isValidObjectId(id)) {
       throw AppError.notFound('Link not found');
     }
-    const link = await Link.findOne({ _id: id, userId }).select('+passwordHash');
+    const link = await Link.findOne({ _id: id, userId, isArchived: { $ne: true } }).select(
+      '+passwordHash',
+    );
     if (!link) {
       throw AppError.notFound('Link not found');
     }
+    syncExpiryState(link);
     return serialize(link);
   }
 
@@ -82,7 +103,9 @@ export class LinksService {
     if (!mongoose.isValidObjectId(id)) {
       throw AppError.notFound('Link not found');
     }
-    const link = await Link.findOne({ _id: id, userId }).select('+passwordHash');
+    const link = await Link.findOne({ _id: id, userId, isArchived: { $ne: true } }).select(
+      '+passwordHash',
+    );
     if (!link) {
       throw AppError.notFound('Link not found');
     }
@@ -102,21 +125,54 @@ export class LinksService {
     return serialize(link);
   }
 
+  async archiveLink(userId: string, id: string): Promise<void> {
+    if (!mongoose.isValidObjectId(id)) {
+      throw AppError.notFound('Link not found');
+    }
+    const result = await Link.findOneAndUpdate(
+      { _id: id, userId, isArchived: { $ne: true } },
+      { isArchived: true, isActive: false },
+    );
+    if (!result) {
+      throw AppError.notFound('Link not found');
+    }
+  }
+
   async listLinks(
     userId: string,
-    page: number,
-    limit: number,
+    query: ListLinksQuery,
   ): Promise<{ links: LinkDTO[]; total: number; page: number; limit: number }> {
-    const filter = { userId };
+    const { page, limit, search, status, sort } = query;
+    const now = new Date();
+
+    const and: mongoose.FilterQuery<ILink>[] = [{ userId, isArchived: { $ne: true } }];
+    if (search) {
+      const rx = new RegExp(escapeRegex(search), 'i');
+      and.push({ $or: [{ title: rx }, { originalUrl: rx }, { slug: rx }] });
+    }
+    if (status === 'active') {
+      and.push({ isActive: true, $or: [{ expiresAt: null }, { expiresAt: { $gt: now } }] });
+    } else if (status === 'inactive') {
+      and.push({ isActive: false });
+    }
+    const filter: mongoose.FilterQuery<ILink> = and.length === 1 ? and[0] : { $and: and };
+
+    const sortMap: Record<ListLinksQuery['sort'], Record<string, 1 | -1>> = {
+      newest: { createdAt: -1 },
+      oldest: { createdAt: 1 },
+      clicks: { clicks: -1 },
+    };
+
     const [docs, total] = await Promise.all([
       Link.find(filter)
         .select('+passwordHash')
-        .sort({ createdAt: -1 })
+        .sort(sortMap[sort])
         .skip((page - 1) * limit)
         .limit(limit),
       Link.countDocuments(filter),
     ]);
 
+    docs.forEach(syncExpiryState);
     return { links: docs.map(serialize), total, page, limit };
   }
 

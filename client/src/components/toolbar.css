@@ -1,0 +1,69 @@
+/* Control bar meant to live as the first child of a ContentPanel body: the
+   negative margin cancels the body's 1rem top/side padding so the bar bleeds
+   to the panel's borders and butts against the title bar's bottom border,
+   matching the divider convention used by .link-list / .profile-actions. */
+.toolbar {
+  display: flex;
+  align-items: stretch;
+  height: 3rem;
+  margin: -1rem -1rem 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.toolbar-search {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0 0.75rem 0 1rem;
+}
+
+.toolbar-search-icon {
+  flex-shrink: 0;
+  color: var(--text);
+}
+
+.toolbar-search-input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.toolbar-search-input::placeholder {
+  color: var(--text);
+}
+
+/* Drop the native clear/decoration on type=search where the browser adds one. */
+.toolbar-search-input::-webkit-search-decoration,
+.toolbar-search-input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.toolbar-segment {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+
+.toolbar-sep {
+  width: 1px;
+  flex-shrink: 0;
+  background: var(--border);
+}
+
+/* Make the shared MenuButton fill the bar's height and sit centered. */
+.toolbar .menu-button {
+  display: flex;
+}
+
+.toolbar .menu-button-trigger {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}

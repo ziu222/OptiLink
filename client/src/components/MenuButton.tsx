@@ -41,7 +41,7 @@ export function MenuButton({ label, items, ariaLabel, align = 'right' }: MenuBut
               key={item.key}
               type="button"
               role="menuitem"
-              className="menu-item"
+              className={`menu-item${item.danger ? ' menu-item--danger' : ''}`}
               disabled={item.disabled}
               onClick={() => {
                 item.onSelect();

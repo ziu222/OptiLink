@@ -1,18 +1,29 @@
 import { useState } from 'react';
+import type { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from '../Menu';
 import type { MenuItem } from '../Menu';
 import { copyText } from '../../lib/clipboard';
+import { deleteLink } from '../../api/links';
 import type { ShortenedLink } from '../../api/links';
 
 interface ShortenedLinkRowProps {
   link: ShortenedLink;
   showViewDetail?: boolean;
+  onDeleted?: (id: string) => void;
+  selected?: boolean;
+  onSelect?: (id: string) => void;
 }
 
 // One row of the Shortened Links list: a 3-column grid (left / center / right),
 // each column stacking a main / sub / extra slot.
-export function ShortenedLinkRow({ link, showViewDetail = true }: ShortenedLinkRowProps) {
+export function ShortenedLinkRow({
+  link,
+  showViewDetail = true,
+  onDeleted,
+  selected = false,
+  onSelect,
+}: ShortenedLinkRowProps) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const name = link.title || 'Untitle';
@@ -22,6 +33,24 @@ export function ShortenedLinkRow({ link, showViewDetail = true }: ShortenedLinkR
     if (!(await copyText(link.shortUrl))) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Delete “${name}”? This can’t be undone.`)) return;
+    try {
+      await deleteLink(link.id);
+      onDeleted?.(link.id);
+    } catch {
+      window.alert('Could not delete this link. Please try again.');
+    }
+  };
+
+  // Toggle selection when the row background is clicked, but let links and the
+  // options menu handle their own clicks.
+  const handleRowClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!onSelect) return;
+    if ((event.target as HTMLElement).closest('a, button')) return;
+    onSelect(link.id);
   };
 
   const menuItems: MenuItem[] = [
@@ -35,10 +64,15 @@ export function ShortenedLinkRow({ link, showViewDetail = true }: ShortenedLinkR
         ]
       : []),
     { key: 'copy', label: 'Copy short link', onSelect: handleCopy },
+    { key: 'delete', label: 'Delete link', onSelect: handleDelete, danger: true },
   ];
 
   return (
-    <div className="link-row">
+    <div
+      className={`link-row${onSelect ? ' is-selectable' : ''}${selected ? ' is-selected' : ''}`}
+      onClick={handleRowClick}
+      aria-selected={onSelect ? selected : undefined}
+    >
       <div className="link-cell link-cell--left">
         <span className="link-cell-main">{name}</span>
         <a

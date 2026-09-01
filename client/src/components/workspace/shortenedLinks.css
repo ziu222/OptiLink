@@ -10,6 +10,17 @@
   margin: -1rem;
 }
 
+/* When a toolbar precedes the list, drop the list's top pull-up so the first
+   row sits directly under the toolbar border — the row's own 1rem padding
+   then matches its left/right inset (keep the side/bottom bleed). */
+.toolbar + .link-list {
+  margin-top: 0;
+}
+
+.toolbar + .link-list-empty {
+  margin-top: 1rem;
+}
+
 .link-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -19,8 +30,18 @@
   border-bottom: 1px solid var(--border);
 }
 
+.link-row.is-selectable {
+  cursor: pointer;
+}
+
 .link-row:last-child {
   border-bottom: none;
+}
+
+/* Selected row: a thick left rule drawn inside the padding (inset shadow, so
+   it adds no width and never shifts the row content). */
+.link-row.is-selected {
+  box-shadow: inset 3px 0 0 var(--text-h);
 }
 
 .link-cell {
