@@ -15,6 +15,9 @@ interface ShortenedLinksPanelProps {
   pagination?: ReactNode;
   isLoading?: boolean;
   emptyLabel?: string;
+  /** Controlled row selection. Rows are selectable only when onToggleSelect is set. */
+  selectedIds?: ReadonlySet<string>;
+  onToggleSelect?: (id: string) => void;
 }
 
 // List-layout container for shortened links, rendered as a workspace ContentPanel.
@@ -27,6 +30,8 @@ export function ShortenedLinksPanel({
   pagination,
   isLoading = false,
   emptyLabel,
+  selectedIds,
+  onToggleSelect,
 }: ShortenedLinksPanelProps) {
   return (
     <ContentPanel title={title} className="shorten-list-panel" footer={pagination}>
@@ -43,6 +48,8 @@ export function ShortenedLinksPanel({
               link={link}
               showViewDetail={showViewDetail}
               onDeleted={onDeleted}
+              selected={selectedIds?.has(link.id) ?? false}
+              onSelect={onToggleSelect}
             />
           ))}
         </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from '../Menu';
 import type { MenuItem } from '../Menu';
@@ -10,6 +11,8 @@ interface ShortenedLinkRowProps {
   link: ShortenedLink;
   showViewDetail?: boolean;
   onDeleted?: (id: string) => void;
+  selected?: boolean;
+  onSelect?: (id: string) => void;
 }
 
 // One row of the Shortened Links list: a 3-column grid (left / center / right),
@@ -18,6 +21,8 @@ export function ShortenedLinkRow({
   link,
   showViewDetail = true,
   onDeleted,
+  selected = false,
+  onSelect,
 }: ShortenedLinkRowProps) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
@@ -40,6 +45,14 @@ export function ShortenedLinkRow({
     }
   };
 
+  // Toggle selection when the row background is clicked, but let links and the
+  // options menu handle their own clicks.
+  const handleRowClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!onSelect) return;
+    if ((event.target as HTMLElement).closest('a, button')) return;
+    onSelect(link.id);
+  };
+
   const menuItems: MenuItem[] = [
     ...(showViewDetail
       ? [
@@ -55,7 +68,11 @@ export function ShortenedLinkRow({
   ];
 
   return (
-    <div className="link-row">
+    <div
+      className={`link-row${onSelect ? ' is-selectable' : ''}${selected ? ' is-selected' : ''}`}
+      onClick={handleRowClick}
+      aria-selected={onSelect ? selected : undefined}
+    >
       <div className="link-cell link-cell--left">
         <span className="link-cell-main">{name}</span>
         <a

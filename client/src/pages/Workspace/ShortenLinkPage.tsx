@@ -8,9 +8,10 @@ import { OptionTabs } from '../../components/OptionTabs';
 import { MenuSelect } from '../../components/MenuSelect';
 import { Toolbar } from '../../components/Toolbar';
 import { Pagination } from '../../components/Pagination';
+import type { MenuItem } from '../../components/Menu';
 import { ShortenedLinksPanel } from '../../components/workspace/ShortenedLinksPanel';
 import { applyServerError } from '../../lib/formError';
-import { createLink, listLinks } from '../../api/links';
+import { createLink, deleteLink, listLinks } from '../../api/links';
 import { shortenLinkSchema } from './shortenLinkSchema';
 import type { ShortenLinkValues } from './shortenLinkSchema';
 import type { ShortenedLink } from '../../api/links';
@@ -51,6 +52,8 @@ export function ShortenLinkPage() {
   const [sort, setSort] = useState<LinkSort>('newest');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [multiSelect, setMultiSelect] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const pageCount = Math.max(1, Math.ceil((total || 0) / PAGE_SIZE));
   const {
     register,
@@ -110,6 +113,73 @@ export function ShortenLinkPage() {
       setPage((current) => current - 1);
     }
   }, [loadingLinks, links, page]);
+
+  // Drop the selection whenever the visible set of links changes.
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [debouncedSearch, status, sort, page]);
+
+  const toggleSelect = useCallback(
+    (id: string) => {
+      setSelectedIds((prev) => {
+        if (multiSelect) {
+          const next = new Set(prev);
+          if (next.has(id)) next.delete(id);
+          else next.add(id);
+          return next;
+        }
+        return prev.has(id) ? new Set<string>() : new Set<string>([id]);
+      });
+    },
+    [multiSelect],
+  );
+
+  const deleteSelected = useCallback(async () => {
+    if (selectedIds.size === 0) return;
+    const count = selectedIds.size;
+    if (!window.confirm(`Delete ${count} link${count > 1 ? 's' : ''}? This can’t be undone.`)) {
+      return;
+    }
+    await Promise.allSettled([...selectedIds].map((id) => deleteLink(id)));
+    setSelectedIds(new Set());
+    setMultiSelect(false);
+    fetchLinks();
+  }, [selectedIds, fetchLinks]);
+
+  const actionItems: MenuItem[] = multiSelect
+    ? [
+        {
+          key: 'delete-selected',
+          label: `Delete selected${selectedIds.size ? ` (${selectedIds.size})` : ''}`,
+          disabled: selectedIds.size === 0,
+          danger: true,
+          onSelect: deleteSelected,
+        },
+        {
+          key: 'exit',
+          label: 'Exit multi-select',
+          onSelect: () => {
+            setMultiSelect(false);
+            setSelectedIds(new Set());
+          },
+        },
+      ]
+    : [
+        {
+          key: 'multi',
+          label: 'Multi-select',
+          onSelect: () => setMultiSelect(true),
+        },
+        {
+          key: 'select-all',
+          label: 'Select all',
+          disabled: links.length === 0,
+          onSelect: () => {
+            setMultiSelect(true);
+            setSelectedIds(new Set(links.map((link) => link.id)));
+          },
+        },
+      ];
 
   const onSubmit = handleSubmit(async (values) => {
     try {
@@ -254,11 +324,16 @@ export function ShortenLinkPage() {
           search || status !== 'all' ? 'No links match your filters.' : undefined
         }
         onDeleted={() => fetchLinks()}
+        selectedIds={selectedIds}
+        onToggleSelect={toggleSelect}
         toolbar={
           <Toolbar
             search={search}
             onSearchChange={setSearch}
             searchPlaceholder="Search links"
+            actionsLabel={
+              multiSelect && selectedIds.size ? `Actions (${selectedIds.size})` : 'Actions'
+            }
             menus={[
               {
                 ariaLabel: 'Filter by status',
@@ -279,14 +354,7 @@ export function ShortenLinkPage() {
                 options: SORT_OPTIONS,
               },
             ]}
-            actions={[
-              {
-                key: 'multi',
-                label: 'Select multiple',
-                disabled: true,
-                onSelect: () => {},
-              },
-            ]}
+            actions={actionItems}
           />
         }
         pagination={

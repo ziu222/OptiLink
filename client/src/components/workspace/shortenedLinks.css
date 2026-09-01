@@ -30,8 +30,18 @@
   border-bottom: 1px solid var(--border);
 }
 
+.link-row.is-selectable {
+  cursor: pointer;
+}
+
 .link-row:last-child {
   border-bottom: none;
+}
+
+/* Selected row: a thick left rule drawn inside the padding (inset shadow, so
+   it adds no width and never shifts the row content). */
+.link-row.is-selected {
+  box-shadow: inset 3px 0 0 var(--text-h);
 }
 
 .link-cell {
