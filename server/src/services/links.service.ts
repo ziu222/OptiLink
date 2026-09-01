@@ -33,6 +33,22 @@ export interface LinkDTO {
   createdAt: string;
 }
 
+/**
+ * Lazily reconcile a link's `isActive` flag with its expiry: if it is past
+ * `expiresAt` but still marked active, flip it off in memory and persist the
+ * change (fire-and-forget). Returns whether the link is currently expired.
+ */
+export const syncExpiryState = (link: ILink): boolean => {
+  const expired = link.expiresAt != null && link.expiresAt.getTime() < Date.now();
+  if (expired && link.isActive) {
+    link.isActive = false;
+    Link.updateOne({ _id: link._id }, { isActive: false }).catch((err) =>
+      console.error('Error deactivating expired link:', err),
+    );
+  }
+  return expired;
+};
+
 const serialize = (link: ILink): LinkDTO => ({
   id: link._id.toString(),
   originalUrl: link.originalUrl,
@@ -71,10 +87,13 @@ export class LinksService {
     if (!mongoose.isValidObjectId(id)) {
       throw AppError.notFound('Link not found');
     }
-    const link = await Link.findOne({ _id: id, userId }).select('+passwordHash');
+    const link = await Link.findOne({ _id: id, userId, isArchived: { $ne: true } }).select(
+      '+passwordHash',
+    );
     if (!link) {
       throw AppError.notFound('Link not found');
     }
+    syncExpiryState(link);
     return serialize(link);
   }
 
@@ -82,7 +101,9 @@ export class LinksService {
     if (!mongoose.isValidObjectId(id)) {
       throw AppError.notFound('Link not found');
     }
-    const link = await Link.findOne({ _id: id, userId }).select('+passwordHash');
+    const link = await Link.findOne({ _id: id, userId, isArchived: { $ne: true } }).select(
+      '+passwordHash',
+    );
     if (!link) {
       throw AppError.notFound('Link not found');
     }
@@ -102,12 +123,25 @@ export class LinksService {
     return serialize(link);
   }
 
+  async archiveLink(userId: string, id: string): Promise<void> {
+    if (!mongoose.isValidObjectId(id)) {
+      throw AppError.notFound('Link not found');
+    }
+    const result = await Link.findOneAndUpdate(
+      { _id: id, userId, isArchived: { $ne: true } },
+      { isArchived: true, isActive: false },
+    );
+    if (!result) {
+      throw AppError.notFound('Link not found');
+    }
+  }
+
   async listLinks(
     userId: string,
     page: number,
     limit: number,
   ): Promise<{ links: LinkDTO[]; total: number; page: number; limit: number }> {
-    const filter = { userId };
+    const filter = { userId, isArchived: { $ne: true } };
     const [docs, total] = await Promise.all([
       Link.find(filter)
         .select('+passwordHash')
@@ -117,6 +151,7 @@ export class LinksService {
       Link.countDocuments(filter),
     ]);
 
+    docs.forEach(syncExpiryState);
     return { links: docs.map(serialize), total, page, limit };
   }
 

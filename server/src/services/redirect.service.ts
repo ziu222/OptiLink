@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import Link, { ILink } from '../models/Link';
 import Analytics from '../models/Analytics';
+import { syncExpiryState } from './links.service';
 import { Request } from 'express';
 
 export class RedirectService {
@@ -9,9 +10,11 @@ export class RedirectService {
    * `passwordHash` is selected so callers can gate on it.
    */
   async getActiveLink(slug: string): Promise<ILink | null> {
-    const link = await Link.findOne({ slug, isActive: true }).select('+passwordHash');
+    const link = await Link.findOne({ slug, isActive: true, isArchived: { $ne: true } }).select(
+      '+passwordHash',
+    );
     if (!link) return null;
-    if (link.expiresAt && link.expiresAt.getTime() < Date.now()) return null;
+    if (syncExpiryState(link)) return null;
     return link;
   }
 

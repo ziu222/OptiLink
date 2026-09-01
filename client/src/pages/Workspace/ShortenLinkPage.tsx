@@ -199,7 +199,10 @@ export function ShortenLinkPage() {
           <p className="link-list-empty">Loading…</p>
         </ContentPanel>
       ) : (
-        <ShortenedLinksPanel links={links} />
+        <ShortenedLinksPanel
+          links={links}
+          onDeleted={(id) => setLinks((cur) => cur.filter((l) => l.id !== id))}
+        />
       )}
     </>
   );

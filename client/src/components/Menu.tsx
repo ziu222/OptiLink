@@ -7,6 +7,8 @@ export interface MenuItem {
   label: string;
   onSelect: () => void;
   disabled?: boolean;
+  /** Render as a destructive action (red text + border). */
+  danger?: boolean;
 }
 
 interface MenuProps {
@@ -60,7 +62,7 @@ export function Menu({ items, ariaLabel, align = 'right' }: MenuProps) {
               key={item.key}
               type="button"
               role="menuitem"
-              className="menu-item"
+              className={`menu-item${item.danger ? ' menu-item--danger' : ''}`}
               disabled={item.disabled}
               onClick={() => {
                 item.onSelect();

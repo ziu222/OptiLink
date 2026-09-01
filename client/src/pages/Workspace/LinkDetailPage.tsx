@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageHeader } from '../../components/workspace/PageHeader';
 import { ShortenedLinksPanel } from '../../components/workspace/ShortenedLinksPanel';
 import { LinkConfigPanel } from '../../components/workspace/LinkConfigPanel';
@@ -11,6 +11,7 @@ const BREADCRUMB = [{ label: 'Shorten Link', to: '/dashboard' }];
 
 export function LinkDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [link, setLink] = useState<ShortenedLink | null>(null);
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
 
@@ -41,7 +42,12 @@ export function LinkDetailPage() {
   return (
     <>
       <PageHeader breadcrumb={BREADCRUMB} title={link.title || 'Untitle'} />
-      <ShortenedLinksPanel title="Shortened Link" links={[link]} showViewDetail={false} />
+      <ShortenedLinksPanel
+        title="Shortened Link"
+        links={[link]}
+        showViewDetail={false}
+        onDeleted={() => navigate('/dashboard')}
+      />
       <LinkConfigPanel link={link} onSaved={setLink} />
     </>
   );

@@ -42,9 +42,10 @@ export class LinksController {
   }
 
   async deleteLink(req: Request, res: Response): Promise<void> {
+    await linksService.archiveLink(req.user!.id, req.params.id as string);
     res.status(200).json({
       success: true,
-      message: 'Xóa link thành công (Mock)'
+      message: 'Link deleted successfully',
     });
   }
 

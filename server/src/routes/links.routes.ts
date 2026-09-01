@@ -139,7 +139,7 @@ router.put('/:id', authenticate, validate(updateLinkSchema), asyncHandler(linksC
  * @swagger
  * /api/links/{id}:
  *   delete:
- *     summary: Xóa link
+ *     summary: Xóa link (xóa mềm / archive)
  *     tags: [Links]
  *     security:
  *       - bearerAuth: []

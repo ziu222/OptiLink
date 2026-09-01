@@ -12,6 +12,7 @@ export interface ILink extends Document {
   redirectMode: 'standard' | 'splash';
   expiresAt: Date | null;
   passwordHash?: string | null;
+  isArchived: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,7 +27,8 @@ const LinkSchema = new Schema({
   title: { type: String, default: '' },
   redirectMode: { type: String, enum: ['standard', 'splash'], default: 'standard' },
   expiresAt: { type: Date, default: null },
-  passwordHash: { type: String, default: null, select: false }
+  passwordHash: { type: String, default: null, select: false },
+  isArchived: { type: Boolean, default: false }
 }, {
   timestamps: true
 });

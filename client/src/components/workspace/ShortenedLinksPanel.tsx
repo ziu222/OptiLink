@@ -7,6 +7,7 @@ interface ShortenedLinksPanelProps {
   links: ShortenedLink[];
   title?: string;
   showViewDetail?: boolean;
+  onDeleted?: (id: string) => void;
 }
 
 // List-layout container for shortened links, rendered as a workspace ContentPanel.
@@ -14,6 +15,7 @@ export function ShortenedLinksPanel({
   links,
   title = 'Shortened Links',
   showViewDetail = true,
+  onDeleted,
 }: ShortenedLinksPanelProps) {
   return (
     <ContentPanel title={title} className="shorten-list-panel">
@@ -22,7 +24,12 @@ export function ShortenedLinksPanel({
       ) : (
         <div className="link-list">
           {links.map((link) => (
-            <ShortenedLinkRow key={link.id} link={link} showViewDetail={showViewDetail} />
+            <ShortenedLinkRow
+              key={link.id}
+              link={link}
+              showViewDetail={showViewDetail}
+              onDeleted={onDeleted}
+            />
           ))}
         </div>
       )}

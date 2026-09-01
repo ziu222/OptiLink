@@ -72,6 +72,10 @@ export const updateLink = async (
   return res.data.data.link;
 };
 
+export const deleteLink = async (id: string): Promise<void> => {
+  await api.delete(`/links/${id}`);
+};
+
 // The verify route is public and lives at the server root (not under /api).
 export const verifyLinkPassword = async (
   slug: string,
