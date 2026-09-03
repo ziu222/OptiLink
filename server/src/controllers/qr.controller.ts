@@ -1,51 +1,129 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { qrService } from '../services/qr.service.js';
+import { AppError } from '../utils/AppError.js';
 
 export class QrController {
-  async generateQr(req: Request, res: Response): Promise<void> {
-    res.status(201).json({
-      success: true,
-      message: 'Tạo QR code thành công (Mock)',
-      data: {
-        qrCode: {
-          id: 'qr_123',
-          linkId: req.body.linkId || null,
-          imageUrl: 'http://localhost:5000/mock-qr.png'
-        }
+  /**
+   * Tạo mã QR mới
+   * POST /api/qr/generate
+   */
+  async generateQr(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw AppError.unauthorized('Bạn cần đăng nhập để tạo mã QR');
       }
-    });
+
+      const qr = await qrService.createQr(userId, req.body);
+
+      res.status(201).json({
+        success: true,
+        message: 'Tạo mã QR thành công',
+        data: { qr },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async getQrList(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
-      message: 'Lấy danh sách QR code thành công (Mock)',
-      data: {
-        qrCodes: [
-          {
-            id: 'qr_123',
-            linkId: 'link_123',
-            imageUrl: 'http://localhost:5000/mock-qr.png'
-          }
-        ]
+  /**
+   * Lấy danh sách mã QR của user đang đăng nhập
+   * GET /api/qr/list
+   */
+  async getQrList(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw AppError.unauthorized('Bạn cần đăng nhập');
       }
-    });
+
+      const qrCodes = await qrService.getUserQrs(userId);
+
+      res.status(200).json({
+        success: true,
+        data: { qrCodes },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async downloadQr(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
-      message: 'Đang tải xuống QR code (Mock)',
-      data: {
-        downloadUrl: 'http://localhost:5000/mock-qr.png'
+  /**
+   * Lấy chi tiết 1 mã QR
+   * GET /api/qr/:id
+   */
+  async getQrById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw AppError.unauthorized('Bạn cần đăng nhập');
       }
-    });
+
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const qr = await qrService.getQrById(id, userId);
+
+      res.status(200).json({
+        success: true,
+        data: { qr },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
-  async deleteQr(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
-      message: 'Xóa QR code thành công (Mock)'
-    });
+  /**
+   * Tải xuống mã QR (PNG hoặc SVG)
+   * GET /api/qr/:id/download
+   */
+  async downloadQr(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw AppError.unauthorized('Bạn cần đăng nhập để tải mã QR');
+      }
+
+      const format = (req.query.format as 'png' | 'svg') || 'png';
+      const sizeOverride = req.query.size ? Number(req.query.size) : undefined;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+      const fileData = await qrService.generateDownload(
+        id,
+        userId,
+        format,
+        sizeOverride
+      );
+
+      res.setHeader('Content-Type', fileData.mimeType);
+      res.setHeader('Content-Disposition', `attachment; filename="${fileData.filename}"`);
+      res.setHeader('Content-Length', fileData.buffer.length);
+
+      res.end(fileData.buffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Xóa mã QR
+   * DELETE /api/qr/:id
+   */
+  async deleteQr(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw AppError.unauthorized('Bạn cần đăng nhập');
+      }
+
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      await qrService.deleteQr(id, userId);
+
+      res.status(200).json({
+        success: true,
+        message: 'Mã QR đã được xóa thành công',
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }
 
