@@ -59,7 +59,8 @@ export class QrController {
         throw AppError.unauthorized('Bạn cần đăng nhập');
       }
 
-      const qr = await qrService.getQrById(req.params.id, userId);
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const qr = await qrService.getQrById(id, userId);
 
       res.status(200).json({
         success: true,
@@ -83,9 +84,10 @@ export class QrController {
 
       const format = (req.query.format as 'png' | 'svg') || 'png';
       const sizeOverride = req.query.size ? Number(req.query.size) : undefined;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
       const fileData = await qrService.generateDownload(
-        req.params.id,
+        id,
         userId,
         format,
         sizeOverride
@@ -112,7 +114,8 @@ export class QrController {
         throw AppError.unauthorized('Bạn cần đăng nhập');
       }
 
-      await qrService.deleteQr(req.params.id, userId);
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      await qrService.deleteQr(id, userId);
 
       res.status(200).json({
         success: true,
