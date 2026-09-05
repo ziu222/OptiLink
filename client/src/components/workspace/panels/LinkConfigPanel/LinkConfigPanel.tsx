@@ -99,7 +99,7 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
           </div>
 
           <div className="link-config-item">
-            <span className="link-config-label">Original url</span>
+            <span className="link-config-label">Original URL</span>
             <input
               className="profile-input link-config-readonly"
               disabled
@@ -108,7 +108,7 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
           </div>
 
           <div className="link-config-item">
-            <span className="link-config-label">Short url</span>
+            <span className="link-config-label">Short URL</span>
             <input
               className="profile-input link-config-readonly"
               disabled
@@ -130,7 +130,7 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
           </div>
 
           <div className="link-config-item">
-            <span className="link-config-label">Redirect mode</span>
+            <span className="link-config-label">Redirect Mode</span>
             <InputSelect
               ariaLabel="Redirect mode"
               value={watch('redirectMode')}
