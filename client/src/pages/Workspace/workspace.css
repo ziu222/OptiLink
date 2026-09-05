@@ -26,6 +26,16 @@
   padding: 2.5rem;
 }
 
+/* Shared column layout for everything below a page's PageHeader — a single
+   gap replaces the old pattern of every panel declaring its own
+   margin-top: 1.5rem. The header-to-first-panel gap stays separate: it's
+   .page-header's own margin-bottom (2rem), not part of this gap. */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .workspace-placeholder {
   max-width: 40rem;
 }
@@ -248,10 +258,6 @@
 }
 
 /* Shorten Link page */
-.shorten-panel {
-  margin-top: 1.5rem;
-}
-
 .shorten-form {
   display: flex;
   flex-direction: column;
@@ -348,4 +354,23 @@
   font-size: 0.9375rem;
   line-height: 1.4;
   outline: none;
+}
+
+/* Analytics page */
+.analytics-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 640px) {
+  .analytics-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analytics-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }

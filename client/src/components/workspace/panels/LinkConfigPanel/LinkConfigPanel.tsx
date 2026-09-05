@@ -82,7 +82,7 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
   });
 
   return (
-    <ContentPanel title="Shortened Link Configuration" className="shorten-list-panel">
+    <ContentPanel title="Shortened Link Configuration">
       <form onSubmit={onSubmit}>
         {errors.root && <p className="profile-error">{errors.root.message}</p>}
 
