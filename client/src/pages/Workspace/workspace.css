@@ -313,7 +313,10 @@
   gap: 1rem;
 }
 
-@media (min-width: 640px) {
+/* Below this, the sidebar leaves too little room for two fields side by
+   side (a tablet in portrait or landscape, or a phone) — each field gets
+   its own full-width row instead of being squeezed into a cramped column. */
+@media (min-width: 1024px) {
   .shorten-tab-content {
     flex-direction: row;
   }
