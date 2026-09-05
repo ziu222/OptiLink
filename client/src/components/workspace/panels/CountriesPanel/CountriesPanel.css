@@ -1,0 +1,12 @@
+.countries-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 2rem;
+}
+
+@media (max-width: 640px) {
+  .countries-panel-grid {
+    grid-template-columns: 1fr;
+  }
+}

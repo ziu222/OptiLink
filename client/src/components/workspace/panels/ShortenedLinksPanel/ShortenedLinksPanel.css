@@ -1,7 +1,3 @@
-.shorten-list-panel {
-  margin-top: 1.5rem;
-}
-
 /* Bleeds ContentPanel's 1rem body padding (ContentPanel/ContentPanel.css) so the
    row separators reach the panel's border instead of stopping at the padding —
    the project's standing divider convention (see .profile-grid /
@@ -16,6 +12,25 @@
    then matches its left/right inset (keep the side/bottom bleed). */
 .toolbar + .link-list {
   margin-top: 0;
+}
+
+/* Only the paginated lists (a `pagination` prop passed in) fetch PAGE_SIZE=5
+   rows at a time (ShortenLinkPage.tsx / AnalyticsPage.tsx); LinkDetailPage's
+   single-link usage has no pagination and must stay content-sized. Height is
+   fixed to exactly 5 row-heights (~117px measured: 1rem padding top/bottom +
+   content + 1px divider) rather than resizing per page — a short page just
+   leaves blank space below its last row instead of shrinking the panel.
+   overflow-y guards the rare row that wraps to two lines. */
+.link-list--paged {
+  height: 585px;
+  overflow-y: auto;
+}
+
+/* InfoRow drops the border on its true last child; a paged list always wants
+   a divider there so a short page's blank space still reads as part of the
+   list rather than butting the row against empty space with no separator. */
+.link-list--paged .info-row:last-child {
+  border-bottom: 1px solid var(--border);
 }
 
 .toolbar + .link-list-empty {

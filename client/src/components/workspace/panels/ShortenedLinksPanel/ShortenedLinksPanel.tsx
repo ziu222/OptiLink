@@ -34,14 +34,14 @@ export function ShortenedLinksPanel({
   onToggleSelect,
 }: ShortenedLinksPanelProps) {
   return (
-    <ContentPanel title={title} className="shorten-list-panel" footer={pagination}>
+    <ContentPanel title={title} footer={pagination}>
       {toolbar}
       {isLoading && links.length === 0 ? (
         <p className="link-list-empty">Loading…</p>
       ) : links.length === 0 ? (
         <p className="link-list-empty">{emptyLabel ?? 'No shortened links yet.'}</p>
       ) : (
-        <div className="link-list">
+        <div className={pagination ? 'link-list link-list--paged' : 'link-list'}>
           {links.map((link) => (
             <ShortenedLinkRow
               key={link.id}

@@ -42,13 +42,15 @@ export function LinkDetailPage() {
   return (
     <>
       <PageHeader breadcrumb={BREADCRUMB} title={link.title || 'Untitle'} />
-      <ShortenedLinksPanel
-        title="Shortened Link"
-        links={[link]}
-        showViewDetail={false}
-        onDeleted={() => navigate('/dashboard')}
-      />
-      <LinkConfigPanel link={link} onSaved={setLink} />
+      <div className="page-content">
+        <ShortenedLinksPanel
+          title="Shortened Link"
+          links={[link]}
+          showViewDetail={false}
+          onDeleted={() => navigate('/dashboard')}
+        />
+        <LinkConfigPanel link={link} onSaved={setLink} />
+      </div>
     </>
   );
 }

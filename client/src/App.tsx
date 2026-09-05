@@ -11,6 +11,7 @@ import { WorkspaceLayout } from './pages/Workspace/WorkspaceLayout';
 import { ShortenLinkPage } from './pages/Workspace/ShortenLinkPage';
 import { LinkDetailPage } from './pages/Workspace/LinkDetailPage';
 import { AnalyticsPage } from './pages/Workspace/AnalyticsPage';
+import { LinkAnalyticsPage } from './pages/Workspace/LinkAnalyticsPage';
 import { SettingsPage } from './pages/Workspace/SettingsPage';
 import { ProfilePage } from './pages/Workspace/ProfilePage';
 
@@ -31,6 +32,7 @@ function App() {
               <Route index element={<ShortenLinkPage />} />
               <Route path="links/:id" element={<LinkDetailPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="analytics/:id" element={<LinkAnalyticsPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="profile" element={<ProfilePage />} />
             </Route>
