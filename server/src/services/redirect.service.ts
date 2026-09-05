@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import Link, { ILink } from '../models/Link';
 import Analytics from '../models/Analytics';
 import { syncExpiryState } from './links.service';
+import { lookupGeo } from '../utils/geoLookup';
 import { Request } from 'express';
 
 export class RedirectService {
@@ -35,15 +36,19 @@ export class RedirectService {
     const ipAddress = req.ip || req.socket.remoteAddress || 'unknown';
     const referrer = req.get('Referrer') || '';
 
-    const analytics = new Analytics({
-      linkId: link._id,
-      ipAddress,
-      userAgent: userAgentString || 'unknown',
-      deviceType,
-      referrer,
-    });
-
-    analytics.save().catch((err) => console.error('Error saving analytics:', err));
+    lookupGeo(ipAddress)
+      .then(({ country, city }) =>
+        new Analytics({
+          linkId: link._id,
+          ipAddress,
+          userAgent: userAgentString || 'unknown',
+          deviceType,
+          referrer,
+          country,
+          city,
+        }).save(),
+      )
+      .catch((err) => console.error('Error saving analytics:', err));
     Link.updateOne({ _id: link._id }, { $inc: { clicks: 1 } }).catch((err) =>
       console.error('Error updating clicks:', err),
     );

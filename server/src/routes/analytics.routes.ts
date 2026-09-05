@@ -1,5 +1,9 @@
 import { Router } from 'express';
 import { analyticsController } from '../controllers/analytics.controller.js';
+import { authenticate } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validate.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { analyticsRangeQuerySchema } from '../validators/analytics.validators.js';
 
 const router = Router();
 
@@ -22,7 +26,7 @@ const router = Router();
  *       200:
  *         description: Trả về thống kê tổng quan
  */
-router.get('/overview', analyticsController.getOverview);
+router.get('/overview', authenticate, asyncHandler(analyticsController.getOverview));
 
 /**
  * @swagger
@@ -38,10 +42,25 @@ router.get('/overview', analyticsController.getOverview);
  *         required: true
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: from
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: to
+ *         schema:
+ *           type: string
+ *           format: date-time
  *     responses:
  *       200:
  *         description: Trả về thống kê chi tiết của link
  */
-router.get('/link/:id', analyticsController.getLinkAnalytics);
+router.get(
+  '/link/:id',
+  authenticate,
+  validate(analyticsRangeQuerySchema, 'query'),
+  asyncHandler(analyticsController.getLinkAnalytics),
+);
 
 export const analyticsRoutes = router;
