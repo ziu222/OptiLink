@@ -1,31 +1,27 @@
 import { Request, Response } from 'express';
+import { analyticsService } from '../services/analytics.service.js';
+import type { AnalyticsRangeQuery } from '../validators/analytics.validators.js';
 
 export class AnalyticsController {
   async getOverview(req: Request, res: Response): Promise<void> {
+    const data = await analyticsService.getOverview(req.user!.id);
     res.status(200).json({
       success: true,
-      message: 'Lấy thống kê tổng quan (Mock)',
-      data: {
-        totalLinks: 10,
-        totalClicks: 250,
-        clicksToday: 15,
-        recentActivity: [
-          { linkId: 'link_123', clickedAt: new Date().toISOString() }
-        ]
-      }
+      message: 'Overview retrieved successfully',
+      data,
     });
   }
 
   async getLinkAnalytics(req: Request, res: Response): Promise<void> {
+    const data = await analyticsService.getLinkAnalytics(
+      req.user!.id,
+      req.params.id as string,
+      req.query as unknown as AnalyticsRangeQuery,
+    );
     res.status(200).json({
       success: true,
-      message: 'Lấy thống kê cho link chi tiết (Mock)',
-      data: {
-        linkId: req.params.id,
-        totalClicks: 150,
-        locations: [{ country: 'VN', clicks: 100 }, { country: 'US', clicks: 50 }],
-        devices: [{ device: 'Mobile', clicks: 120 }, { device: 'Desktop', clicks: 30 }]
-      }
+      message: 'Link analytics retrieved successfully',
+      data,
     });
   }
 }

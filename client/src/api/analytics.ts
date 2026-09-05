@@ -25,6 +25,7 @@ export interface DeviceBreakdown {
 export interface LinkAnalyticsData {
   linkId: string;
   totalClicks: number;
+  clicksToday: number;
   locations: LocationBreakdown[];
   devices: DeviceBreakdown[];
 }

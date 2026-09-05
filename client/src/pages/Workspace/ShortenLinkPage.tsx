@@ -303,7 +303,7 @@ export function ShortenLinkPage() {
                 </label>
 
                 <label className="profile-field">
-                  <span className="profile-label">Expires</span>
+                  <span className="profile-label">Expiry</span>
                   <input
                     type="datetime-local"
                     lang="en-GB"

@@ -6,8 +6,8 @@ import { CountriesPanel } from '../../components/workspace/panels/CountriesPanel
 import { BreakdownPanel } from '../../components/workspace/panels/BreakdownPanel/BreakdownPanel';
 import { getLink } from '../../api/links';
 import type { ShortenedLink } from '../../api/links';
-import { getLinkAnalytics, getOverview } from '../../api/analytics';
-import type { LinkAnalyticsData, OverviewData } from '../../api/analytics';
+import { getLinkAnalytics } from '../../api/analytics';
+import type { LinkAnalyticsData } from '../../api/analytics';
 import './workspace.css';
 
 type FetchState = 'idle' | 'loading' | 'ready' | 'error';
@@ -19,7 +19,6 @@ export function LinkAnalyticsPage() {
   const [link, setLink] = useState<ShortenedLink | null>(null);
   const [linkState, setLinkState] = useState<'loading' | 'ready' | 'error'>('loading');
 
-  const [overview, setOverview] = useState<OverviewData | null>(null);
   const [linkAnalytics, setLinkAnalytics] = useState<LinkAnalyticsData | null>(null);
   const [linkAnalyticsState, setLinkAnalyticsState] = useState<FetchState>('idle');
 
@@ -32,14 +31,6 @@ export function LinkAnalyticsPage() {
       })
       .catch(() => setLinkState('error'));
   }, [id]);
-
-  useEffect(() => {
-    getOverview()
-      .then(setOverview)
-      .catch(() => {
-        /* stat tiles just stay hidden if the overview fails to load */
-      });
-  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -78,29 +69,26 @@ export function LinkAnalyticsPage() {
       <PageHeader breadcrumb={BREADCRUMB} title={link.title || 'Untitle'} />
 
       <div className="page-content">
-        {overview && (
-          <div className="analytics-stats">
-            <StatTile title="Total Links" value={overview.totalLinks} />
-            <StatTile title="Total Clicks" value={overview.totalClicks} />
-            <StatTile title="Clicks Today" value={overview.clicksToday} />
-          </div>
+        {linkAnalyticsState === 'loading' && <p className="link-list-empty">Loading…</p>}
+        {linkAnalyticsState === 'error' && (
+          <p className="link-list-empty">Couldn’t load analytics for this link.</p>
         )}
+        {linkAnalyticsState === 'ready' && linkAnalytics && (
+          <>
+            <div className="analytics-stats analytics-stats--pair">
+              <StatTile title="Total Clicks" value={linkAnalytics.totalClicks} />
+              <StatTile title="Clicks Today" value={linkAnalytics.clicksToday} />
+            </div>
 
-        <div className="analytics-breakdown">
-          {linkAnalyticsState === 'loading' && <p className="link-list-empty">Loading…</p>}
-          {linkAnalyticsState === 'error' && (
-            <p className="link-list-empty">Couldn’t load analytics for this link.</p>
-          )}
-          {linkAnalyticsState === 'ready' && linkAnalytics && (
-            <>
+            <div className="analytics-breakdown">
               <CountriesPanel data={linkAnalytics.locations} />
               <BreakdownPanel
                 title="Devices"
                 data={linkAnalytics.devices.map((d) => ({ label: d.device, value: d.clicks }))}
               />
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
