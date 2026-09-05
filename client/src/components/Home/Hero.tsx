@@ -2,10 +2,8 @@ import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { createLink } from '../../api/links';
 import { useAuth } from '../../contexts/AuthContext';
-import { PictureFrame } from './PictureFrame';
+import shortenIllustration from '../../assets/hero-shorten-illustration.png';
 import './home.css';
-
-const badges = ['No Credit Card Required', 'Instant Setup', 'Built-In Analytics'];
 
 export function Hero() {
   const { user } = useAuth();
@@ -53,7 +51,11 @@ export function Hero() {
   return (
     <section className="hero-section">
       <div className="home-container hero-grid">
-        <PictureFrame />
+        <img
+          className="hero-image"
+          src={shortenIllustration}
+          alt="A long URL shortened to a short opti.link URL"
+        />
 
         <div className="hero-copy">
           <div>
@@ -120,15 +122,6 @@ export function Hero() {
                 <Link to="/register">Create a free account</Link>
               </p>
             )}
-
-            <div className="hero-badges">
-              {badges.map((badge) => (
-                <span key={badge} className="hero-badge">
-                  <span className="hero-badge-check">✓</span>
-                  {badge}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </div>

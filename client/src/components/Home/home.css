@@ -34,7 +34,7 @@
 }
 
 .home-heading {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -66,12 +66,6 @@
   color: var(--text-h);
 }
 
-@media (min-width: 1024px) {
-  .home-heading {
-    font-size: 3rem;
-  }
-}
-
 /* Picture frame placeholder */
 .picture-frame {
   display: flex;
@@ -79,14 +73,22 @@
   justify-content: center;
   min-height: 24rem;
   width: 100%;
+  padding: 1.5rem;
   border: 1px solid var(--border);
-  background: var(--code-bg);
+  background: transparent;
   color: var(--border);
+  box-sizing: border-box;
 }
 
 .picture-frame__icon {
   width: 4rem;
   height: 4rem;
+}
+
+.picture-frame__image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Hero */
@@ -100,15 +102,24 @@
   align-items: stretch;
 }
 
+.hero-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: left top;
+}
+
 .hero-copy {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 2rem;
 }
 
 .hero-title {
   max-width: 36rem;
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -219,36 +230,9 @@
   color: var(--text-h);
 }
 
-.hero-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.hero-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--text-h);
-}
-
-.hero-badge-check {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  font-size: 0.625rem;
-  border: 1px solid var(--text-h);
-}
-
 @media (min-width: 1024px) {
   .hero-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 3fr 2fr;
   }
 }
 
@@ -314,7 +298,53 @@
 }
 
 .step-frame {
-  min-height: 18rem;
+  /* A fixed height (not min-height) keeps every step's frame the same size
+     whether it holds the empty placeholder glyph or a real screenshot —
+     otherwise a flex container with no definite height just grows to wrap
+     its content instead of staying a consistent box across steps. */
+  height: 18rem;
+}
+
+/* Step 03: one frame, several screenshots auto-cycling through it. Images
+   stack via absolute positioning inset to match .picture-frame's own
+   padding, faded in/out by .is-active rather than swapped in the DOM. */
+.picture-carousel {
+  position: relative;
+}
+
+.picture-carousel__image {
+  position: absolute;
+  inset: 1.5rem;
+  width: calc(100% - 3rem);
+  height: calc(100% - 3rem);
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.picture-carousel__image.is-active {
+  opacity: 1;
+}
+
+.picture-carousel__dots {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.375rem;
+}
+
+.picture-carousel__dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  background: var(--border);
+  transition: background 0.3s ease;
+}
+
+.picture-carousel__dot.is-active {
+  background: var(--text-h);
 }
 
 @media (min-width: 1024px) {

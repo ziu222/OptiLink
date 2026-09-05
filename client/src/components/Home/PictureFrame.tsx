@@ -1,19 +1,26 @@
 // Placeholder image frame — a bordered box with a picture glyph, shown in
-// place of real illustrations/screenshots until those are dropped in.
+// place of real illustrations/screenshots until those are dropped in. Pass
+// `src` once a real image is ready; the glyph placeholder drops out.
 interface PictureFrameProps {
   className?: string;
+  src?: string;
+  alt?: string;
 }
 
-export function PictureFrame({ className = '' }: PictureFrameProps) {
+export function PictureFrame({ className = '', src, alt = '' }: PictureFrameProps) {
   return (
     <div className={`picture-frame ${className}`.trim()}>
-      <svg className="picture-frame__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0Z"
-        />
-      </svg>
+      {src ? (
+        <img className="picture-frame__image" src={src} alt={alt} />
+      ) : (
+        <svg className="picture-frame__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0Z"
+          />
+        </svg>
+      )}
     </div>
   );
 }
