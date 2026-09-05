@@ -3,6 +3,7 @@ import { KebabMenu } from '../menu/KebabMenu/KebabMenu';
 import type { MenuItem } from '../menu/MenuPopup/MenuPopup';
 import { InfoRow, Cell, Main, Sub, Extra, Status, Actions, Separator } from '../InfoRow/InfoRow';
 import { copyText } from '../../../lib/clipboard';
+import { useAuth } from '../../../contexts/AuthContext';
 import { deleteLink } from '../../../api/links';
 import type { ShortenedLink } from '../../../api/links';
 
@@ -24,11 +25,16 @@ export function ShortenedLinkRow({
   onSelect,
 }: ShortenedLinkRowProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const name = link.title || 'Untitle';
   const isActive = link.isActive ?? true;
 
   const handleCopy = () => {
     void copyText(link.shortUrl);
+  };
+
+  const handleAccess = () => {
+    window.open(link.shortUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleDelete = async () => {
@@ -42,6 +48,7 @@ export function ShortenedLinkRow({
   };
 
   const menuItems: MenuItem[] = [
+    { key: 'access', label: 'Access short link', onSelect: handleAccess },
     ...(showViewDetail
       ? [
           {
@@ -51,6 +58,11 @@ export function ShortenedLinkRow({
           },
         ]
       : []),
+    {
+      key: 'analytics',
+      label: 'View analytics',
+      onSelect: () => navigate(`/dashboard/analytics/${link.id}`),
+    },
     { key: 'copy', label: 'Copy short link', onSelect: handleCopy },
     { key: 'delete', label: 'Delete link', onSelect: handleDelete, danger: true },
   ];
@@ -64,7 +76,7 @@ export function ShortenedLinkRow({
     >
       <Cell>
         <Main>{name}</Main>
-        <Sub href={link.originalUrl}>{link.originalUrl}</Sub>
+        <Sub>Created by {user?.fullName ?? 'Unknown'}</Sub>
         <Extra>
           <Status active={isActive}>{isActive ? 'Active' : 'Inactive'}</Status>
           <Separator />
@@ -74,6 +86,7 @@ export function ShortenedLinkRow({
 
       <Cell mobileSpan>
         <Main href={link.shortUrl}>{link.shortUrl}</Main>
+        <Sub href={link.originalUrl}>{link.originalUrl}</Sub>
       </Cell>
 
       <Cell align="end">
