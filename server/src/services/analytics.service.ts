@@ -26,6 +26,7 @@ export interface OverviewDTO {
 export interface LinkAnalyticsDTO {
   linkId: string;
   totalClicks: number;
+  clicksToday: number;
   locations: { country: string; clicks: number }[];
   devices: { device: string; clicks: number }[];
 }
@@ -82,8 +83,12 @@ export class AnalyticsService {
       if (range.to) match.createdAt.$lte = range.to;
     }
 
-    const [totalClicks, locations, devices] = await Promise.all([
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const [totalClicks, clicksToday, locations, devices] = await Promise.all([
       Analytics.countDocuments(match),
+      Analytics.countDocuments({ linkId: link._id, createdAt: { $gte: startOfToday } }),
       Analytics.aggregate([
         { $match: match },
         { $group: { _id: '$country', clicks: { $sum: 1 } } },
@@ -99,6 +104,7 @@ export class AnalyticsService {
     return {
       linkId: link._id.toString(),
       totalClicks,
+      clicksToday,
       locations: locations.map((row) => ({ country: row._id ?? 'unknown', clicks: row.clicks })),
       devices: devices.map((row) => ({
         device: DEVICE_LABELS[row._id as string] ?? 'Unknown',

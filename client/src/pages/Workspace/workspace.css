@@ -363,6 +363,13 @@
   gap: 2rem;
 }
 
+/* LinkAnalyticsPage: two tiles (Total Clicks / Clicks Today) instead of
+   AnalyticsPage's three — must come before the mobile media query below so
+   that query still wins and collapses to one column on small screens. */
+.analytics-stats--pair {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 @media (max-width: 640px) {
   .analytics-stats {
     grid-template-columns: 1fr;
