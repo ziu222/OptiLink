@@ -52,7 +52,7 @@ export function MagicTreeContainer() {
         manager.rebuild({ targetUrl: trimmed, season, palette });
         setError(null);
         const q = encodeShareState({ targetUrl: trimmed, season, palette });
-        window.history.replaceState(null, '', `?q=${q}`);
+        window.history.replaceState(null, '', `?q=${encodeURIComponent(q)}`);
       } catch {
         setError('URL không hợp lệ để tạo mã QR');
       }
@@ -76,7 +76,7 @@ export function MagicTreeContainer() {
       palette,
     };
     const q = encodeShareState(config);
-    const shareUrl = `${window.location.origin}${window.location.pathname}?q=${q}`;
+    const shareUrl = `${window.location.origin}${window.location.pathname}?q=${encodeURIComponent(q)}`;
     try {
       await navigator.clipboard.writeText(shareUrl);
     } catch {

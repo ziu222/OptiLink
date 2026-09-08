@@ -51,6 +51,8 @@ export function buildPedestal(grid: QRGridData, theme: SeasonTheme): BuildResult
   lightMesh.instanceMatrix.needsUpdate = true;
   darkMesh.instanceMatrix.needsUpdate = true;
   group.add(lightMesh, darkMesh);
+  // InstancedMesh.dispose() frees instanceMatrix; geometry.dispose() does not.
+  disposables.push(lightMesh, darkMesh);
 
   return {
     group,
