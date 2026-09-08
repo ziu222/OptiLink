@@ -14,6 +14,7 @@ import { AnalyticsPage } from './pages/Workspace/AnalyticsPage';
 import { LinkAnalyticsPage } from './pages/Workspace/LinkAnalyticsPage';
 import { SettingsPage } from './pages/Workspace/SettingsPage';
 import { ProfilePage } from './pages/Workspace/ProfilePage';
+import { MagicTreePage } from './pages/Workspace/MagicTreePage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
 
@@ -30,6 +31,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<WorkspaceLayout />}>
               <Route index element={<ShortenLinkPage />} />
+              <Route path="magic-tree" element={<MagicTreePage />} />
               <Route path="links/:id" element={<LinkDetailPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="analytics/:id" element={<LinkAnalyticsPage />} />
