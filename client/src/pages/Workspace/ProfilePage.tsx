@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { applyServerError } from '../../lib/formError';
 import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
 import { ContentPanel } from '../../components/workspace/panels/ContentPanel/ContentPanel';
+import { Button } from '../../components/workspace/Button/Button';
 import { profileSchema } from './profileSchema';
 import type { ProfileValues } from './profileSchema';
 import './workspace.css';
@@ -105,9 +106,9 @@ export function ProfilePage() {
 
             <div className="profile-actions">
               {isSubmitSuccessful && !errors.root && <span className="profile-saved">Saved.</span>}
-              <button type="submit" disabled={isSubmitting} className="profile-submit">
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Saving…' : 'Save changes'}
-              </button>
+              </Button>
             </div>
           </form>
         </ContentPanel>

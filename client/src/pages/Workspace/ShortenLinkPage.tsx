@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
 import { ContentPanel } from '../../components/workspace/panels/ContentPanel/ContentPanel';
 import { OptionTabs } from '../../components/workspace/OptionTabs/OptionTabs';
+import { Button } from '../../components/workspace/Button/Button';
 import { Field } from '../../components/workspace/Field/Field';
 import { InputSelect } from '../../components/workspace/menu/InputSelect/InputSelect';
 import { Toolbar } from '../../components/workspace/Toolbar/Toolbar';
@@ -215,9 +216,9 @@ export function ShortenLinkPage() {
                   className="shorten-url-input"
                   {...register('url')}
                 />
-                <button type="submit" disabled={isSubmitting} className="shorten-submit">
+                <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Shortening…' : 'Shorten'}
-                </button>
+                </Button>
               </div>
               {errors.url && <em className="profile-field-error">{errors.url.message}</em>}
             </div>

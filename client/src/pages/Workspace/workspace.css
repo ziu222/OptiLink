@@ -241,22 +241,6 @@
   color: #16a34a;
 }
 
-.profile-submit {
-  padding: 0.625rem 1.25rem;
-  border: 1px solid var(--text-h);
-  background: var(--text-h);
-  color: var(--bg);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.profile-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* Shorten Link page */
 .shorten-form {
   display: flex;
@@ -287,25 +271,6 @@
   color: var(--text-h);
   font-size: 17px;
   outline: none;
-}
-
-/* Same footprint as the toolbar menu buttons. */
-.shorten-submit {
-  flex-shrink: 0;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--text-h);
-  background: var(--text-h);
-  color: var(--bg);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
-  white-space: nowrap;
-}
-
-.shorten-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .shorten-tab-content {

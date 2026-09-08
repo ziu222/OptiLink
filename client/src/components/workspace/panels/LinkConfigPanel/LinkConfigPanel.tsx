@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContentPanel } from '../ContentPanel/ContentPanel';
+import { Button } from '../../Button/Button';
 import { Field } from '../../Field/Field';
 import { InputSelect } from '../../menu/InputSelect/InputSelect';
 import { MenuButton } from '../../menu/MenuButton/MenuButton';
@@ -208,9 +209,9 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
 
         <div className="profile-actions">
           {saved && <span className="profile-saved">Saved.</span>}
-          <button type="submit" disabled={isSubmitting} className="profile-submit">
+          <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Updating…' : 'Update'}
-          </button>
+          </Button>
         </div>
       </form>
     </ContentPanel>
