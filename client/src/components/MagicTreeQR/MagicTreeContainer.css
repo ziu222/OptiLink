@@ -1,0 +1,87 @@
+.magic-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  min-height: 640px;
+}
+
+.magic-tree-canvas {
+  flex: 1;
+  width: 100%;
+  min-height: 480px;
+  border-radius: 12px;
+  background: #f6f1e7;
+  cursor: pointer;
+}
+
+.magic-tree-hint {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+.magic-tree-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.magic-tree-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.magic-tree-share {
+  padding: 10px 18px;
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.magic-tree-error {
+  color: #dc2626;
+  font-size: 13px;
+  margin: 0;
+}
+
+.magic-tree-seasons,
+.magic-tree-palettes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.magic-tree-season,
+.magic-tree-mute {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.magic-tree-season.is-active {
+  background: #111827;
+  color: #fff;
+  border-color: #111827;
+}
+
+.magic-tree-palette {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.magic-tree-palette.is-active {
+  border-color: #111827;
+}
