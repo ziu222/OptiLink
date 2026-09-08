@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiLink - QR Code Generator & Theme Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- QRCode.js library for high quality dynamic QR rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-muted: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e5e4e7;
+            --border-hover: #cbd5e1;
+            --text: #6b6375;
+            --text-h: #08060d;
+            --accent: #aa3bff;
+            --accent-bg: rgba(170, 59, 255, 0.08);
+            --primary: #08060d;
+            --emerald: #10b981;
+            --emerald-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        :root.dark {
+            --bg: #16171d;
+            --bg-muted: #111217;
+            --card-bg: #1e2028;
+            --border: #2e303a;
+            --border-hover: #474b5c;
+            --text: #9ca3af;
+            --text-h: #f3f4f6;
+            --accent: #c084fc;
+            --accent-bg: rgba(192, 132, 252, 0.12);
+            --primary: #f3f4f6;
+            --emerald: #10b981;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-muted);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Top Navbar matching OptiLink Workspace */
+        .navbar {
+            padding: 0 32px;
+            height: 56px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-h);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s;
+        }
+
+        .nav-link:hover {
+            color: var(--text-h);
+            background: var(--bg-muted);
+        }
+
+        .nav-link.active {
+            color: var(--text-h);
+            font-weight: 600;
+            background: var(--bg-muted);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-h);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--border-hover);
+        }
+
+        /* Page Layout */
+        .page-container {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px;
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-h);
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .page-desc {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        @media (max-width: 992px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Content Card matching OptiLink panels */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .card-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--text);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 24px 0;
+        }
+
+        /* Theme Presets Grid */
+        .theme-presets-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .theme-presets-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .theme-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .theme-item:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .theme-item.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-bg);
+        }
+
+        .theme-item-swatch {
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .swatch-fg { flex: 1; }
+        .swatch-bg { flex: 1; }
+
+        .theme-item-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-h);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-h);
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-size: 14px;
+            color: var(--text-h);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        /* Color Picker Row */
+        .color-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .color-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .color-preview input[type="color"] {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 60px;
+            height: 60px;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .color-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .color-title {
+            font-size: 11px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .color-hex {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-h);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Logo Selection Buttons */
+        .logo-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .logo-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-h);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .logo-btn:hover {
+            border-color: var(--border-hover);
+        }
+
+        .logo-btn.active {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+            font-weight: 600;
+        }
+
+        /* Preview Card */
+        .preview-wrapper {
+            position: sticky;
+            top: 80px;
+        }
+
+        .qr-display-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .qr-frame {
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        #qr-canvas {
+            display: block;
+            border-radius: 6px;
+        }
+
+        .qr-center-logo {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            background: #ffffff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+            font-size: 18px;
+            pointer-events: none;
+            border: 2px solid #ffffff;
+        }
+
+        .qr-title-preview {
+            margin-top: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-h);
+            text-align: center;
+        }
+
+        .qr-url-preview {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text);
+            text-align: center;
+            word-break: break-all;
+            max-width: 280px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Action Buttons */
+        .action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--emerald-gradient);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-h);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .status-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--text-h);
+            color: var(--bg);
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="brand-group">
+            <a href="/dashboard" class="brand">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                </svg>
+                OptiLink
+            </a>
+            <nav class="nav-links">
+                <a href="/dashboard" class="nav-link">Shorten Link</a>
+                <a href="/qr-demo.html" class="nav-link active">QR Code</a>
+                <a href="/builder" class="nav-link">Bio Page</a>
+                <a href="/dashboard/analytics" class="nav-link">Analytics</a>
+                <a href="/dashboard/settings" class="nav-link">Setting</a>
+            </nav>
+        </div>
+
+        <div class="nav-actions">
+            <button class="theme-toggle-btn" id="theme-toggle">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">Dark Mode</span>
+            </button>
+            <a href="/dashboard" class="nav-link" style="border: 1px solid var(--border);">Vào Workspace ↗</a>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title">QR Code Generator & Theme Studio</h1>
+            <p class="page-desc">Tạo mã QR thương hiệu đồng bộ với bảng màu và phong cách OptiLink.</p>
+        </div>
+
+        <div class="main-grid">
+            <!-- Left Panel: Form & Theme Config -->
+            <div class="content-card">
+                <div class="card-section-title">
+                    <span>1. Theme Presets (Màu chủ đề OptiLink)</span>
+                    <span class="status-badge">Tự động đồng bộ</span>
+                </div>
+
+                <div class="theme-presets-grid" id="theme-presets">
+                    <!-- Populated via Javascript -->
+                </div>
+
+                <div class="card-divider"></div>
+
+                <div class="card-section-title">
+                    <span>2. Thông tin mã QR</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="qr-url">URL Đích hoặc Văn bản</label>
+                    <input type="text" id="qr-url" class="form-input" value="https://optilink.io/b/demo" placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="qr-title">Tiêu đề QR</label>
+                    <input type="text" id="qr-title" class="form-input" value="OptiLink Bio Page" placeholder="VD: Bio Instagram, Menu...">
+                </div>
+
+                <div class="card-divider"></div>
+
+                <div class="card-section-title">
+                    <span>3. Tùy biến màu sắc</span>
+                </div>
+
+                <div class="color-row">
+                    <div class="color-box">
+                        <div class="color-preview" id="fg-preview">
+                            <input type="color" id="fg-color" value="#08060d">
+                        </div>
+                        <div class="color-meta">
+                            <span class="color-title">Màu nét QR (Foreground)</span>
+                            <span class="color-hex" id="fg-val">#08060D</span>
+                        </div>
+                    </div>
+
+                    <div class="color-box">
+                        <div class="color-preview" id="bg-preview">
+                            <input type="color" id="bg-color" value="#ffffff">
+                        </div>
+                        <div class="color-meta">
+                            <span class="color-title">Màu nền (Background)</span>
+                            <span class="color-hex" id="bg-val">#FFFFFF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Logo trung tâm</label>
+                    <div class="logo-options">
+                        <button class="logo-btn active" data-logo="none">Không logo</button>
+                        <button class="logo-btn" data-logo="link">🔗 OptiLink</button>
+                        <button class="logo-btn" data-logo="github">🐙 GitHub</button>
+                        <button class="logo-btn" data-logo="star">⭐ Star</button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">Chất lượng xuất file & Phục hồi lỗi (ECC)</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <select id="qr-size" class="form-input">
+                            <option value="256">256 x 256 px (Web)</option>
+                            <option value="512" selected>512 x 512 px (Chuẩn HD)</option>
+                            <option value="1024">1024 x 1024 px (In ấn Print)</option>
+                        </select>
+                        <select id="qr-ecc" class="form-input">
+                            <option value="M">Medium (15% phục hồi)</option>
+                            <option value="Q">Quartile (25% phục hồi)</option>
+                            <option value="H" selected>High (30% - tối ưu logo)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Sticky Live Preview -->
+            <div class="preview-wrapper">
+                <div class="qr-display-card">
+                    <div class="qr-frame" id="canvas-frame">
+                        <canvas id="qr-canvas"></canvas>
+                        <div id="qr-logo-badge" class="qr-center-logo" style="display: none;">
+                            <span id="logo-icon-display">🔗</span>
+                        </div>
+                    </div>
+
+                    <div class="qr-title-preview" id="preview-title">OptiLink Bio Page</div>
+                    <div class="qr-url-preview" id="preview-url">https://optilink.io/b/demo</div>
+                </div>
+
+                <div class="action-row">
+                    <button class="btn btn-primary" id="btn-download-png">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Tải ảnh PNG
+                    </button>
+                    <button class="btn btn-secondary" id="btn-download-svg">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Tải Vector SVG
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Thông báo</div>
+
+    <script>
+        // Preset Themes matching OptiLink's system palette
+        const THEMES = [
+            { id: 'optilink-classic', name: 'OptiLink Classic', fg: '#08060d', bg: '#ffffff' },
+            { id: 'optilink-purple', name: 'OptiLink Violet', fg: '#aa3bff', bg: '#faf5ff' },
+            { id: 'emerald-mint', name: 'Emerald Green', fg: '#059669', bg: '#ecfdf5' },
+            { id: 'minimal-slate', name: 'Slate Gray', fg: '#1e293b', bg: '#f8fafc' },
+            { id: 'optilink-dark', name: 'Dark Stealth', fg: '#f3f4f6', bg: '#16171d' },
+            { id: 'sunset-rose', name: 'Sunset Rose', fg: '#e11d48', bg: '#fff1f2' },
+            { id: 'ocean-blue', name: 'Ocean Blue', fg: '#2563eb', bg: '#eff6ff' },
+            { id: 'cyberpunk-neon', name: 'Cyberpunk', fg: '#00f0ff', bg: '#0d0221' }
+        ];
+
+        let currentTheme = 'optilink-classic';
+        let currentLogo = 'none';
+
+        // Elements
+        const themesContainer = document.getElementById('theme-presets');
+        const urlInput = document.getElementById('qr-url');
+        const titleInput = document.getElementById('qr-title');
+        const fgInput = document.getElementById('fg-color');
+        const bgInput = document.getElementById('bg-color');
+        const fgPreview = document.getElementById('fg-preview');
+        const bgPreview = document.getElementById('bg-preview');
+        const fgVal = document.getElementById('fg-val');
+        const bgVal = document.getElementById('bg-val');
+        const qrCanvas = document.getElementById('qr-canvas');
+        const canvasFrame = document.getElementById('canvas-frame');
+        const previewTitle = document.getElementById('preview-title');
+        const previewUrl = document.getElementById('preview-url');
+        const logoBadge = document.getElementById('qr-logo-badge');
+        const logoIconDisplay = document.getElementById('logo-icon-display');
+        const eccSelect = document.getElementById('qr-ecc');
+        const sizeSelect = document.getElementById('qr-size');
+        const btnPng = document.getElementById('btn-download-png');
+        const btnSvg = document.getElementById('btn-download-svg');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        const toast = document.getElementById('toast');
+
+        // Dark / Light Theme Toggle
+        function initThemeMode() {
+            const isDark = localStorage.getItem('optilink-dark-mode') === 'true';
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('optilink-dark-mode', isDark);
+            themeIcon.textContent = isDark ? '☀️' : '🌙';
+            themeText.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+        });
+
+        // Render Themes Grid
+        function renderThemes() {
+            themesContainer.innerHTML = '';
+            THEMES.forEach(t => {
+                const card = document.createElement('div');
+                card.className = `theme-item ${t.id === currentTheme ? 'active' : ''}`;
+                card.onclick = () => selectTheme(t);
+                card.innerHTML = `
+                    <div class="theme-item-swatch">
+                        <div class="swatch-fg" style="background: ${t.fg};"></div>
+                        <div class="swatch-bg" style="background: ${t.bg};"></div>
+                    </div>
+                    <div class="theme-item-name">${t.name}</div>
+                `;
+                themesContainer.appendChild(card);
+            });
+        }
+
+        function selectTheme(t) {
+            currentTheme = t.id;
+            fgInput.value = t.fg;
+            bgInput.value = t.bg;
+            updateColorDisplay();
+            renderThemes();
+            generateQR();
+        }
+
+        function updateColorDisplay() {
+            fgPreview.style.backgroundColor = fgInput.value;
+            bgPreview.style.backgroundColor = bgInput.value;
+            fgVal.textContent = fgInput.value.toUpperCase();
+            bgVal.textContent = bgInput.value.toUpperCase();
+            canvasFrame.style.backgroundColor = bgInput.value;
+        }
+
+        // Generate Real QR Code
+        function generateQR() {
+            const text = urlInput.value.trim() || 'https://optilink.io';
+            const fg = fgInput.value;
+            const bg = bgInput.value;
+            const ecc = currentLogo !== 'none' ? 'H' : eccSelect.value;
+
+            previewTitle.textContent = titleInput.value.trim() || 'OptiLink Bio Page';
+            previewUrl.textContent = text;
+
+            QRCode.toCanvas(qrCanvas, text, {
+                width: 220,
+                margin: 2,
+                color: {
+                    dark: fg,
+                    light: bg
+                },
+                errorCorrectionLevel: ecc
+            }, function (error) {
+                if (error) console.error(error);
+            });
+        }
+
+        // Color Inputs
+        fgInput.addEventListener('input', () => {
+            currentTheme = 'custom';
+            renderThemes();
+            updateColorDisplay();
+            generateQR();
+        });
+
+        bgInput.addEventListener('input', () => {
+            currentTheme = 'custom';
+            renderThemes();
+            updateColorDisplay();
+            generateQR();
+        });
+
+        urlInput.addEventListener('input', generateQR);
+        titleInput.addEventListener('input', generateQR);
+        eccSelect.addEventListener('change', generateQR);
+
+        // Logo Selection
+        document.querySelectorAll('.logo-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.logo-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentLogo = btn.dataset.logo;
+
+                const logoIcons = {
+                    none: '',
+                    link: '🔗',
+                    github: '🐙',
+                    star: '⭐'
+                };
+
+                if (currentLogo === 'none') {
+                    logoBadge.style.display = 'none';
+                } else {
+                    logoBadge.style.display = 'flex';
+                    logoIconDisplay.textContent = logoIcons[currentLogo];
+                }
+                generateQR();
+            });
+        });
+
+        // Toast feedback
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        // Download PNG
+        btnPng.addEventListener('click', () => {
+            const size = parseInt(sizeSelect.value, 10);
+            const text = urlInput.value.trim() || 'https://optilink.io';
+            const fg = fgInput.value;
+            const bg = bgInput.value;
+            const ecc = currentLogo !== 'none' ? 'H' : eccSelect.value;
+
+            const tempCanvas = document.createElement('canvas');
+            QRCode.toCanvas(tempCanvas, text, {
+                width: size,
+                margin: 3,
+                color: { dark: fg, light: bg },
+                errorCorrectionLevel: ecc
+            }, function () {
+                const link = document.createElement('a');
+                link.download = `optilink-qr-${Date.now()}.png`;
+                link.href = tempCanvas.toDataURL('image/png');
+                link.click();
+                showToast('Đã tải xuống mã QR (PNG)');
+            });
+        });
+
+        // Download SVG
+        btnSvg.addEventListener('click', () => {
+            const text = urlInput.value.trim() || 'https://optilink.io';
+            const fg = fgInput.value;
+            const bg = bgInput.value;
+            const ecc = currentLogo !== 'none' ? 'H' : eccSelect.value;
+
+            QRCode.toString(text, {
+                type: 'svg',
+                color: { dark: fg, light: bg },
+                errorCorrectionLevel: ecc
+            }, function (err, svgString) {
+                if (err) return console.error(err);
+                const blob = new Blob([svgString], { type: 'image/svg+xml' });
+                const link = document.createElement('a');
+                link.download = `optilink-qr-${Date.now()}.svg`;
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                showToast('Đã tải xuống mã QR Vector (SVG)');
+            });
+        });
+
+        // Initialize
+        initThemeMode();
+        renderThemes();
+        updateColorDisplay();
+        generateQR();
+    </script>
+</body>
+</html>

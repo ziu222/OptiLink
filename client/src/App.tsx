@@ -14,6 +14,7 @@ import { AnalyticsPage } from './pages/Workspace/AnalyticsPage';
 import { LinkAnalyticsPage } from './pages/Workspace/LinkAnalyticsPage';
 import { SettingsPage } from './pages/Workspace/SettingsPage';
 import { ProfilePage } from './pages/Workspace/ProfilePage';
+import { QRCodePage } from './pages/Workspace/QRCodePage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
 // three.js is heavy — keep it out of the main bundle.
@@ -34,6 +35,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<WorkspaceLayout />}>
               <Route index element={<ShortenLinkPage />} />
+              <Route path="qr" element={<QRCodePage />} />
               <Route
                 path="magic-tree"
                 element={
