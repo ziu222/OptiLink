@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ContentPanel } from '../ContentPanel/ContentPanel';
+import { Field } from '../../Field/Field';
 import { InputSelect } from '../../menu/InputSelect/InputSelect';
 import { MenuButton } from '../../menu/MenuButton/MenuButton';
 import { applyServerError } from '../../../../lib/formError';
@@ -87,37 +88,38 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
         {errors.root && <p className="profile-error">{errors.root.message}</p>}
 
         <div className="link-config">
-          <div className="link-config-item link-config-item--full">
-            <span className="link-config-label">Title</span>
+          <Field
+            label="Title"
+            hint="A label for this link in your dashboard. Not shown to visitors."
+            full
+            error={errors.title?.message}
+          >
             <input
               type="text"
-              className="profile-input"
+              className="field-input"
               placeholder="Untitle"
               {...register('title')}
             />
-            {errors.title && <em className="profile-field-error">{errors.title.message}</em>}
-          </div>
+          </Field>
 
-          <div className="link-config-item">
-            <span className="link-config-label">Original URL</span>
-            <input
-              className="profile-input link-config-readonly"
-              disabled
-              value={link.originalUrl}
-            />
-          </div>
+          <Field
+            label="Original URL"
+            hint="The destination this short link redirects to. Set when the link was created."
+          >
+            <input className="field-input" disabled value={link.originalUrl} />
+          </Field>
 
-          <div className="link-config-item">
-            <span className="link-config-label">Short URL</span>
-            <input
-              className="profile-input link-config-readonly"
-              disabled
-              value={link.shortUrl}
-            />
-          </div>
+          <Field
+            label="Short URL"
+            hint="The shareable link. Built from the slug and can't be changed here."
+          >
+            <input className="field-input" disabled value={link.shortUrl} />
+          </Field>
 
-          <div className="link-config-item">
-            <span className="link-config-label">Status</span>
+          <Field
+            label="Status"
+            hint="Active links redirect normally; inactive links stop redirecting."
+          >
             <InputSelect
               ariaLabel="Status"
               value={watch('status')}
@@ -127,10 +129,12 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
                 { value: 'inactive', label: 'Inactive' },
               ]}
             />
-          </div>
+          </Field>
 
-          <div className="link-config-item">
-            <span className="link-config-label">Redirect Mode</span>
+          <Field
+            label="Redirect Mode"
+            hint="Standard sends visitors straight to the destination. Splash shows a brief interstitial first."
+          >
             <InputSelect
               ariaLabel="Redirect mode"
               value={watch('redirectMode')}
@@ -140,14 +144,17 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
                 { value: 'splash', label: 'Splash' },
               ]}
             />
-          </div>
+          </Field>
 
-          <div className="link-config-item">
-            <span className="link-config-label">Password</span>
+          <Field
+            label="Password"
+            hint="Require visitors to enter a password before the link redirects."
+            error={errors.password?.message}
+          >
             <div className="link-password-frame">
               <input
                 type="password"
-                className="profile-input"
+                className="field-input"
                 autoComplete="new-password"
                 disabled={clearPassword}
                 placeholder={
@@ -183,23 +190,20 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
                 }
               />
             </div>
-            {errors.password && (
-              <em className="profile-field-error">{errors.password.message}</em>
-            )}
-          </div>
+          </Field>
 
-          <div className="link-config-item">
-            <span className="link-config-label">Expiry</span>
+          <Field
+            label="Expiry"
+            hint="Date and time after which the link stops working. Leave blank for no expiry."
+            error={errors.expiresAt?.message}
+          >
             <input
               type="datetime-local"
               lang="en-GB"
-              className="profile-input"
+              className="field-input"
               {...register('expiresAt')}
             />
-            {errors.expiresAt && (
-              <em className="profile-field-error">{errors.expiresAt.message}</em>
-            )}
-          </div>
+          </Field>
         </div>
 
         <div className="profile-actions">

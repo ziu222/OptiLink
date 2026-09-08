@@ -17,12 +17,17 @@
 /* Only the paginated lists (a `pagination` prop passed in) fetch PAGE_SIZE=5
    rows at a time (ShortenLinkPage.tsx / AnalyticsPage.tsx); LinkDetailPage's
    single-link usage has no pagination and must stay content-sized. Height is
-   fixed to exactly 5 row-heights (~117px measured: 1rem padding top/bottom +
-   content + 1px divider) rather than resizing per page — a short page just
-   leaves blank space below its last row instead of shrinking the panel.
-   overflow-y guards the rare row that wraps to two lines. */
+   fixed to exactly 5 row-heights rather than resizing per page — a short page
+   just leaves blank space below its last row instead of shrinking the panel.
+   overflow-y guards the rare row that wraps to two lines.
+
+   A row measures ~6.5rem (104px): .info-row 1rem padding top + bottom + 1px
+   divider + the tallest (name) cell's three stacked lines (.info-cell-main
+   1rem, .info-cell-sub + .info-cell-extra 0.875rem, +2px). Kept in rem so it
+   tracks the root font size; erring ~1rem short of 6 rows so a short bottom
+   page never peeks the next row (it only trims the last row's 1rem padding). */
 .link-list--paged {
-  height: 585px;
+  height: 32.5rem;
   overflow-y: auto;
 }
 

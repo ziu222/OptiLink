@@ -11,27 +11,6 @@
   }
 }
 
-.link-config-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-.link-config-label {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.link-config-item--full {
-  grid-column: 1 / -1;
-}
-
-.link-config-readonly:disabled {
-  background: transparent;
-}
-
 .link-password-frame {
   display: flex;
   align-items: stretch;
@@ -44,7 +23,7 @@
   border-color: var(--text-h);
 }
 
-.link-password-frame .profile-input {
+.link-password-frame .field-input {
   flex: 1;
   min-width: 0;
   border: none;

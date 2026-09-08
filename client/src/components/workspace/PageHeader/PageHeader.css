@@ -2,7 +2,7 @@
    (pages/Workspace/workspace.css), matching Thesis's User.jsx title bar. */
 .page-header {
   margin: -2.5rem -2.5rem 2rem;
-  padding: 0 2.5rem;
+  padding: 0.5rem 2.5rem;
   height: 3rem;
   display: flex;
   align-items: center;
@@ -12,13 +12,13 @@
 
 .page-header h1 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-h);
 }
 
 .page-header-crumb {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text);
   text-decoration: none;
@@ -31,7 +31,7 @@
 
 .page-header-sep {
   margin: 0 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--text);
 }

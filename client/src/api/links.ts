@@ -18,6 +18,8 @@ export interface ShortenedLink {
   expiresAt?: string | null;
   hasPassword?: boolean;
   createdAt?: string;
+  /** Rolling 24h clicks, one entry per hour, oldest -> newest (length 24). */
+  hourlyClicks?: number[];
 }
 
 export interface CreateLinkInput {

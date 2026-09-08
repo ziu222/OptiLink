@@ -31,6 +31,67 @@ export interface LinkAnalyticsDTO {
   devices: { device: string; clicks: number }[];
 }
 
+const HOUR_MS = 3_600_000;
+const WINDOW_HOURS = 24;
+
+export const emptyHourlySeries = (): number[] => new Array(WINDOW_HOURS).fill(0);
+
+/** Fold hourly aggregation rows into per-link, zero-filled 24-slot arrays. Pure. */
+export function bucketHourlyRows(
+  rows: Array<{ linkId: string; bucketMs: number; count: number }>,
+  sinceMs: number,
+): Record<string, number[]> {
+  const out: Record<string, number[]> = {};
+  for (const row of rows) {
+    const series = (out[row.linkId] ??= emptyHourlySeries());
+    const idx = Math.floor((row.bucketMs - sinceMs) / HOUR_MS);
+    if (idx >= 0 && idx < WINDOW_HOURS) series[idx] += row.count;
+  }
+  return out;
+}
+
+/**
+ * Rolling 24h hourly click counts per link, hour-aligned to UTC (matching
+ * `$dateTrunc`'s default), ordered oldest -> newest. Links with no clicks in the
+ * window are absent from the result; callers zero-fill with `emptyHourlySeries`.
+ */
+export async function getHourlyClickSeries(
+  linkIds: Array<string | mongoose.Types.ObjectId>,
+): Promise<Record<string, number[]>> {
+  if (linkIds.length === 0) return {};
+
+  const objectIds = linkIds.map((id) =>
+    typeof id === 'string' ? new mongoose.Types.ObjectId(id) : id,
+  );
+  const nowHourMs = Math.floor(Date.now() / HOUR_MS) * HOUR_MS;
+  const sinceMs = nowHourMs - (WINDOW_HOURS - 1) * HOUR_MS;
+
+  const rows = await Analytics.aggregate<{
+    _id: { linkId: mongoose.Types.ObjectId; bucket: Date };
+    count: number;
+  }>([
+    { $match: { linkId: { $in: objectIds }, createdAt: { $gte: new Date(sinceMs) } } },
+    {
+      $group: {
+        _id: {
+          linkId: '$linkId',
+          bucket: { $dateTrunc: { date: '$createdAt', unit: 'hour' } },
+        },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  return bucketHourlyRows(
+    rows.map((row) => ({
+      linkId: row._id.linkId.toString(),
+      bucketMs: row._id.bucket.getTime(),
+      count: row.count,
+    })),
+    sinceMs,
+  );
+}
+
 export class AnalyticsService {
   async getOverview(userId: string): Promise<OverviewDTO> {
     const linkFilter = { userId, isArchived: { $ne: true } };

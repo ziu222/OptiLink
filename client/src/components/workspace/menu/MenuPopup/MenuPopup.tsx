@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import './MenuPopup.css';
 
 export interface MenuItem {
@@ -7,6 +8,8 @@ export interface MenuItem {
   disabled?: boolean;
   /** Render as a destructive action (red text + border). */
   danger?: boolean;
+  /** Optional leading icon (an <svg>); inherits the item's text colour. */
+  icon?: ReactNode;
 }
 
 interface MenuPopupProps {
@@ -34,6 +37,11 @@ export function MenuPopup({ items, align = 'right', id, onClose }: MenuPopupProp
             onClose?.();
           }}
         >
+          {item.icon && (
+            <span className="menu-item-icon" aria-hidden="true">
+              {item.icon}
+            </span>
+          )}
           {item.label}
         </button>
       ))}

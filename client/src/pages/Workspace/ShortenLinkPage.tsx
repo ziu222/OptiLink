@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
 import { ContentPanel } from '../../components/workspace/panels/ContentPanel/ContentPanel';
 import { OptionTabs } from '../../components/workspace/OptionTabs/OptionTabs';
+import { Field } from '../../components/workspace/Field/Field';
 import { InputSelect } from '../../components/workspace/menu/InputSelect/InputSelect';
 import { Toolbar } from '../../components/workspace/Toolbar/Toolbar';
 import { Pagination } from '../../components/workspace/Pagination/Pagination';
@@ -233,19 +234,24 @@ export function ShortenLinkPage() {
             {activeTab === 'basic' && (
               <>
                 <div className="shorten-tab-content">
-                  <label className="profile-field">
-                    <span className="profile-label">Title</span>
+                  <Field
+                    label="Title"
+                    hint="A label for this link in your dashboard. Not shown to visitors."
+                    error={errors.title?.message}
+                  >
                     <input
                       type="text"
                       placeholder="Spring campaign landing page"
-                      className="profile-input"
+                      className="field-input"
                       {...register('title')}
                     />
-                    {errors.title && <em className="profile-field-error">{errors.title.message}</em>}
-                  </label>
+                  </Field>
 
-                  <label className="profile-field">
-                    <span className="profile-label">Slug</span>
+                  <Field
+                    label="Slug"
+                    hint="The custom ending of your short URL (opti.link/your-slug). Leave blank for a random one."
+                    error={errors.slug?.message}
+                  >
                     <div className="shorten-slug-frame">
                       <span className="shorten-slug-prefix">opti.link/</span>
                       <input
@@ -255,13 +261,14 @@ export function ShortenLinkPage() {
                         {...register('slug')}
                       />
                     </div>
-                    {errors.slug && <em className="profile-field-error">{errors.slug.message}</em>}
-                  </label>
+                  </Field>
                 </div>
 
                 <div className="shorten-tab-content">
-                  <div className="profile-field">
-                    <span className="profile-label">Redirect Mode</span>
+                  <Field
+                    label="Redirect Mode"
+                    hint="Standard sends visitors straight to the destination. Splash shows a brief interstitial first."
+                  >
                     <InputSelect
                       ariaLabel="Redirect mode"
                       value={watch('redirectMode')}
@@ -271,10 +278,12 @@ export function ShortenLinkPage() {
                         { value: 'splash', label: 'Splash' },
                       ]}
                     />
-                  </div>
+                  </Field>
 
-                  <div className="profile-field">
-                    <span className="profile-label">Status</span>
+                  <Field
+                    label="Status"
+                    hint="Active links redirect; inactive links are created but won't redirect yet."
+                  >
                     <InputSelect
                       ariaLabel="Status"
                       value={watch('status')}
@@ -284,34 +293,38 @@ export function ShortenLinkPage() {
                         { value: 'inactive', label: 'Inactive' },
                       ]}
                     />
-                  </div>
+                  </Field>
                 </div>
               </>
             )}
 
             {activeTab === 'access' && (
               <div className="shorten-tab-content">
-                <label className="profile-field">
-                  <span className="profile-label">Password</span>
+                <Field
+                  label="Password"
+                  hint="Require visitors to enter a password before the link redirects."
+                  error={errors.password?.message}
+                >
                   <input
                     type="password"
                     placeholder="Leave blank for no password"
-                    className="profile-input"
+                    className="field-input"
                     {...register('password')}
                   />
-                  {errors.password && <em className="profile-field-error">{errors.password.message}</em>}
-                </label>
+                </Field>
 
-                <label className="profile-field">
-                  <span className="profile-label">Expiry</span>
+                <Field
+                  label="Expiry"
+                  hint="Date and time after which the link stops working. Leave blank for no expiry."
+                  error={errors.expiresAt?.message}
+                >
                   <input
                     type="datetime-local"
                     lang="en-GB"
-                    className="profile-input"
+                    className="field-input"
                     {...register('expiresAt')}
                   />
-                  {errors.expiresAt && <em className="profile-field-error">{errors.expiresAt.message}</em>}
-                </label>
+                </Field>
               </div>
             )}
 
