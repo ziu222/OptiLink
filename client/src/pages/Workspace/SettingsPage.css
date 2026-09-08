@@ -1,0 +1,44 @@
+.settings-page {
+  max-width: none;
+}
+
+/* Two-pane layout: a 1/3 section list on the left, the selected section's
+   controls on the right. The negative margin cancels ContentPanel's body
+   padding (1rem) so the vertical divider between the panes reaches the panel's
+   real top/bottom border instead of stopping at the padding — the project's
+   divider-bleed convention. */
+.settings-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  margin: -1rem;
+}
+
+.settings-nav {
+  border-right: 1px solid var(--border);
+}
+
+/* InfoRow supplies its own 1rem padding + bottom hairline between rows.
+   Re-assert it on the last row too so the list closes with a divider
+   (InfoRow.css drops it on :last-child). */
+.settings-nav .info-row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  /* 1rem top aligns the first control with the first nav row's title */
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-nav {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
