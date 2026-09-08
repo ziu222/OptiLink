@@ -1,0 +1,7 @@
+.clicks-sparkline {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Near-black line; flips to near-white in dark mode via the heading token. */
+  color: var(--text-h);
+}

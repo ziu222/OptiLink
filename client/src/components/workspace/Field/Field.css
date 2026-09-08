@@ -1,0 +1,80 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.field-hint {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--text);
+  cursor: help;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.field-hint svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* The hint icons stay hidden until the surrounding panel is hovered. */
+.content-panel:hover .field-hint {
+  opacity: 1;
+}
+
+.field-error {
+  font-style: normal;
+  font-size: 0.875rem;
+  color: #dc2626;
+}
+
+/* Bare text control inside a Field. */
+.field-input {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 1rem;
+  line-height: 1.4;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field-input::placeholder {
+  color: var(--text);
+}
+
+.field-input:focus {
+  border-color: var(--text-h);
+}
+
+.field-input:disabled {
+  color: var(--text);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+/* datetime-local renders its mm/dd/yyyy text in the input colour; mute it while
+   empty so it reads like the other fields' placeholders. */
+.field-input[type='datetime-local']:placeholder-shown {
+  color: var(--text);
+}
+
+.field-input[type='datetime-local']:placeholder-shown:focus {
+  color: var(--text-h);
+}

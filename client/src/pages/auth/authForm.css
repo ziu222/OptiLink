@@ -97,7 +97,7 @@
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
-  font-size: 0.9375rem;
+  font-size: 16px;
   outline: none;
   transition: border-color 0.15s;
 }

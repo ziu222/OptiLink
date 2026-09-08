@@ -7,11 +7,11 @@
 }
 
 .option-tab {
-  padding: 0.5rem 0.875rem; /* click target only; not container chrome */
+  padding: 0.5rem 0.75rem; /* matches the toolbar menu buttons */
   border: none;
   background: transparent;
   color: var(--text);
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.15s, background 0.15s;

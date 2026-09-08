@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { customAlphabet } from 'nanoid';
 import Link, { ILink } from '../models/Link.js';
 import { AppError } from '../utils/AppError.js';
+import { getHourlyClickSeries, emptyHourlySeries } from './analytics.service.js';
 import type { ListLinksQuery, UpdateLinkInput } from '../validators/links.validators.js';
 
 const SLUG_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -33,6 +34,7 @@ export interface LinkDTO {
   expiresAt: string | null;
   hasPassword: boolean;
   createdAt: string;
+  hourlyClicks?: number[]; // rolling 24h, one entry per hour, oldest -> newest
 }
 
 /**
@@ -51,7 +53,7 @@ export const syncExpiryState = (link: ILink): boolean => {
   return expired;
 };
 
-const serialize = (link: ILink): LinkDTO => ({
+const serialize = (link: ILink, hourlyClicks?: number[]): LinkDTO => ({
   id: link._id.toString(),
   originalUrl: link.originalUrl,
   shortUrl: link.shortUrl,
@@ -63,6 +65,7 @@ const serialize = (link: ILink): LinkDTO => ({
   expiresAt: link.expiresAt ? link.expiresAt.toISOString() : null,
   hasPassword: link.passwordHash != null,
   createdAt: link.createdAt.toISOString(),
+  ...(hourlyClicks ? { hourlyClicks } : {}),
 });
 
 export class LinksService {
@@ -96,7 +99,8 @@ export class LinksService {
       throw AppError.notFound('Link not found');
     }
     syncExpiryState(link);
-    return serialize(link);
+    const series = await getHourlyClickSeries([link._id]);
+    return serialize(link, series[link._id.toString()] ?? emptyHourlySeries());
   }
 
   async updateLink(userId: string, id: string, patch: UpdateLinkInput): Promise<LinkDTO> {
@@ -173,7 +177,12 @@ export class LinksService {
     ]);
 
     docs.forEach(syncExpiryState);
-    return { links: docs.map(serialize), total, page, limit };
+
+    const series = await getHourlyClickSeries(docs.map((doc) => doc._id));
+    const links = docs.map((doc) =>
+      serialize(doc, series[doc._id.toString()] ?? emptyHourlySeries()),
+    );
+    return { links, total, page, limit };
   }
 
   private async claimCustomSlug(slug: string): Promise<string> {

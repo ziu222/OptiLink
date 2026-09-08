@@ -10,7 +10,7 @@
   flex-direction: column;
   gap: 0.25rem;
   min-width: 10rem;
-  padding: 0.25rem;
+  padding: 0.5rem;
   border: 1px solid var(--border);
   background: var(--bg);
   box-shadow: var(--shadow);
@@ -25,14 +25,28 @@
 }
 
 .menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 0.625rem;
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-h);
-  font-size: 0.875rem;
+  font-size: 1rem;
   text-align: left;
   cursor: pointer;
   transition: border-color 0.15s;
+}
+
+.menu-item-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.menu-item-icon svg {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .menu-item:hover:not(:disabled),

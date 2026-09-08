@@ -27,4 +27,7 @@ const AnalyticsSchema = new Schema({
   timestamps: { createdAt: true, updatedAt: false } // Chỉ cần track thời gian click
 });
 
+// Covers the rolling-window click aggregation (match by linkId + createdAt range).
+AnalyticsSchema.index({ linkId: 1, createdAt: -1 });
+
 export default mongoose.model<IAnalytics>('Analytics', AnalyticsSchema);

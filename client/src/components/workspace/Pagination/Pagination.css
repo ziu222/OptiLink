@@ -26,7 +26,7 @@
   border: none;
   background: transparent;
   color: var(--text);
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.15s;
@@ -58,7 +58,7 @@
   border: none;
   background: transparent;
   color: var(--text-h);
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   text-align: center;
   outline: none;
