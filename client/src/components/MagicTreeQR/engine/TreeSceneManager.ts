@@ -25,10 +25,12 @@ export class TreeSceneManager {
   private sceneGroup: THREE.Group | null = null;
   private disposables: Disposable[] = [];
   private updaters: Array<(elapsed: number, delta: number) => void> = [];
+  private gridSize = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
     this.renderer.shadowMap.enabled = true;
 
     this.camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
@@ -49,6 +51,8 @@ export class TreeSceneManager {
     this.clearScene();
 
     const grid: QRGridData = buildQRMatrix(config.targetUrl);
+    this.gridSize = grid.size;
+    const scale = this.cameraAnimator.frameGrid(grid.size);
     const theme = SEASON_THEMES[config.season];
     const accent = PALETTE_PRESETS.find((p) => p.id === config.palette)?.color ?? theme.canopyPrimary;
 
@@ -58,7 +62,7 @@ export class TreeSceneManager {
     const pedestal = buildPedestal(grid, theme);
     const finders = buildShrubFinders(grid, theme);
     const tree = buildTreeMesh(grid, theme, accent);
-    const weather = buildWeather(config.season);
+    const weather = buildWeather(config.season, scale);
 
     group.add(pedestal.group, finders.group, tree.group, weather.points);
     this.scene.add(group);
@@ -78,6 +82,8 @@ export class TreeSceneManager {
     if (clientWidth === 0 || clientHeight === 0) return;
     this.camera.aspect = clientWidth / clientHeight;
     this.camera.updateProjectionMatrix();
+    // Aspect drives the framing distance, so re-fit when it changes.
+    if (this.gridSize > 0) this.cameraAnimator.frameGrid(this.gridSize);
     this.renderer.setSize(clientWidth, clientHeight, false);
   };
 

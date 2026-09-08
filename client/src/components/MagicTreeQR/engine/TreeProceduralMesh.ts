@@ -96,6 +96,8 @@ export function buildTreeMesh(
   });
   leafMesh.instanceMatrix.needsUpdate = true;
   group.add(leafMesh);
+  // InstancedMesh.dispose() frees instanceMatrix; geometry.dispose() does not.
+  disposables.push(leafMesh);
 
   const update = (elapsedSeconds: number) => {
     for (let i = 0; i < basePositions.length; i++) {

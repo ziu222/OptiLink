@@ -23,17 +23,20 @@ const WEATHER_PARAMS: Record<SeasonId, WeatherParams> = {
   winter: { count: 100, color: '#F8FAFC', size: 0.1, fallSpeed: [0.8, 1.6], spread: 15, height: 18 },
 };
 
-export function buildWeather(season: SeasonId): WeatherResult {
+/** `scale` widens the particle volume to match a larger diorama. */
+export function buildWeather(season: SeasonId, scale = 1): WeatherResult {
   const params = WEATHER_PARAMS[season];
+  const spread = params.spread * scale;
+  const height = params.height * scale;
   const geometry = new THREE.BufferGeometry();
   const positions = new Float32Array(params.count * 3);
   const speeds = new Float32Array(params.count);
   const phases = new Float32Array(params.count);
 
   for (let i = 0; i < params.count; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * params.spread * 2;
-    positions[i * 3 + 1] = Math.random() * params.height;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * params.spread * 2;
+    positions[i * 3] = (Math.random() - 0.5) * spread * 2;
+    positions[i * 3 + 1] = Math.random() * height;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * spread * 2;
     speeds[i] = params.fallSpeed[0] + Math.random() * (params.fallSpeed[1] - params.fallSpeed[0]);
     phases[i] = Math.random() * Math.PI * 2;
   }
@@ -56,8 +59,8 @@ export function buildWeather(season: SeasonId): WeatherResult {
       let y = posAttr.getY(i) - speeds[i] * deltaSeconds;
       let x = posAttr.getX(i) + Math.sin(phases[i] + y * 0.5) * 0.02;
       if (y < 0) {
-        y = params.height;
-        x = (Math.random() - 0.5) * params.spread * 2;
+        y = height;
+        x = (Math.random() - 0.5) * spread * 2;
       }
       posAttr.setX(i, x);
       posAttr.setY(i, y);

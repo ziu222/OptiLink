@@ -16,6 +16,10 @@ import { SettingsPage } from './pages/Workspace/SettingsPage';
 import { ProfilePage } from './pages/Workspace/ProfilePage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
+// three.js is heavy — keep it out of the main bundle.
+const MagicTreePage = lazy(() =>
+  import('./pages/Workspace/MagicTreePage').then((m) => ({ default: m.MagicTreePage }))
+);
 
 function App() {
   return (
@@ -30,6 +34,16 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<WorkspaceLayout />}>
               <Route index element={<ShortenLinkPage />} />
+              <Route
+                path="magic-tree"
+                element={
+                  <RouteErrorBoundary>
+                    <Suspense fallback={<p className="route-status">Loading…</p>}>
+                      <MagicTreePage />
+                    </Suspense>
+                  </RouteErrorBoundary>
+                }
+              />
               <Route path="links/:id" element={<LinkDetailPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="analytics/:id" element={<LinkAnalyticsPage />} />
