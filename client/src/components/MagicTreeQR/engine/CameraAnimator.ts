@@ -24,8 +24,10 @@ export class CameraAnimator {
   private animating = false;
   private progress = 0;
   private idleAngle = 0;
+  private camera: THREE.PerspectiveCamera;
 
-  constructor(private camera: THREE.PerspectiveCamera) {
+  constructor(camera: THREE.PerspectiveCamera) {
+    this.camera = camera;
     this.camera.position.copy(ISO_POS);
     this.camera.up.copy(ISO_UP);
     this.camera.lookAt(ISO_TARGET);
