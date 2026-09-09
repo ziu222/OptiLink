@@ -17,6 +17,8 @@ export class TreeSceneManager {
   private renderer: THREE.WebGLRenderer;
   private scene = new THREE.Scene();
   private camera: THREE.PerspectiveCamera;
+  private orthoCamera: THREE.OrthographicCamera;
+  private orthoHalfWidth = 10;
   private cameraAnimator: CameraAnimator;
   private clock = new THREE.Clock();
   private frameId: number | null = null;
@@ -31,6 +33,14 @@ export class TreeSceneManager {
 
     this.camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     this.cameraAnimator = new CameraAnimator(this.camera);
+
+    // True top-down projection for the settled "flat" state: zero parallax,
+    // so a tall canopy column reads at exactly its own grid cell regardless
+    // of height — a perspective camera cannot do this (see plan note above).
+    this.orthoCamera = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.1, 500);
+    this.orthoCamera.position.set(0, 100, 0);
+    this.orthoCamera.up.set(0, 0, -1);
+    this.orthoCamera.lookAt(0, 0, 0);
 
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
@@ -47,6 +57,8 @@ export class TreeSceneManager {
 
     this.scene.background = new THREE.Color(theme.background);
     this.cameraAnimator.frameGrid(size);
+    this.orthoHalfWidth = (size * 1.3) / 2;
+    this.updateOrthoFrustum();
 
     const group = new THREE.Group();
 
@@ -84,18 +96,38 @@ export class TreeSceneManager {
     this.cameraAnimator.toggle();
   }
 
+  private updateOrthoFrustum(): void {
+    const aspect = this.camera.aspect || 1;
+    const base = this.orthoHalfWidth;
+    if (aspect >= 1) {
+      this.orthoCamera.top = base;
+      this.orthoCamera.bottom = -base;
+      this.orthoCamera.left = -base * aspect;
+      this.orthoCamera.right = base * aspect;
+    } else {
+      this.orthoCamera.left = -base;
+      this.orthoCamera.right = base;
+      this.orthoCamera.top = base / aspect;
+      this.orthoCamera.bottom = -base / aspect;
+    }
+    this.orthoCamera.updateProjectionMatrix();
+  }
+
   private handleResize = (): void => {
     const { clientWidth, clientHeight } = this.canvas;
     if (clientWidth === 0 || clientHeight === 0) return;
     this.camera.aspect = clientWidth / clientHeight;
     this.camera.updateProjectionMatrix();
+    this.updateOrthoFrustum();
     this.renderer.setSize(clientWidth, clientHeight, false);
   };
 
   private renderLoop = (): void => {
     const delta = this.clock.getDelta();
     this.cameraAnimator.update(delta);
-    this.renderer.render(this.scene, this.camera);
+    const activeCamera: THREE.Camera =
+      this.cameraAnimator.currentState === 'flat' ? this.orthoCamera : this.camera;
+    this.renderer.render(this.scene, activeCamera);
     this.frameId = requestAnimationFrame(this.renderLoop);
   };
 
