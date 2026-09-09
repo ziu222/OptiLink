@@ -6,6 +6,7 @@ const BASE_ISO_POS = new THREE.Vector3(22, 24, 22);
 const BASE_ISO_TARGET = new THREE.Vector3(0, 6, 0);
 const BASE_FLAT_Y = 32;
 const TRANSITION_SECONDS = 0.9;
+export const FRAME_PADDING_FACTOR = 1.3;
 
 export function quinticEase(t: number): number {
   return t < 0.5 ? 16 * t ** 5 : 1 - Math.pow(-2 * t + 2, 5) / 2;
@@ -36,11 +37,11 @@ export class CameraAnimator {
     return this.state;
   }
 
-  /** Scales both camera distances to fit a gridSize × gridSize structure. Returns the scale factor applied (1 at the floor). */
-  frameGrid(gridSize: number): number {
+  /** Scales both camera distances to fit a gridSize × gridSize structure. */
+  frameGrid(gridSize: number): void {
     const fovRad = (this.camera.fov * Math.PI) / 180;
     const halfTan = Math.tan(fovRad / 2);
-    const width = gridSize * 1.3;
+    const width = gridSize * FRAME_PADDING_FACTOR;
     let flatY = width / (2 * halfTan);
     if (this.camera.aspect < 1) flatY = flatY / this.camera.aspect;
     flatY = Math.max(flatY, BASE_FLAT_Y);
@@ -50,7 +51,6 @@ export class CameraAnimator {
     this.isoPos.copy(BASE_ISO_POS).multiplyScalar(scale);
     this.camera.far = Math.max(100, flatY * 3);
     this.camera.updateProjectionMatrix();
-    return scale;
   }
 
   toggle(): void {

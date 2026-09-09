@@ -3,7 +3,7 @@ import { buildQRMatrix, cellToWorld } from './QRMatrixBuilder';
 import { generateVoxelBlocks, type BlockType } from './VoxelBlockGenerator';
 import { baseColorForType, buildCubeMaterials } from './VoxelMaterials';
 import { buildGroundingDecal } from './GroundingDecal';
-import { CameraAnimator } from './CameraAnimator';
+import { CameraAnimator, FRAME_PADDING_FACTOR } from './CameraAnimator';
 import { SEASON_THEMES, PALETTE_PRESETS, type MagicTreeConfig } from '../types/magicTree';
 
 const BLOCK_TYPES: BlockType[] = ['dirt', 'grass', 'trunk', 'fallenPetals', 'cherryBlossom'];
@@ -59,7 +59,7 @@ export class TreeSceneManager {
 
     this.scene.background = new THREE.Color(theme.background);
     this.cameraAnimator.frameGrid(size);
-    this.orthoHalfWidth = (size * 1.3) / 2;
+    this.orthoHalfWidth = (size * FRAME_PADDING_FACTOR) / 2;
     this.updateOrthoFrustum();
 
     const group = new THREE.Group();
