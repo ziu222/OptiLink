@@ -7,12 +7,20 @@
 }
 
 .magic-tree-canvas {
+  position: relative;
   flex: 1;
   width: 100%;
   min-height: 480px;
   border-radius: 12px;
-  background: #f6f1e7;
+  overflow: hidden;
   cursor: pointer;
+  background: #f6f1e7;
+  transition: background 0.3s ease;
+}
+
+.magic-tree-canvas:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(17 24 39 / 0.2);
 }
 
 .magic-tree-hint {
@@ -24,15 +32,28 @@
 
 .magic-tree-controls {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .magic-tree-input {
   flex: 1;
+  min-width: 200px;
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.magic-tree-input:hover {
+  border-color: #cbd5e1;
+}
+
+.magic-tree-input:focus-visible {
+  outline: none;
+  border-color: #111827;
+  box-shadow: 0 0 0 3px rgb(17 24 39 / 0.12);
 }
 
 .magic-tree-share {
@@ -43,6 +64,20 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.magic-tree-share:hover {
+  background: #1f2937;
+}
+
+.magic-tree-share:active {
+  transform: translateY(1px);
+}
+
+.magic-tree-share:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(17 24 39 / 0.3);
 }
 
 .magic-tree-error {
@@ -58,14 +93,24 @@
   flex-wrap: wrap;
 }
 
-.magic-tree-season,
-.magic-tree-mute {
+.magic-tree-season {
   padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid #e2e8f0;
   background: #fff;
   font-size: 13px;
   cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.magic-tree-season:hover {
+  border-color: #94a3b8;
+}
+
+.magic-tree-season:focus-visible,
+.magic-tree-palette:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(17 24 39 / 0.2);
 }
 
 .magic-tree-season.is-active {
@@ -80,6 +125,11 @@
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.magic-tree-palette:hover {
+  transform: scale(1.1);
 }
 
 .magic-tree-palette.is-active {

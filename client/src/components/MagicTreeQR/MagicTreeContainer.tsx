@@ -24,7 +24,6 @@ export function MagicTreeContainer() {
   const [urlInput, setUrlInput] = useState(initial.targetUrl);
   const [season, setSeason] = useState<SeasonId>(initial.season);
   const [palette, setPalette] = useState<PaletteId>(initial.palette);
-  const [muted, setMuted] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -62,10 +61,6 @@ export function MagicTreeContainer() {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
     };
   }, [urlInput, season, palette]);
-
-  useEffect(() => {
-    managerRef.current?.audio.setMuted(muted);
-  }, [muted]);
 
   const handleTap = () => managerRef.current?.toggleView();
 
@@ -115,9 +110,6 @@ export function MagicTreeContainer() {
             {SEASON_THEMES[id].label}
           </button>
         ))}
-        <button type="button" onClick={() => setMuted((m) => !m)} className="magic-tree-mute">
-          {muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
-        </button>
       </div>
 
       <div className="magic-tree-palettes">
