@@ -81,7 +81,20 @@ export function MagicTreeContainer() {
 
   return (
     <div className="magic-tree">
-      <canvas ref={canvasRef} className="magic-tree-canvas" onClick={handleTap} />
+      <canvas
+        ref={canvasRef}
+        className="magic-tree-canvas"
+        onClick={handleTap}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleTap();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="Chạm hoặc nhấn Enter để xem mã QR"
+      />
       <p className="magic-tree-hint">Chạm vào cây để xem mã QR</p>
 
       <div className="magic-tree-controls">
