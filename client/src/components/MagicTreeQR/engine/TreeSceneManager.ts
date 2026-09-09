@@ -19,6 +19,7 @@ export class TreeSceneManager {
   private camera: THREE.PerspectiveCamera;
   private orthoCamera: THREE.OrthographicCamera;
   private orthoHalfWidth = 10;
+  private gridSize = 0;
   private cameraAnimator: CameraAnimator;
   private clock = new THREE.Clock();
   private frameId: number | null = null;
@@ -51,6 +52,7 @@ export class TreeSceneManager {
     this.clearScene();
 
     const { size, matrix } = buildQRMatrix(config.targetUrl);
+    this.gridSize = size;
     const blocks = generateVoxelBlocks(matrix, size);
     const theme = SEASON_THEMES[config.season];
     const accent = PALETTE_PRESETS.find((p) => p.id === config.palette)?.color ?? theme.canopyPrimary;
@@ -118,6 +120,7 @@ export class TreeSceneManager {
     if (clientWidth === 0 || clientHeight === 0) return;
     this.camera.aspect = clientWidth / clientHeight;
     this.camera.updateProjectionMatrix();
+    if (this.gridSize > 0) this.cameraAnimator.frameGrid(this.gridSize);
     this.updateOrthoFrustum();
     this.renderer.setSize(clientWidth, clientHeight, false);
   };
