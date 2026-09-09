@@ -32,7 +32,7 @@ export function buildGroundingDecal(radius: number): GroundingDecalResult {
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.rotation.x = -Math.PI / 2;
-  mesh.position.y = -0.02;
+  mesh.position.y = 0.49;
 
   return {
     mesh,
