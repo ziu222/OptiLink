@@ -129,7 +129,7 @@ export function ShortenedLinkRow({
     >
       <Cell>
         <Main>{name}</Main>
-        <Sub>Created by {user?.fullName ?? 'Unknown'}</Sub>
+        <Sub>Created by {user?.fullName || user?.username || 'Unknown'}</Sub>
         <Extra>
           <Status active={isActive}>{isActive ? 'Active' : 'Inactive'}</Status>
           <Separator />

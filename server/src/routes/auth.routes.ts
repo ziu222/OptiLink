@@ -31,11 +31,11 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [fullName, email, password, confirmPassword]
+ *             required: [username, email, password, confirmPassword]
  *             properties:
- *               fullName:
+ *               username:
  *                 type: string
- *                 example: "Nguyen Van A"
+ *                 example: "nguyenvana"
  *               email:
  *                 type: string
  *                 example: "nguyenvana@example.com"
@@ -49,7 +49,7 @@ const router = Router();
  *       201:
  *         description: Đăng ký thành công. Trả về accessToken + user; refresh token đặt trong httpOnly cookie.
  *       409:
- *         description: Email đã tồn tại
+ *         description: Email hoặc username đã tồn tại
  *       422:
  *         description: Dữ liệu không hợp lệ
  */
@@ -92,10 +92,11 @@ router.post('/verify-email', asyncHandler(authController.verifyEmail));
  *         application/json:
  *           schema:
  *             type: object
- *             required: [email, password]
+ *             required: [identifier, password]
  *             properties:
- *               email:
+ *               identifier:
  *                 type: string
+ *                 description: Email hoặc username
  *                 example: "nguyenvana@example.com"
  *               password:
  *                 type: string
@@ -104,7 +105,7 @@ router.post('/verify-email', asyncHandler(authController.verifyEmail));
  *       200:
  *         description: Đăng nhập thành công. Trả về accessToken + user; refresh token đặt trong httpOnly cookie.
  *       401:
- *         description: Sai email hoặc mật khẩu
+ *         description: Sai email/username hoặc mật khẩu
  */
 router.post('/login', authLimiter, validate(loginSchema), asyncHandler(authController.login));
 
@@ -169,6 +170,9 @@ router.get('/me', authenticate, asyncHandler(authController.getMe));
  *           schema:
  *             type: object
  *             properties:
+ *               username:
+ *                 type: string
+ *                 example: "nguyenvana"
  *               fullName:
  *                 type: string
  *               avatarUrl:
@@ -180,6 +184,8 @@ router.get('/me', authenticate, asyncHandler(authController.getMe));
  *         description: Cập nhật thành công
  *       401:
  *         description: Chưa đăng nhập
+ *       409:
+ *         description: Username đã tồn tại
  */
 router.put('/profile', authenticate, validate(updateProfileSchema), asyncHandler(authController.updateProfile));
 

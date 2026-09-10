@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
   email: string;
+  username: string;
   passwordHash: string;
   fullName: string;
   avatarUrl: string;
@@ -19,8 +20,9 @@ export interface IUser extends Document {
 const UserSchema = new Schema<IUser>(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    username: { type: String, lowercase: true, trim: true, match: /^[a-z0-9_.-]+$/ },
     passwordHash: { type: String, required: true, select: false },
-    fullName: { type: String, required: true },
+    fullName: { type: String, default: '' },
     avatarUrl: { type: String, default: '' },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     tier: { type: String, enum: ['FREE', 'PREMIUM'], default: 'FREE' },
@@ -29,6 +31,13 @@ const UserSchema = new Schema<IUser>(
     refreshTokenHash: { type: String, select: false, default: null },
   },
   { timestamps: true }
+);
+
+// Chỉ ràng buộc unique với những user thực sự có username — các tài khoản cũ
+// chưa đặt username sẽ không bị coi là trùng nhau ở giá trị `null`.
+UserSchema.index(
+  { username: 1 },
+  { unique: true, partialFilterExpression: { username: { $type: 'string' } } }
 );
 
 UserSchema.methods.comparePassword = function (this: IUser, plain: string): Promise<boolean> {

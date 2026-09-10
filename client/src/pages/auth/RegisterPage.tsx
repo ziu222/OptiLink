@@ -9,6 +9,7 @@ import { PictureFrame } from '../../components/Home/PictureFrame';
 import { OAuthButtons } from './OAuthButtons';
 import { registerSchema } from './schemas';
 import type { RegisterValues } from './schemas';
+import heroIllustration from '../../assets/hero-shorten-illustration.png';
 import './authForm.css';
 
 export function RegisterPage() {
@@ -40,7 +41,11 @@ export function RegisterPage() {
 
       <main className="authform-main">
         <div className="authform-layout">
-          <PictureFrame className="authform-frame" />
+          <PictureFrame
+            className="authform-frame"
+            src={heroIllustration}
+            alt="Shorten a long link into a branded opti.link URL"
+          />
 
           <form className="authform-panel" onSubmit={onSubmit} noValidate>
             <h1 className="authform-title">Create an Account</h1>
@@ -48,9 +53,14 @@ export function RegisterPage() {
             {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
             <label className="authform-field">
-              <span className="authform-label">Full name</span>
-              <input type="text" autoComplete="name" className="authform-input" {...register('fullName')} />
-              {errors.fullName && <em className="authform-field-error">{errors.fullName.message}</em>}
+              <span className="authform-label">Username</span>
+              <input
+                type="text"
+                autoComplete="username"
+                className="authform-input"
+                {...register('username')}
+              />
+              {errors.username && <em className="authform-field-error">{errors.username.message}</em>}
             </label>
 
             <label className="authform-field">

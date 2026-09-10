@@ -25,15 +25,22 @@
 .authform-layout {
   display: grid;
   gap: 3rem;
-  align-items: stretch;
+  align-items: start;
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 24px;
   width: 100%;
 }
 
+/* Borderless, padding-free image column — the hero art bleeds straight onto
+   the page instead of sitting inside the .picture-frame placeholder box, and
+   its top edge lines up with the top of the form panel. */
 .authform-frame {
   display: none;
+  min-height: 0;
+  border: none;
+  padding: 0;
+  align-items: flex-start;
 }
 
 .authform-panel {
@@ -84,7 +91,7 @@
 
 .authform-hint-link {
   font-size: 0.8125rem;
-  color: var(--accent);
+  color: var(--text-h);
   text-decoration: none;
 }
 
@@ -200,7 +207,7 @@
 
 .authform-footer a {
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text-h);
   text-decoration: none;
 }
 

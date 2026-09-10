@@ -44,7 +44,7 @@ export function Hero() {
         setTimeout(() => setCopied(false), 2000);
       })
       .catch(() => {
-        /* clipboard access denied — nothing more we can do here */
+        /* clipboard access denied, nothing more we can do here */
       });
   };
 
@@ -77,7 +77,7 @@ export function Hero() {
                       required
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      placeholder="https://example.com/very-long-link-to-shorten"
+                      placeholder="https://example.com/really/long/link/to/shorten"
                       className="hero-input"
                     />
                     <button type="submit" disabled={loading} className="hero-button">

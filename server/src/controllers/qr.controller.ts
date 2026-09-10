@@ -125,6 +125,31 @@ export class QrController {
       next(error);
     }
   }
+
+  /**
+   * Lấy (hoặc tự tạo mới nếu chưa có) mã QR gắn với một link
+   * GET /api/qr/link/:linkId
+   */
+  async getLinkQr(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw AppError.unauthorized('Bạn cần đăng nhập');
+      }
+
+      const linkId = Array.isArray(req.params.linkId)
+        ? req.params.linkId[0]
+        : req.params.linkId;
+      const qr = await qrService.getOrCreateForLink(userId, linkId);
+
+      res.status(200).json({
+        success: true,
+        data: { qr },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const qrController = new QrController();

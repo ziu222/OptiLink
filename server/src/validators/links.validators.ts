@@ -21,6 +21,7 @@ export const createLinkSchema = z.object({
 
 export const verifyLinkSchema = z.object({
   password: z.string().min(1, 'Password is required'),
+  src: z.enum(['direct', 'qr']).optional(),
 });
 
 export const listLinksQuerySchema = z.object({

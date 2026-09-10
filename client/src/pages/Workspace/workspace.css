@@ -241,6 +241,20 @@
   color: #16a34a;
 }
 
+/* Link detail page */
+.link-detail-config-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 2rem; /* matches .page-content's vertical gap */
+  align-items: stretch; /* QR panel matches the config panel's height */
+}
+
+@media (max-width: 900px) {
+  .link-detail-config-row {
+    grid-template-columns: 1fr; /* stack once the sidebar leaves too little room */
+  }
+}
+
 /* Shorten Link page */
 .shorten-form {
   display: flex;

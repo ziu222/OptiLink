@@ -1,0 +1,55 @@
+/* Make the panel body a column so the preview can absorb the height the
+   config panel forces on this row (see .link-detail-config-row in
+   workspace.css) and the actions stay pinned to the bottom. */
+.qr-panel .content-panel-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.qr-panel-preview {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0 1.5rem;
+}
+
+/* Square, grows to fill whatever space the row gives it (capped so it doesn't
+   get absurd next to a very tall config panel). The source preview is 256px,
+   so pixelated keeps the modules crisp when it scales up. */
+.qr-panel-preview img {
+  max-width: min(100%, 400px);
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border: 1px solid var(--border);
+  background: #fff; /* keep the QR quiet zone white in dark mode */
+}
+
+.qr-panel-status {
+  margin: 0;
+  padding: 3rem 0;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+/* The shared .button is a filled CTA; the "Customize" link is a quiet outline:
+   gray by default, black text + border on hover. */
+.qr-panel-customize {
+  background: var(--bg);
+  border-color: var(--text);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.qr-panel-customize:hover {
+  border-color: var(--text-h);
+  color: var(--text-h);
+}

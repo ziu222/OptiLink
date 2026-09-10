@@ -9,6 +9,7 @@ import { PictureFrame } from '../../components/Home/PictureFrame';
 import { OAuthButtons } from './OAuthButtons';
 import { loginSchema } from './schemas';
 import type { LoginValues } from './schemas';
+import heroIllustration from '../../assets/hero-shorten-illustration.png';
 import './authForm.css';
 
 export function LoginPage() {
@@ -27,7 +28,7 @@ export function LoginPage() {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await login(values.email, values.password);
+      await login(values.identifier, values.password);
       navigate('/dashboard', { replace: true });
     } catch (err) {
       applyServerError<LoginValues>(err, setError);
@@ -40,7 +41,11 @@ export function LoginPage() {
 
       <main className="authform-main">
         <div className="authform-layout">
-          <PictureFrame className="authform-frame" />
+          <PictureFrame
+            className="authform-frame"
+            src={heroIllustration}
+            alt="Shorten a long link into a branded opti.link URL"
+          />
 
           <form className="authform-panel" onSubmit={onSubmit} noValidate>
             <h1 className="authform-title">Welcome Back</h1>
@@ -48,9 +53,16 @@ export function LoginPage() {
             {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
             <label className="authform-field">
-              <span className="authform-label">Email</span>
-              <input type="email" autoComplete="email" className="authform-input" {...register('email')} />
-              {errors.email && <em className="authform-field-error">{errors.email.message}</em>}
+              <span className="authform-label">Email or username</span>
+              <input
+                type="text"
+                autoComplete="username"
+                className="authform-input"
+                {...register('identifier')}
+              />
+              {errors.identifier && (
+                <em className="authform-field-error">{errors.identifier.message}</em>
+              )}
             </label>
 
             <label className="authform-field">

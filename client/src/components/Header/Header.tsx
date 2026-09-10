@@ -20,6 +20,9 @@ export function Header({ forceGuest = false }: HeaderProps) {
 
   const authed = status === 'authenticated' && !forceGuest;
 
+  // New accounts have no fullName — fall back to the username for the avatar initial.
+  const displayName = user?.fullName || user?.username || '';
+
   const navItems = authed ? [...navLinks, { label: 'Dashboard', to: '/dashboard' }] : navLinks;
 
   const handleLogout = async () => {
@@ -49,7 +52,7 @@ export function Header({ forceGuest = false }: HeaderProps) {
               Log out
             </button>
             <Link to="/dashboard" title="Go to dashboard" className="site-header__avatar">
-              {user?.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}
+              {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
             </Link>
           </div>
         ) : (

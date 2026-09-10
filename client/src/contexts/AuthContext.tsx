@@ -9,7 +9,7 @@ type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 interface AuthContextValue {
   user: User | null;
   status: AuthStatus;
-  login: (email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
@@ -46,8 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const { accessToken, user: current } = await authApi.login({ email, password });
+  const login = useCallback(async (identifier: string, password: string) => {
+    const { accessToken, user: current } = await authApi.login({ identifier, password });
     setAccessToken(accessToken);
     setUser(current);
     setStatus('authenticated');

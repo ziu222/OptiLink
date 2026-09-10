@@ -17,7 +17,7 @@
 }
 
 .site-footer__logo {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-h);
@@ -26,7 +26,7 @@
 
 .site-footer__tagline {
   margin-top: 0.75rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--text);
 }
 
@@ -38,7 +38,7 @@
 
 .site-footer__heading {
   margin: 0 0 0.75rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-h);
 }
@@ -53,7 +53,7 @@
 }
 
 .site-footer__link {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--text);
   text-decoration: none;
   transition: color 0.15s;
@@ -67,7 +67,7 @@
   border-top: 1px solid var(--border);
   padding: 1.5rem 24px;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--text);
 }
 

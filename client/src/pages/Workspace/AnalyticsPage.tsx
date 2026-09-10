@@ -37,7 +37,7 @@ export function AnalyticsPage() {
   const [links, setLinks] = useState<ShortenedLink[]>([]);
   const [loadingLinks, setLoadingLinks] = useState(true);
   const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [appliedSearch, setAppliedSearch] = useState('');
   const [status, setStatus] = useState<LinkStatus>('all');
   const [sort, setSort] = useState<LinkSort>('newest');
   const [page, setPage] = useState(1);
@@ -58,17 +58,16 @@ export function AnalyticsPage() {
       });
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-      setPage(1);
-    }, 300);
-    return () => clearTimeout(timer);
+  // Search runs only on submit (Enter) via the Toolbar's onSearchSubmit, not on
+  // every keystroke — see the <Toolbar> below.
+  const submitSearch = useCallback(() => {
+    setAppliedSearch(search);
+    setPage(1);
   }, [search]);
 
   const fetchLinks = useCallback(() => {
     let cancelled = false;
-    listLinks({ search: debouncedSearch || undefined, status, sort, page, limit: PAGE_SIZE })
+    listLinks({ search: appliedSearch || undefined, status, sort, page, limit: PAGE_SIZE })
       .then((result) => {
         if (cancelled) return;
         setLinks(result.links);
@@ -83,7 +82,7 @@ export function AnalyticsPage() {
     return () => {
       cancelled = true;
     };
-  }, [debouncedSearch, status, sort, page]);
+  }, [appliedSearch, status, sort, page]);
 
   useEffect(() => fetchLinks(), [fetchLinks]);
 
@@ -98,7 +97,7 @@ export function AnalyticsPage() {
   // Drop the selection whenever the visible set of links changes.
   useEffect(() => {
     setSelectedIds(new Set());
-  }, [debouncedSearch, status, sort, page]);
+  }, [appliedSearch, status, sort, page]);
 
   // Default the breakdown selector to the first loaded link.
   useEffect(() => {
@@ -217,6 +216,10 @@ export function AnalyticsPage() {
                   title="Devices"
                   data={linkAnalytics.devices.map((d) => ({ label: d.device, value: d.clicks }))}
                 />
+                <BreakdownPanel
+                  title="Traffic source"
+                  data={linkAnalytics.sources.map((s) => ({ label: s.source, value: s.clicks }))}
+                />
               </>
             )}
           </div>
@@ -234,6 +237,7 @@ export function AnalyticsPage() {
             <Toolbar
               search={search}
               onSearchChange={setSearch}
+              onSearchSubmit={submitSearch}
               searchPlaceholder="Search links"
               actionsLabel={
                 multiSelect && selectedIds.size ? `Actions (${selectedIds.size})` : 'Actions'

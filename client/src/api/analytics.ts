@@ -22,12 +22,18 @@ export interface DeviceBreakdown {
   clicks: number;
 }
 
+export interface SourceBreakdown {
+  source: string;
+  clicks: number;
+}
+
 export interface LinkAnalyticsData {
   linkId: string;
   totalClicks: number;
   clicksToday: number;
   locations: LocationBreakdown[];
   devices: DeviceBreakdown[];
+  sources: SourceBreakdown[];
 }
 
 export const getOverview = async (): Promise<OverviewData> => {

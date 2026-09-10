@@ -30,31 +30,41 @@ export class AuthService {
   }
 
   async register(input: {
-    fullName: string;
+    username: string;
     email: string;
     password: string;
   }): Promise<AuthTokens & { user: IUser }> {
-    const existing = await User.findOne({ email: input.email });
+    // email + username đều lưu ở dạng chữ thường — chuẩn hoá trước khi so sánh/tạo mới
+    const email = input.email.trim().toLowerCase();
+    const username = input.username.trim().toLowerCase();
+
+    const existing = await User.findOne({ $or: [{ email }, { username }] });
     if (existing) {
-      throw AppError.conflict('email already exists', 'DUPLICATE_KEY');
+      if (existing.email === email) {
+        throw AppError.conflict('email already exists', 'DUPLICATE_KEY');
+      }
+      throw AppError.conflict('username already exists', 'DUPLICATE_KEY');
     }
 
     const passwordHash = await bcrypt.hash(input.password, 10);
-    const user = await User.create({
-      fullName: input.fullName,
-      email: input.email,
-      passwordHash,
-    });
+    const user = await User.create({ username, email, passwordHash });
 
     const tokens = this.issueTokens(user);
     await this.persistRefreshToken(user, tokens.refreshToken);
     return { user, ...tokens };
   }
 
-  async login(input: { email: string; password: string }): Promise<AuthTokens & { user: IUser }> {
-    const user = await User.findOne({ email: input.email }).select('+passwordHash +refreshTokenHash');
+  async login(input: {
+    identifier: string;
+    password: string;
+  }): Promise<AuthTokens & { user: IUser }> {
+    // email và username đều lưu ở dạng chữ thường nên chỉ cần một giá trị tra cứu cho cả hai
+    const id = input.identifier.trim().toLowerCase();
+    const user = await User.findOne({ $or: [{ email: id }, { username: id }] }).select(
+      '+passwordHash +refreshTokenHash'
+    );
     if (!user || !(await user.comparePassword(input.password))) {
-      throw AppError.unauthorized('Invalid email or password');
+      throw AppError.unauthorized('Invalid email/username or password');
     }
 
     const tokens = this.issueTokens(user);
@@ -94,9 +104,18 @@ export class AuthService {
 
   async updateProfile(
     userId: string,
-    input: { fullName?: string; avatarUrl?: string; timezone?: string }
+    input: { username?: string; fullName?: string; avatarUrl?: string; timezone?: string }
   ): Promise<IUser> {
     const update: Record<string, unknown> = {};
+    if (input.username !== undefined) {
+      // Đảm bảo username là duy nhất — bỏ qua chính user đang cập nhật
+      const username = input.username.trim().toLowerCase();
+      const taken = await User.exists({ username, _id: { $ne: userId } });
+      if (taken) {
+        throw AppError.conflict('username already exists', 'DUPLICATE_KEY');
+      }
+      update.username = username;
+    }
     if (input.fullName !== undefined) update.fullName = input.fullName;
     if (input.avatarUrl !== undefined) update.avatarUrl = input.avatarUrl;
     if (input.timezone !== undefined) update.timezone = input.timezone;

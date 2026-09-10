@@ -11,6 +11,11 @@ const DEVICE_LABELS: Record<string, string> = {
   unknown: 'Unknown',
 };
 
+const SOURCE_LABELS: Record<string, string> = {
+  direct: 'Short link',
+  qr: 'QR code',
+};
+
 export interface RecentActivityDTO {
   linkId: string;
   clickedAt: string;
@@ -29,6 +34,7 @@ export interface LinkAnalyticsDTO {
   clicksToday: number;
   locations: { country: string; clicks: number }[];
   devices: { device: string; clicks: number }[];
+  sources: { source: string; clicks: number }[];
 }
 
 const HOUR_MS = 3_600_000;
@@ -147,7 +153,7 @@ export class AnalyticsService {
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
-    const [totalClicks, clicksToday, locations, devices] = await Promise.all([
+    const [totalClicks, clicksToday, locations, devices, sources] = await Promise.all([
       Analytics.countDocuments(match),
       Analytics.countDocuments({ linkId: link._id, createdAt: { $gte: startOfToday } }),
       Analytics.aggregate([
@@ -160,6 +166,12 @@ export class AnalyticsService {
         { $group: { _id: '$deviceType', clicks: { $sum: 1 } } },
         { $sort: { clicks: -1 } },
       ]),
+      Analytics.aggregate([
+        { $match: match },
+        // Older logs predate the `source` field — treat them as direct visits.
+        { $group: { _id: { $ifNull: ['$source', 'direct'] }, clicks: { $sum: 1 } } },
+        { $sort: { clicks: -1 } },
+      ]),
     ]);
 
     return {
@@ -169,6 +181,10 @@ export class AnalyticsService {
       locations: locations.map((row) => ({ country: row._id ?? 'unknown', clicks: row.clicks })),
       devices: devices.map((row) => ({
         device: DEVICE_LABELS[row._id as string] ?? 'Unknown',
+        clicks: row.clicks,
+      })),
+      sources: sources.map((row) => ({
+        source: SOURCE_LABELS[row._id as string] ?? SOURCE_LABELS.direct,
         clicks: row.clicks,
       })),
     };

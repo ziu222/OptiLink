@@ -86,6 +86,10 @@ export function LinkAnalyticsPage() {
                 title="Devices"
                 data={linkAnalytics.devices.map((d) => ({ label: d.device, value: d.clicks }))}
               />
+              <BreakdownPanel
+                title="Traffic source"
+                data={linkAnalytics.sources.map((s) => ({ label: s.source, value: s.clicks }))}
+              />
             </div>
           </>
         )}

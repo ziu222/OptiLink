@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { Header } from '../components/Header/Header';
 import { Footer } from '../components/Footer/Footer';
@@ -17,6 +17,8 @@ type GateValues = z.infer<typeof gateSchema>;
 
 export function LinkGatePage() {
   const { slug } = useParams<{ slug: string }>();
+  const [searchParams] = useSearchParams();
+  const src = searchParams.get('src') ?? undefined;
   const {
     register,
     handleSubmit,
@@ -26,7 +28,7 @@ export function LinkGatePage() {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      const originalUrl = await verifyLinkPassword(slug ?? '', values.password);
+      const originalUrl = await verifyLinkPassword(slug ?? '', values.password, src);
       window.location.assign(originalUrl);
     } catch (err) {
       applyServerError<GateValues>(err, setError);

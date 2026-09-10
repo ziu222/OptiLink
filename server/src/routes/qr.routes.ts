@@ -186,4 +186,26 @@ router.get(
  */
 router.delete('/:id', authenticate, qrController.deleteQr);
 
+/**
+ * @swagger
+ * /api/qr/link/{linkId}:
+ *   get:
+ *     summary: Lấy mã QR gắn với một link (tự tạo nếu link chưa có)
+ *     tags: [QRCode]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: linkId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Trả về mã QR của link
+ *       404:
+ *         description: Không tìm thấy link
+ */
+router.get('/link/:linkId', authenticate, qrController.getLinkQr);
+
 export const qrRoutes = router;
