@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { ArrowLeft, ArrowUpRight, Check, Download, Flower2, Info, Leaf, Link2, Pause, Play, QrCode, ScanLine, Snowflake, Sprout, Sun, X } from 'lucide-react';
+import { ArrowUpRight, Check, Download, Flower2, Info, Leaf, Link2, Pause, Play, QrCode, Snowflake, Sprout, Sun, X } from 'lucide-react';
 import { buildQRMatrix } from '../MagicTreeQR/engine/QRMatrixBuilder';
 import { decodeShareState, encodeShareState } from '../MagicTreeQR/engine/shareState';
 import type { MagicTreeConfig, SeasonId } from '../MagicTreeQR/types/magicTree';
@@ -49,6 +49,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
   const [error, setError] = useState('');
   const [flat, setFlat] = useState(false);
   const [settled, setSettled] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
   const [paused, setPaused] = useState(false);
   const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [motionOverride, setMotionOverride] = useState(() => {
@@ -84,8 +85,9 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
         setSupport('unsupported');
         setSettled(true);
         setFlat(true);
+        setTransitioning(false);
       };
-      manager.onViewSettled = isFlat => setSettled(isFlat);
+      manager.onViewSettled = isFlat => { setSettled(isFlat); setTransitioning(false); };
       managerRef.current = manager;
       setSupport('ready');
     }).catch(() => { if (!cancelled) setSupport('unsupported'); });
@@ -136,6 +138,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
   const toggle = (immediate = false) => {
     if (!managerRef.current) return;
     setSettled(false);
+    setTransitioning(true);
     setFlat(managerRef.current.toggleView(immediate));
   };
 
@@ -170,12 +173,11 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
   };
 
   return <section className={`tree-world ${embedded ? 'tree-world--embedded' : ''}`} data-season={season}
-    data-view={support === 'unsupported' ? 'fallback' : settled ? 'flat' : flat ? 'transition' : 'tree'}
+    data-view={support === 'unsupported' ? 'fallback' : transitioning ? 'transition' : settled ? 'flat' : 'tree'}
     style={{ '--tree-bg': art.background, '--tree-ink': art.ink, '--tree-tint': art.canopy } as CSSProperties}>
     <header className="tree-header">
       <a className="tree-brand" href={embedded ? '/dashboard' : '/'} aria-label="Về OptiLink"><span className="tree-brand-mark"><Sprout size={23} strokeWidth={1.6} /></span><span>OptiLink <small>MAGIC TREE</small></span></a>
       <div className="tree-header-actions">
-        {flat && support === 'ready' && <button className="tree-icon-button" onClick={() => toggle()} aria-label="Trở về khu vườn" title="Trở về khu vườn"><ArrowLeft size={18} /></button>}
         {embedded && <a href={`/magic-tree?q=${encodeURIComponent(encodeShareState(config))}`} className="tree-icon-button" aria-label="Mở toàn màn hình"><ArrowUpRight size={19} /></a>}
         <button className="tree-icon-button" onClick={download} disabled={!!error || pending} aria-label="Tải mã QR" title="Tải mã QR"><Download size={18} /></button>
         <button className="tree-icon-button" onClick={() => setInfo(true)} aria-label="Giới thiệu Magic Tree"><Info size={18} /></button>
@@ -184,8 +186,8 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
 
     <div className="tree-intro">
       <span className="tree-eyebrow">MỘT LIÊN KẾT · MỘT KHU VƯỜN</span>
-      <h1>{flat ? 'Một chạm, kết nối.' : current.title}</h1>
-      <p>{flat ? 'Mở camera và quét mã để ghé thăm liên kết.' : current.subtitle}</p>
+      <h1>{flat || support === 'unsupported' ? 'Một chạm, kết nối.' : current.title}</h1>
+      <p>{flat || support === 'unsupported' ? 'Mở camera và quét mã để ghé thăm liên kết.' : current.subtitle}</p>
     </div>
 
     <div className="tree-stage">
@@ -201,11 +203,19 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
 
     <aside className="tree-specimen" aria-hidden="true"><span>GARDEN / {current.number}</span><span>{current.detail}</span></aside>
     <div className="tree-dock">
-      {support === 'ready' && !flat && <button className="tree-reveal" onClick={() => toggle()}>
-        {flat ? <ArrowLeft size={14} /> : <ScanLine size={15} />}
-        {flat ? 'Trở về khu vườn' : 'Chạm vào cây để xem QR'}
-      </button>}
       <div className="tree-control-card">
+        <div className="tree-view-toolbar">
+          <div className="tree-view-switch" role="group" aria-label="Chế độ hiển thị">
+            <button aria-pressed={!flat && support !== 'unsupported'} disabled={support !== 'ready'} onClick={event => { if (flat) toggle(event.detail === 0); }}><Sprout size={16} /> Cây 3D</button>
+            <button aria-pressed={flat || support === 'unsupported'} disabled={support !== 'ready'} onClick={event => { if (!flat) toggle(event.detail === 0); }}><QrCode size={16} /> Mã QR 2D</button>
+          </div>
+          <button className="tree-motion-toggle" aria-pressed={!paused && !effectiveReduced}
+            aria-label={effectiveReduced ? 'Bật hiệu ứng chuyển động' : paused ? 'Tiếp tục chuyển động' : 'Tạm dừng chuyển động'}
+            onClick={toggleMotion} disabled={support !== 'ready'}>
+            {paused || effectiveReduced ? <Play size={14} /> : <Pause size={14} />}
+            <span>{effectiveReduced ? 'Bật hiệu ứng' : paused ? 'Tiếp tục' : 'Đang chuyển động'}</span>
+          </button>
+        </div>
         <div className="tree-link-row">
           <Link2 size={18} aria-hidden="true" />
           <input aria-label="Liên kết của bạn" aria-invalid={!!error} aria-describedby={error ? 'tree-error' : undefined}
@@ -220,16 +230,10 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
               <item.icon size={17} strokeWidth={1.6} /><span>{item.label}</span>
             </button>)}
           </div>
-          <span className="tree-control-divider" />
-          <button className="tree-icon-button tree-pause" aria-label={effectiveReduced ? 'Bật hiệu ứng chuyển động' : paused ? 'Tiếp tục chuyển động' : 'Tạm dừng chuyển động'}
-            title={effectiveReduced ? 'Bật hiệu ứng chuyển động' : paused ? 'Tiếp tục chuyển động' : 'Tạm dừng chuyển động'}
-            aria-pressed={paused || effectiveReduced} onClick={toggleMotion} disabled={support !== 'ready'}>
-            {paused || effectiveReduced ? <Play size={16} /> : <Pause size={16} />}
-          </button>
         </div>
       </div>
       <p className={`tree-footnote ${error ? 'tree-error' : ''}`} id="tree-error" role="status">
-        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : effectiveReduced ? 'Chuyển động đang tắt theo thiết bị. Nhấn ▶ để bật hiệu ứng.' : 'Mỗi liên kết, một dáng cây. Chọn mùa của riêng bạn.')}
+        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : support === 'unsupported' ? 'Trình duyệt đang dùng QR tĩnh · Sẵn sàng để quét' : transitioning ? (flat ? 'Khu vườn đang hạ xuống · Đang mở mã QR…' : 'Khu vườn đang trở lại…') : effectiveReduced ? 'Thiết bị đang giảm chuyển động. Chọn “Bật hiệu ứng” để xem animation.' : settled ? 'Mã QR đã sẵn sàng · Mở camera để quét' : `${current.detail} · Chọn Mã QR 2D để chuyển cảnh`)}
       </p>
     </div>
     <dialog ref={dialogRef} className="tree-dialog" onCancel={() => setInfo(false)} onClick={event => { if (event.target === event.currentTarget) setInfo(false); }}>

@@ -2,11 +2,10 @@ import { buildQRMatrix, cellToWorld } from '../../MagicTreeQR/engine/QRMatrixBui
 import { SEASON_THEMES } from '../../MagicTreeQR/types/magicTree';
 import { TREE_ART } from './artDirection';
 import type { MagicTreeConfig } from '../../MagicTreeQR/types/magicTree';
-import { generateBranches } from './BranchGenerator';
-import { BRANCH_VERTEX_FLOATS, buildBranchMesh } from './BranchMesh';
+import { BRANCH_VERTEX_FLOATS } from './BranchMesh';
+import { botanicalBranches, botanicalCanopy, loadBotanicalAssets, type BotanicalAssets } from './BotanicalAssets';
 import { CameraMatrices } from './CameraMatrices';
 import { generateGrassRing, gridHalfExtent } from './GrassRing';
-import { generateLeaves } from './LeafInstances';
 import { generateFallingParticles } from './PetalParticles';
 import { seedFromUrl } from './seedFromUrl';
 import { DEPTH_FORMAT, SAMPLE_COUNT, WebGPUContext } from './WebGPUContext';
@@ -57,6 +56,7 @@ function hexToRgb(hex: string): [number, number, number] {
 
 export class WebGPUTreeSceneManager {
   private readonly gpu: WebGPUContext;
+  private readonly assets: BotanicalAssets;
   private readonly camera = new CameraMatrices();
 
   private readonly frameUniform: GPUBuffer;
@@ -86,6 +86,10 @@ export class WebGPUTreeSceneManager {
   private branchIndexCount = 0;
   private canopyInstances: GPUBuffer | null = null;
   private canopyCount = 0;
+  private canopyMesh: GPUBuffer | null = null;
+  private canopyVertexCount = 0;
+  private grassMesh: GPUBuffer | null = null;
+  private grassVertexCount = 0;
   private fallingInstances: GPUBuffer | null = null;
   private fallingCount = 0;
   private grassInstances: GPUBuffer | null = null;
@@ -99,8 +103,9 @@ export class WebGPUTreeSceneManager {
   private lastTime = performance.now();
   private disposed = false;
 
-  private constructor(gpu: WebGPUContext) {
+  private constructor(gpu: WebGPUContext, assets: BotanicalAssets) {
     this.gpu = gpu;
+    this.assets = assets;
     const { device } = gpu;
 
     this.frameUniform = device.createBuffer({
@@ -154,12 +159,19 @@ export class WebGPUTreeSceneManager {
         ],
       },
     ]);
+    const botanicalLayout: GPUVertexBufferLayout = {
+      arrayStride: 36, attributes: [
+        { shaderLocation: 0, offset: 0, format: 'float32x3' },
+        { shaderLocation: 1, offset: 12, format: 'float32x3' },
+        { shaderLocation: 2, offset: 24, format: 'float32x3' },
+      ],
+    };
     this.canopyPipeline = this.createPipeline(layout, canopyWgsl, [
-      cornerLayout,
+      botanicalLayout,
       {
         arrayStride: 16,
         stepMode: 'instance',
-        attributes: [{ shaderLocation: 1, offset: 0, format: 'float32x4' }],
+        attributes: [{ shaderLocation: 3, offset: 0, format: 'float32x4' }],
       },
     ]);
     this.fallingPipeline = this.createPipeline(layout, fallingWgsl, [
@@ -167,7 +179,11 @@ export class WebGPUTreeSceneManager {
       PARTICLE_INSTANCE_LAYOUT,
     ]);
     this.grassPipeline = this.createPipeline(layout, grassWgsl, [
-      PARTICLE_INSTANCE_LAYOUT,
+      botanicalLayout,
+      { arrayStride: 20, stepMode: 'instance', attributes: [
+        { shaderLocation: 3, offset: 0, format: 'float32x4' },
+        { shaderLocation: 4, offset: 16, format: 'float32' },
+      ] },
     ]);
     this.decalPipeline = this.createPipeline(layout, decalWgsl, [cornerLayout], true);
     this.platformPipeline = this.createPipeline(layout, platformWgsl, [{
@@ -197,7 +213,7 @@ export class WebGPUTreeSceneManager {
     gpu.device.pushErrorScope('validation');
     let manager: WebGPUTreeSceneManager | null = null;
     try {
-      manager = new WebGPUTreeSceneManager(gpu);
+      manager = new WebGPUTreeSceneManager(gpu, await loadBotanicalAssets());
       const error = await gpu.device.popErrorScope();
       if (error) { manager.dispose(); return null; }
       return manager;
@@ -268,9 +284,8 @@ export class WebGPUTreeSceneManager {
       }
     }
 
-    const segments = generateBranches(seed, size);
-    const mesh = buildBranchMesh(segments, seed);
-    const canopy = generateLeaves(segments, seed);
+    const mesh = botanicalBranches(this.assets, seed, size);
+    const canopy = botanicalCanopy(seed, size, config.season);
     const leaves = new Float32Array(canopy.leaves.length * 4);
     canopy.leaves.forEach((leaf, i) => {
       leaves.set([leaf.position[0], leaf.position[1], leaf.position[2], leaf.seed], i * 4);
@@ -282,13 +297,20 @@ export class WebGPUTreeSceneManager {
       falling.set([p.x, p.z, p.canopyY, p.drift, p.seed], i * 5);
     });
 
-    const blades = generateGrassRing(size, seed);
+    // Each Blender tuft already contains seventeen folded blades.
+    const blades = generateGrassRing(size, seed).filter((_, index) => index % 14 === 0);
     const grass = new Float32Array(blades.length * 5);
     blades.forEach((b, i) => {
       grass.set([b.x, b.z, b.height, b.rotation, b.seed], i * 5);
     });
 
     this.destroySceneBuffers();
+    const canopyMesh = this.assets.mesh(config.season);
+    this.canopyMesh = this.createGpuBuffer(canopyMesh, GPUBufferUsage.VERTEX);
+    this.canopyVertexCount = canopyMesh.length / 9;
+    const grassMesh = this.assets.mesh(`grass_${config.season}`);
+    this.grassMesh = this.createGpuBuffer(grassMesh, GPUBufferUsage.VERTEX);
+    this.grassVertexCount = grassMesh.length / 9;
     const platform = buildPlatformMesh(size);
     this.platformVertices = this.createGpuBuffer(platform, GPUBufferUsage.VERTEX);
     this.platformCount = platform.length / 6;
@@ -376,10 +398,11 @@ export class WebGPUTreeSceneManager {
       pass.draw(6, this.groundCount);
 
       // Outside the grid, so it can't cover a module and never dissolves.
-      if (treeAlpha > DISSOLVE_EPSILON && this.grassInstances && this.grassCount > 0) {
+      if (treeAlpha > DISSOLVE_EPSILON && this.grassInstances && this.grassMesh && this.grassCount > 0) {
         pass.setPipeline(this.grassPipeline);
-        pass.setVertexBuffer(0, this.grassInstances);
-        pass.draw(36, this.grassCount);
+        pass.setVertexBuffer(0, this.grassMesh);
+        pass.setVertexBuffer(1, this.grassInstances);
+        pass.draw(this.grassVertexCount, this.grassCount);
       }
 
       // Nothing above ground once the flat view is settled, so the QR can
@@ -391,11 +414,11 @@ export class WebGPUTreeSceneManager {
           pass.setIndexBuffer(this.branchIndices, 'uint32');
           pass.drawIndexed(this.branchIndexCount);
         }
-        if (this.canopyInstances && this.canopyCount > 0) {
+        if (this.canopyInstances && this.canopyMesh && this.canopyCount > 0) {
           pass.setPipeline(this.canopyPipeline);
-          pass.setVertexBuffer(0, this.quadBuffer);
+          pass.setVertexBuffer(0, this.canopyMesh);
           pass.setVertexBuffer(1, this.canopyInstances);
-          pass.draw(6, this.canopyCount);
+          pass.draw(this.canopyVertexCount, this.canopyCount);
         }
         if (this.fallingInstances && this.fallingCount > 0) {
           pass.setPipeline(this.fallingPipeline);
@@ -417,6 +440,8 @@ export class WebGPUTreeSceneManager {
   };
 
   private destroySceneBuffers(): void {
+    this.canopyMesh?.destroy(); this.canopyMesh = null;
+    this.grassMesh?.destroy(); this.grassMesh = null;
     this.platformVertices?.destroy();
     this.platformVertices = null;
     this.groundInstances?.destroy();

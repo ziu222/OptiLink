@@ -1,65 +1,47 @@
-// Canopy pipeline — camera-facing leaf quads with a gentle sway (spec §4.1
-// item 3, §5.1). Alpha-tested, never blended, so depth-write stays on and
-// thousands of quads need no sorting.
-
+// Blender-authored cupped flowers and folded leaves, instanced in world space.
 struct VertexOut {
   @builtin(position) clipPosition: vec4<f32>,
-  @location(0) color: vec3<f32>,
-  @location(1) corner: vec2<f32>,
-  @location(2) hash: f32,
+  @location(0) pigment: vec3<f32>,
+  @location(1) normal: vec3<f32>,
+  @location(2) seed: f32,
+  @location(3) height: f32,
+}
+
+fn orient(p: vec3<f32>, seed: f32) -> vec3<f32> {
+  let a = seed * 75.39;
+  let tilt = 0.3 + fract(seed * 17.0) * 2.5;
+  let q = vec3<f32>(p.x, p.y * cos(tilt) - p.z * sin(tilt), p.y * sin(tilt) + p.z * cos(tilt));
+  return vec3<f32>(q.x*cos(a)-q.z*sin(a),q.y,q.x*sin(a)+q.z*cos(a));
 }
 
 @vertex
-fn vertexMain(
-  @location(0) corner: vec2<f32>,
-  @location(1) instance: vec4<f32>,
-) -> VertexOut {
+fn vertexMain(@location(0) position: vec3<f32>, @location(1) normal: vec3<f32>,
+  @location(2) pigment: vec3<f32>, @location(3) instance: vec4<f32>) -> VertexOut {
   let seed = instance.w;
-  let flutter = sin(frame.time * 2.1 + seed * 39.0) * 0.16 * frame.windStrength;
-  let local = rotateLeaf(corner, seed * 6.283 + flutter);
-  let centre = revealPosition(instance.xyz + wind(instance.xyz));
-  let size = palette.bounds.w * 0.062 * (0.8 + seed * 0.45);
-  let world =
-    centre + frame.cameraRight.xyz * local.x * size + frame.cameraUp.xyz * local.y * size;
-
-  // Higher and randomly-varied leaves are brighter — this is what makes the
-  // canopy read as volume instead of a flat silhouette.
-  let heightT = clamp((instance.y - palette.bounds.x) / max(palette.bounds.y, 0.001), 0.0, 1.0);
-  let depth = clamp(1.0 - length(instance.xz) / max(palette.bounds.w, 1.0), 0.0, 1.0);
-  let shade = 0.77 + heightT * 0.25 + seed * 0.18 - depth * 0.06;
-
+  let release = smoothstep(seed * 0.2, 0.7 + seed * 0.12, frame.reveal);
+  let drift = sin(release * 3.14159) * palette.bounds.w * 0.1;
+  let centre = vec3<f32>(instance.x + cos(seed * 31.0) * drift,
+    mix(instance.y, 0.12, release), instance.z + sin(seed * 31.0) * drift) + wind(instance.xyz) * (1.0 - release);
+  let flutter = sin(frame.time * 1.25 + seed * 39.0) * 0.035 * frame.windStrength;
+  let size = palette.bounds.w * 0.076 * (0.75 + seed * 0.45);
+  let local = orient(position, seed + flutter * 0.008) * size;
   var out: VertexOut;
-  out.clipPosition = frame.viewProj * vec4<f32>(world, 1.0);
-  let blossomMix = select(seed * seed * 0.18, 0.2 + seed * 0.65, palette.canopy.w < 0.5);
-  out.color = clamp(mix(palette.canopy.rgb * shade, palette.petal.rgb, blossomMix), vec3<f32>(0.0), vec3<f32>(1.0));
-  out.corner = corner * 2.0;
-  out.hash = seed;
+  out.clipPosition = frame.viewProj * vec4<f32>(centre + local, 1.0);
+  out.pigment = pigment * (0.88 + seed * 0.16);
+  out.normal = orient(normal, seed + flutter * 0.008);
+  out.seed = seed;
+  out.height = clamp((instance.y - palette.bounds.x) / max(palette.bounds.y,0.001),0.0,1.0);
   return out;
 }
 
 @fragment
-fn fragmentMain(in: VertexOut) -> @location(0) vec4<f32> {
-  if (dissolve(in.hash)) { discard; }
-  if (palette.canopy.w < 0.5) {
-    let angle = atan2(in.corner.y, in.corner.x);
-    let radius = length(in.corner);
-    let edge = 0.7 + 0.2 * cos(angle * 5.0);
-    if (radius > edge) { discard; }
-    let centre = 1.0 - smoothstep(0.07, 0.18, radius);
-    let blush = smoothstep(0.3, 0.88, radius) * 0.16;
-    let petal = mix(in.color, palette.canopy.rgb, blush);
-    return vec4<f32>(mix(petal, vec3<f32>(0.76, 0.73, 0.41), centre * 0.55), 1.0);
-  }
-  let width = 0.72 * (1.0 - in.corner.y * in.corner.y);
-  let serration = 0.025 * sin(in.corner.y * 36.0 + in.hash * 8.0);
-  if (abs(in.corner.x) > width + serration || abs(in.corner.y) > 0.96) {
-    discard;
-  }
-  if (dissolve(in.hash)) {
-    discard;
-  }
-  let vein = 1.0 - smoothstep(0.015, 0.045, abs(in.corner.x));
-  let fold = mix(0.91, 1.05, smoothstep(-0.1, 0.1, in.corner.x));
-  let rib = sin((in.corner.y - abs(in.corner.x) * 0.65) * 30.0) * 0.025;
-  return vec4<f32>(in.color * (fold + vein * 0.12 + rib), 1.0);
+fn fragmentMain(in: VertexOut, @builtin(front_facing) front: bool) -> @location(0) vec4<f32> {
+  if (dissolve(in.seed)) { discard; }
+  let normal = normalize(in.normal) * select(-1.0,1.0,front);
+  let key = max(0.0,dot(normal,normalize(vec3<f32>(-0.5,0.8,0.35))));
+  // Broad diffuse wrap and subtle transmission, deliberately no specular lobe.
+  let light = 0.62 + key * 0.27 + in.height * 0.1;
+  let pigment = mix(in.pigment, palette.petal.rgb * 0.75, 0.05);
+  let color = pow(clamp(pigment * light,vec3<f32>(0.0),vec3<f32>(1.0)),vec3<f32>(0.4545));
+  return vec4<f32>(color,1.0);
 }
