@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Magic Tree verification</title>
+<style>body{font:14px system-ui;margin:24px;background:#f5f1e8;color:#34352d}button{padding:12px;margin:4px}canvas{display:block;max-width:100%;background:#faf8f0}li{margin:6px 0}.pass{color:#276036}.fail{color:#ae2525}#fallback-host{position:relative;height:800px}img{max-width:240px}</style></head>
+<body><h1>Magic Tree verification</h1><p>Actual WebGPU canvas pixels decoded with jsQR. Run on a WebGPU-capable browser.</p>
+<button id="run">Run render and scan checks</button><button id="fallback">Test unsupported browser</button><button id="lost">Test device loss</button><button id="motion">Test motion and interruption</button>
+<p id="status" role="status">Ready</p><ol id="results"></ol><canvas id="scene" style="width:600px;height:600px"></canvas><div id="fallback-host"></div>
+<script type="module" src="./magic-tree.tsx"></script></body></html>
