@@ -24,3 +24,20 @@ bundle-size warning remain outside this feature.
    and refine 3D-to-QR choreography.
 2. Detailed clustered grass geometry and seasonal ground accents, followed by
    rerunning the GPU scan/motion/resource checks and final browser inspection.
+
+## Stage 4 results
+
+- Lowered navigation and controls, tightened tree framing, and added an explicit
+  user opt-in to motion when the system requests reduced motion.
+- Coordinated camera travel with folding/fading branches, foliage, and grass;
+  the settled scan view hides decorative text and preserves the QR quiet zone.
+- Replaced flat grass cards with five-segment curved, tapered blades grouped in
+  tufts, root-to-tip shading, small flowers, and seasonal fallen-petal accents.
+- Production build, all 88 client tests, and scoped feature/QA lint passed again.
+- Latest shaders passed all 24 actual GPU QR decodes and 20 rebuild/resize
+  cycles; disposal released all tracked buffers and render targets.
+- Motion, pause, reduced-motion, interrupted-transition, unsupported-browser,
+  and forced-device-loss checks all passed again, including fallback decoding.
+- Final desktop tree and unobstructed QR presentation inspected in the browser.
+  Phone framing was inspected at 390×844 during this stage; decoder coverage
+  includes 340×450 canvases. Physical phone-camera scanning remains unverified.

@@ -167,7 +167,6 @@ export class WebGPUTreeSceneManager {
       PARTICLE_INSTANCE_LAYOUT,
     ]);
     this.grassPipeline = this.createPipeline(layout, grassWgsl, [
-      cornerLayout,
       PARTICLE_INSTANCE_LAYOUT,
     ]);
     this.decalPipeline = this.createPipeline(layout, decalWgsl, [cornerLayout], true);
@@ -358,6 +357,7 @@ export class WebGPUTreeSceneManager {
       this.frameData[24] = this.animationTime;
       this.frameData[25] = this.reducedMotion ? 0 : 1;
       this.frameData[26] = treeAlpha;
+      this.frameData[27] = this.camera.transitionProgress;
       device.queue.writeBuffer(this.frameUniform, 0, this.frameData);
 
       const encoder = device.createCommandEncoder();
@@ -378,9 +378,8 @@ export class WebGPUTreeSceneManager {
       // Outside the grid, so it can't cover a module and never dissolves.
       if (treeAlpha > DISSOLVE_EPSILON && this.grassInstances && this.grassCount > 0) {
         pass.setPipeline(this.grassPipeline);
-        pass.setVertexBuffer(0, this.quadBuffer);
-        pass.setVertexBuffer(1, this.grassInstances);
-        pass.draw(6, this.grassCount);
+        pass.setVertexBuffer(0, this.grassInstances);
+        pass.draw(36, this.grassCount);
       }
 
       // Nothing above ground once the flat view is settled, so the QR can

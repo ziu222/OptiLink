@@ -14,7 +14,7 @@
 .tree-world button:focus-visible, .tree-world a:focus-visible, .tree-world canvas:focus-visible { outline: 2px solid var(--tree-ink); outline-offset: 5px; }
 .tree-world button { transition: transform 160ms cubic-bezier(.2,.8,.2,1), background 180ms cubic-bezier(.2,.8,.2,1); }
 .tree-world button:active:not(:disabled) { transform: scale(.96); }
-.tree-header { position: absolute; top: 0; left: 0; right: 0; z-index: 3; padding: 25px 38px; display: flex; align-items: center; justify-content: space-between; }
+.tree-header { position: absolute; top: 6px; left: 0; right: 0; z-index: 3; padding: 25px 38px; display: flex; align-items: center; justify-content: space-between; }
 .tree-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #48493a; font-size: 18px; font-weight: 600; letter-spacing: -.7px; line-height: 1.1; }
 .tree-brand small { display: block; font-size: 8px; letter-spacing: 2.6px; font-weight: 500; margin-top: 6px; opacity: .65; }
 .tree-brand-mark { display: grid; place-items: center; width: 41px; height: 41px; border: 1px solid #c7c7b6; border-radius: 50%; background: #fff7; }
@@ -25,12 +25,15 @@
 .tree-eyebrow { font-size: 9px; letter-spacing: 2.2px; color: #88816e; font-weight: 500; }
 .tree-intro h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(25px, 3.2vw, 43px); font-weight: 400; line-height: 1.2; letter-spacing: -1.6px; color: #4b493b; margin: 15px 0 12px; }
 .tree-intro p { font-size: 12px; color: #8b8374; line-height: 1.7; max-width: 240px; }
-.tree-stage { position: absolute; inset: 82px 0 176px; }
+.tree-intro { transition: opacity 180ms cubic-bezier(.2,.8,.2,1); }
+.tree-world[data-view='flat'] .tree-intro,
+.tree-world[data-view='transition'] .tree-intro { opacity: 0; }
+.tree-stage { position: absolute; inset: 64px 0 142px; }
 .tree-canvas { width: 100%; height: 100%; display: block; cursor: pointer; touch-action: manipulation; outline: none; }
 .tree-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; font-size: 12px; color: var(--tree-ink); pointer-events: none; }
 .tree-specimen { position: absolute; left: 40px; bottom: 42px; display: flex; flex-direction: column; gap: 7px; font-size: 10px; color: #938a7b; line-height: 1.3; }
 .tree-specimen span:first-child { letter-spacing: 2px; font-size: 8px; }
-.tree-dock { position: absolute; z-index: 3; width: min(560px, calc(100% - 40px)); left: 50%; bottom: 23px; transform: translateX(-50%); text-align: center; }
+.tree-dock { position: absolute; z-index: 3; width: min(560px, calc(100% - 40px)); left: 50%; bottom: 8px; transform: translateX(-50%); text-align: center; }
 .tree-reveal { display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 16px; padding: 8px 13px; border-radius: 30px; border: 1px solid #82785b19; background: #fff6; color: #797361; font-size: 11px !important; box-shadow: 0 2px 7px #655b4303; backdrop-filter: blur(12px); }
 .tree-reveal:hover { background: #fffc; }
 .tree-control-card { padding: 7px; border: 1px solid #fff8; border-radius: 19px; background: #fffc; box-shadow: 0 2px 4px #68533e04, 0 12px 36px -15px #55422c25, 0 0 0 1px #806c4f09; backdrop-filter: blur(18px); }
@@ -63,7 +66,7 @@
   .tree-intro h1 { font-size: 28px; margin: 10px 0 7px; letter-spacing: -.8px; }
   .tree-intro p { max-width: 190px; font-size: 11px; }
   .tree-eyebrow { font-size: 8px; }
-  .tree-stage { top: 76px; bottom: 163px; }
+  .tree-stage { top: 68px; bottom: 142px; }
   .tree-specimen { display: none; }
 }
 @media (max-width: 600px) {
@@ -77,8 +80,8 @@
   .tree-intro { top: 91px; left: 0; right: 0; max-width: none; text-align: center; }
   .tree-intro p { max-width: none; }
   .tree-intro h1 { font-size: 26px; }
-  .tree-stage { inset: 177px 0 179px; }
-  .tree-dock { bottom: max(14px, env(safe-area-inset-bottom)); width: calc(100% - 28px); }
+  .tree-stage { inset: 166px 0 155px; }
+  .tree-dock { bottom: max(5px, env(safe-area-inset-bottom)); width: calc(100% - 28px); }
   .tree-reveal { margin-bottom: 12px; }
   .tree-control-card { border-radius: 17px; }
   .tree-link-row { gap: 8px; padding-left: 9px; }

@@ -51,6 +51,9 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
   const [settled, setSettled] = useState(false);
   const [paused, setPaused] = useState(false);
   const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [motionOverride, setMotionOverride] = useState(() => {
+    try { return localStorage.getItem('optilink-tree-motion') === 'on'; } catch { return false; }
+  });
   const [copied, setCopied] = useState(false);
   const [info, setInfo] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -60,6 +63,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
   const art = TREE_ART[season];
   const current = SEASONS.find(item => item.id === season)!;
   const pending = config.targetUrl !== urlInput.trim() || config.season !== season;
+  const effectiveReduced = reduced && !motionOverride;
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -122,7 +126,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
     }
   }, [config, support]);
 
-  useEffect(() => { managerRef.current?.setMotion(paused, reduced); }, [paused, reduced, support]);
+  useEffect(() => { managerRef.current?.setMotion(paused, effectiveReduced); }, [paused, effectiveReduced, support]);
   useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
   useEffect(() => {
     if (info) dialogRef.current?.showModal();
@@ -133,6 +137,16 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
     if (!managerRef.current) return;
     setSettled(false);
     setFlat(managerRef.current.toggleView(immediate));
+  };
+
+  const toggleMotion = () => {
+    if (effectiveReduced) {
+      setMotionOverride(true);
+      setPaused(false);
+      try { localStorage.setItem('optilink-tree-motion', 'on'); } catch { /* Storage is optional. */ }
+    } else {
+      setPaused(value => !value);
+    }
   };
 
   const share = async () => {
@@ -161,6 +175,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
     <header className="tree-header">
       <a className="tree-brand" href={embedded ? '/dashboard' : '/'} aria-label="Về OptiLink"><span className="tree-brand-mark"><Sprout size={23} strokeWidth={1.6} /></span><span>OptiLink <small>MAGIC TREE</small></span></a>
       <div className="tree-header-actions">
+        {flat && support === 'ready' && <button className="tree-icon-button" onClick={() => toggle()} aria-label="Trở về khu vườn" title="Trở về khu vườn"><ArrowLeft size={18} /></button>}
         {embedded && <a href={`/magic-tree?q=${encodeURIComponent(encodeShareState(config))}`} className="tree-icon-button" aria-label="Mở toàn màn hình"><ArrowUpRight size={19} /></a>}
         <button className="tree-icon-button" onClick={download} disabled={!!error || pending} aria-label="Tải mã QR" title="Tải mã QR"><Download size={18} /></button>
         <button className="tree-icon-button" onClick={() => setInfo(true)} aria-label="Giới thiệu Magic Tree"><Info size={18} /></button>
@@ -186,7 +201,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
 
     <aside className="tree-specimen" aria-hidden="true"><span>GARDEN / {current.number}</span><span>{current.detail}</span></aside>
     <div className="tree-dock">
-      {support === 'ready' && <button className="tree-reveal" onClick={() => toggle()}>
+      {support === 'ready' && !flat && <button className="tree-reveal" onClick={() => toggle()}>
         {flat ? <ArrowLeft size={14} /> : <ScanLine size={15} />}
         {flat ? 'Trở về khu vườn' : 'Chạm vào cây để xem QR'}
       </button>}
@@ -206,14 +221,15 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
             </button>)}
           </div>
           <span className="tree-control-divider" />
-          <button className="tree-icon-button tree-pause" aria-label={paused ? 'Tiếp tục chuyển động' : 'Tạm dừng chuyển động'}
-            aria-pressed={paused} onClick={() => setPaused(value => !value)} disabled={reduced || support !== 'ready'}>
-            {paused || reduced ? <Play size={16} /> : <Pause size={16} />}
+          <button className="tree-icon-button tree-pause" aria-label={effectiveReduced ? 'Bật hiệu ứng chuyển động' : paused ? 'Tiếp tục chuyển động' : 'Tạm dừng chuyển động'}
+            title={effectiveReduced ? 'Bật hiệu ứng chuyển động' : paused ? 'Tiếp tục chuyển động' : 'Tạm dừng chuyển động'}
+            aria-pressed={paused || effectiveReduced} onClick={toggleMotion} disabled={support !== 'ready'}>
+            {paused || effectiveReduced ? <Play size={16} /> : <Pause size={16} />}
           </button>
         </div>
       </div>
       <p className={`tree-footnote ${error ? 'tree-error' : ''}`} id="tree-error" role="status">
-        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : 'Mỗi liên kết, một dáng cây. Chọn mùa của riêng bạn.')}
+        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : effectiveReduced ? 'Chuyển động đang tắt theo thiết bị. Nhấn ▶ để bật hiệu ứng.' : 'Mỗi liên kết, một dáng cây. Chọn mùa của riêng bạn.')}
       </p>
     </div>
     <dialog ref={dialogRef} className="tree-dialog" onCancel={() => setInfo(false)} onClick={event => { if (event.target === event.currentTarget) setInfo(false); }}>

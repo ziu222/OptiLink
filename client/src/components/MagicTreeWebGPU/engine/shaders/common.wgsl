@@ -9,7 +9,7 @@ struct FrameUniforms {
   windStrength: f32,
   // 1 = tree fully drawn, 0 = nothing above ground (§6.1).
   treeAlpha: f32,
-  _pad: f32,
+  reveal: f32,
 }
 
 struct Palette {
@@ -44,4 +44,11 @@ fn wind(position: vec3<f32>) -> vec3<f32> {
 
 fn rotateLeaf(p: vec2<f32>, angle: f32) -> vec2<f32> {
   return vec2<f32>(p.x * cos(angle) - p.y * sin(angle), p.x * sin(angle) + p.y * cos(angle));
+}
+
+// The crown folds down as the camera rises, then dissolves before the grid
+// settles. All attached geometry uses the same transform to stay connected.
+fn revealPosition(position: vec3<f32>) -> vec3<f32> {
+  let fold = smoothstep(0.04, 0.86, frame.reveal);
+  return position * vec3<f32>(1.0 - fold * 0.06, 1.0 - fold * 0.96, 1.0 - fold * 0.06);
 }

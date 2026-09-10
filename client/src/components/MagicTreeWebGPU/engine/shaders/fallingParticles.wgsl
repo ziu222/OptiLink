@@ -24,7 +24,7 @@ fn vertexMain(
 
   let size = PARTICLE_SIZE * (0.7 + seed * 0.6);
   let local = rotateLeaf(corner, frame.time * (0.6 + seed) + seed * 6.28);
-  let world = centre + frame.cameraRight.xyz * local.x * size
+  let world = revealPosition(centre) + frame.cameraRight.xyz * local.x * size
     + frame.cameraUp.xyz * local.y * size * (0.65 + 0.35 * sin(frame.time + seed * 19.0));
 
   var out: VertexOut;
