@@ -20,7 +20,7 @@ export interface FallingParticle {
   seed: number;
 }
 
-const PARTICLE_COUNT = 64;
+export const PARTICLE_COUNT = 110;
 const DRIFT_FACTOR = 0.12;
 
 /** Summer is the one season the reference gives no falling particles. */
@@ -38,12 +38,13 @@ export function generateFallingParticles(
   const count = countFor(weather);
 
   for (let i = 0; i < count; i++) {
-    const angle = pseudoRandom(i, 0, seed + 7) * Math.PI * 2;
-    const radius = spreadRadius * Math.sqrt(pseudoRandom(i, 1, seed + 8));
+    const source = canopy.leaves[Math.floor(pseudoRandom(i, 0, seed + 7) * canopy.leaves.length)];
+    const angle = source ? Math.atan2(source.position[2], source.position[0]) : pseudoRandom(i, 0, seed + 7) * Math.PI * 2;
+    const radius = source ? Math.min(spreadRadius, Math.hypot(source.position[0], source.position[2])) : spreadRadius * Math.sqrt(pseudoRandom(i, 1, seed + 8));
     particles.push({
       x: Math.cos(angle) * radius,
       z: Math.sin(angle) * radius,
-      canopyY: canopy.minY + canopy.height * (0.4 + pseudoRandom(i, 2, seed + 9) * 0.6),
+      canopyY: source?.position[1] ?? canopy.minY + canopy.height * 0.7,
       drift: spreadRadius * DRIFT_FACTOR * (0.5 + pseudoRandom(i, 3, seed + 10)),
       seed: pseudoRandom(i, 4, seed + 11),
     });

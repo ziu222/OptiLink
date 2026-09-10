@@ -27,7 +27,10 @@ fn vertexMain(
   out.clipPosition = frame.viewProj * vec4<f32>(world, 1.0);
   let noise = fract(sin(dot(cell.xy, vec2<f32>(12.9898, 78.233))) * 43758.5453);
   let contact = exp(-dot(cell.xy, cell.xy) * 0.1) * 0.16;
-  let stone = palette.groundLight.rgb * (0.87 + noise * 0.1 - cell.z * 0.035 - contact);
+  // Quiet, broad limestone tiles in the garden; the exact QR appears on reveal.
+  let tile = floor((cell.xy + vec2<f32>(palette.bounds.w)) / 2.0);
+  let checker = fract((tile.x + tile.y) * 0.5) * 2.0;
+  let stone = palette.groundLight.rgb * (0.985 - checker * 0.13 - contact);
   let qr = mix(palette.groundLight.rgb, palette.groundDark.rgb, cell.z);
   out.color = mix(qr, stone, frame.treeAlpha);
   out.corner = corner;
