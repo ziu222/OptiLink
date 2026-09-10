@@ -358,6 +358,7 @@ export class WebGPUTreeSceneManager {
       this.frameData[24] = this.animationTime;
       this.frameData[25] = this.reducedMotion ? 0 : 1;
       this.frameData[26] = treeAlpha;
+      this.frameData[27] = this.camera.transitionProgress;
       device.queue.writeBuffer(this.frameUniform, 0, this.frameData);
 
       const encoder = device.createCommandEncoder();

@@ -17,7 +17,7 @@ export type CameraViewState = 'isometric' | 'flat';
 
 const ISO_DIRECTION = new Vector3(22, 20, 26).normalize();
 const BASE_FLAT_Y = 32;
-const TRANSITION_SECONDS = 0.9;
+const TRANSITION_SECONDS = 1.1;
 const FRAME_PADDING_FACTOR = 1.3;
 const FOV_DEG = 45;
 const NEAR = 0.1;
@@ -30,7 +30,7 @@ const ISO_UP = new Vector3(0, 1, 0);
 const FLAT_UP = new Vector3(0, 0, -1);
 
 export function quinticEase(t: number): number {
-  return t < 0.5 ? 16 * t ** 5 : 1 - Math.pow(-2 * t + 2, 5) / 2;
+  return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
 export function smoothstep(edge0: number, edge1: number, x: number): number {
@@ -121,7 +121,7 @@ export class CameraMatrices {
           Math.sin(a) * Math.sin(phi) * gridSize * 0.59);
       }
     }
-    distance *= 1.05;
+    distance *= 1.015;
     this.isoPos.copy(ISO_DIRECTION).multiplyScalar(distance).add(this.isoTarget);
     this.far = Math.max(100, Math.max(this.flatY, distance + radius) * 3);
   }

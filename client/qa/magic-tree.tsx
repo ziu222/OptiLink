@@ -145,7 +145,7 @@ async function motion() {
     manager.setMotion(false, false);
     manager.toggleView(); await sleep(300); manager.toggleView(); await sleep(180);
     let settledFlat = false; manager.onViewSettled = flat => { settledFlat = flat; };
-    manager.toggleView(); await sleep(1100); await nextFrame();
+    manager.toggleView(); await sleep(1400); await nextFrame();
     const frame = pixels();
     report(settledFlat && jsQR(frame.data, frame.width, frame.height)?.data === 'https://optilink.app', 'interrupted camera transition settles into a decodable QR');
     status.textContent = 'PASS: motion, pause, reduced motion and transition interruption.';

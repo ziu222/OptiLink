@@ -17,7 +17,7 @@ fn vertexMain(
   let seed = instance.w;
   let flutter = sin(frame.time * 2.1 + seed * 39.0) * 0.16 * frame.windStrength;
   let local = rotateLeaf(corner, seed * 6.283 + flutter);
-  let centre = instance.xyz + wind(instance.xyz);
+  let centre = revealPosition(instance.xyz + wind(instance.xyz));
   let size = palette.bounds.w * 0.062 * (0.8 + seed * 0.45);
   let world =
     centre + frame.cameraRight.xyz * local.x * size + frame.cameraUp.xyz * local.y * size;
