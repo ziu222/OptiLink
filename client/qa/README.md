@@ -23,3 +23,10 @@ Manual presentation pass: `/magic-tree` at desktop and 390 × 844; check every
 season, URL editing, errors, reveal, keyboard activation, help dialog, share
 feedback and QR download. Physical phone-camera scanning remains an additional
 device-specific check; successful image decoding is not a substitute for it.
+# Blender asset validation
+
+The botanical asset contract is covered by `BotanicalAssets.test.ts`: binary
+offsets, finite coordinates, unit normals, curved petals, separate seasonal grass
+geometry, deterministic placement, sparse winter foliage, and fetch retry/cache.
+Open `/qa/magic-tree-responsive.html` for a real 390×844 iframe viewport when the
+host browser cannot apply a device-size override. This page is dev-only.

@@ -186,8 +186,8 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
 
     <div className="tree-intro">
       <span className="tree-eyebrow">MỘT LIÊN KẾT · MỘT KHU VƯỜN</span>
-      <h1>{flat ? 'Một chạm, kết nối.' : current.title}</h1>
-      <p>{flat ? 'Mở camera và quét mã để ghé thăm liên kết.' : current.subtitle}</p>
+      <h1>{flat || support === 'unsupported' ? 'Một chạm, kết nối.' : current.title}</h1>
+      <p>{flat || support === 'unsupported' ? 'Mở camera và quét mã để ghé thăm liên kết.' : current.subtitle}</p>
     </div>
 
     <div className="tree-stage">
@@ -233,7 +233,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
         </div>
       </div>
       <p className={`tree-footnote ${error ? 'tree-error' : ''}`} id="tree-error" role="status">
-        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : transitioning ? (flat ? 'Khu vườn đang hạ xuống · Đang mở mã QR…' : 'Khu vườn đang trở lại…') : effectiveReduced ? 'Thiết bị đang giảm chuyển động. Chọn “Bật hiệu ứng” để xem animation.' : settled ? 'Mã QR đã sẵn sàng · Mở camera để quét' : `${current.detail} · Chọn Mã QR 2D để chuyển cảnh`)}
+        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : support === 'unsupported' ? 'Trình duyệt đang dùng QR tĩnh · Sẵn sàng để quét' : transitioning ? (flat ? 'Khu vườn đang hạ xuống · Đang mở mã QR…' : 'Khu vườn đang trở lại…') : effectiveReduced ? 'Thiết bị đang giảm chuyển động. Chọn “Bật hiệu ứng” để xem animation.' : settled ? 'Mã QR đã sẵn sàng · Mở camera để quét' : `${current.detail} · Chọn Mã QR 2D để chuyển cảnh`)}
       </p>
     </div>
     <dialog ref={dialogRef} className="tree-dialog" onCancel={() => setInfo(false)} onClick={event => { if (event.target === event.currentTarget) setInfo(false); }}>
