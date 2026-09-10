@@ -5,14 +5,14 @@ const faqs: { question: string; answer: ReactNode }[] = [
   {
     question: 'What is OptiLink?',
     answer:
-      'An all-in-one link management platform: shorten URLs, build a bio page, and generate QR codes, all from one workspace.',
+      'One platform for managing your links: shorten URLs, build a bio page, and generate QR codes, all from one workspace.',
   },
   {
     question: 'How much does it cost?',
     answer: (
       <>
         Free to get started. The Premium plan unlocks custom aliases, password protection, and advanced
-        analytics — see <a href="/#pricing">Pricing</a> above.
+        analytics. See <a href="/#pricing">Pricing</a> above.
       </>
     ),
   },
@@ -23,14 +23,14 @@ const faqs: { question: string; answer: ReactNode }[] = [
   {
     question: 'Can I customize my bio page?',
     answer:
-      'Yes. Pick from 5 layout themes, then drag and drop blocks — product cards, tabs, search, and category filters — with a real-time preview as you edit.',
+      'Yes. Pick from 5 layout themes, then drag and drop blocks such as product cards, tabs, search, and category filters, with a live preview as you edit.',
   },
   {
     question: 'Do QR codes work for any link?',
     answer: 'Yes. Every short link and bio page gets a downloadable QR code, with scans tracked separately from clicks.',
   },
   {
-    question: 'Can I password-protect or expire a link?',
+    question: 'Can I put a password on a link or make it expire?',
     answer: 'Yes. Access Control lets you require a password before redirect, set an expiration date, or cap the number of clicks a link accepts.',
   },
   {

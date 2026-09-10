@@ -1,5 +1,5 @@
-// Placeholder image frame — a bordered box with a picture glyph, shown in
-// place of real illustrations/screenshots until those are dropped in. Pass
+// Placeholder image frame: a bordered box with a picture glyph, shown in
+// place of real illustrations or screenshots until those are dropped in. Pass
 // `src` once a real image is ready; the glyph placeholder drops out.
 interface PictureFrameProps {
   className?: string;

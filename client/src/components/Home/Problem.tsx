@@ -8,7 +8,7 @@ const paragraphs = [
   },
   {
     label: 'For example',
-    text: "A seller posts a shortened product link on social media, keeps a separate link-in-bio page for their profile, and prints a QR code they generated in a third app for packaging — with no single place to see clicks, scans, or update any of it once it's out.",
+    text: "A seller posts a shortened product link on social media, keeps a separate link in bio page for their profile, and prints a QR code they generated in a third app for packaging, with no single place to see clicks, scans, or update any of it once it's out.",
   },
   {
     label: 'The fix',

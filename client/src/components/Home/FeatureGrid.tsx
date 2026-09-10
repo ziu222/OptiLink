@@ -61,7 +61,7 @@ const features: Feature[] = [
   },
   {
     title: 'Access Control',
-    description: 'Password-protect, expire, or cap clicks on any link, no separate tool required.',
+    description: 'Require a password, set an expiry, or cap clicks on any link, no separate tool required.',
     icon: (
       <svg {...iconProps}>
         <path
@@ -106,7 +106,8 @@ export function FeatureGrid() {
       <div className="home-container">
         <h2 className="home-heading home-heading--center">Everything you need, built in.</h2>
         <p className="home-subheading home-subheading--center">
-          No add-ons, no separate tools — shortening, bio pages, and QR codes share the same workspace.
+          No extras to install and no separate tools. Shortening, bio pages, and QR codes share the same
+          workspace.
         </p>
 
         <div className="feature-grid">
