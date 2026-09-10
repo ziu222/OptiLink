@@ -56,6 +56,9 @@ export class CameraMatrices {
   private out = new Float32Array(16);
   private readonly right = new Float32Array(3);
   private readonly up = new Float32Array(3);
+  private crownPoints: readonly [number, number, number][] = [];
+
+  setCrownPoints(points: readonly [number, number, number][]): void { this.crownPoints = points; }
 
   get state(): CameraViewState {
     return this.progress >= 0.5 ? 'flat' : 'isometric';
@@ -98,13 +101,24 @@ export class CameraMatrices {
     const right = new Vector3().crossVectors(ISO_UP, ISO_DIRECTION).normalize();
     const up = new Vector3().crossVectors(ISO_DIRECTION, right).normalize();
     let distance = 0;
-    // Fit the platform's corners and the canopy volume in camera space.
-    for (const y of [-1.7, structureHeight + 1]) {
-      const extent = y < 0 ? gridSize / 2 + 5 : gridSize * 0.6;
-      for (const x of [-extent, extent]) for (const z of [-extent, extent]) {
-        const p = new Vector3(x, y, z).sub(this.isoTarget);
-        distance = Math.max(distance, p.dot(ISO_DIRECTION) + Math.abs(p.dot(right)) / (halfTan * this.aspect),
-          p.dot(ISO_DIRECTION) + Math.abs(p.dot(up)) / halfTan);
+    const fit = (x: number, y: number, z: number) => {
+      const p = new Vector3(x, y, z).sub(this.isoTarget);
+      distance = Math.max(distance, p.dot(ISO_DIRECTION) + Math.abs(p.dot(right)) / (halfTan * this.aspect),
+        p.dot(ISO_DIRECTION) + Math.abs(p.dot(up)) / halfTan);
+    };
+    const base = gridSize / 2 + 5;
+    for (const x of [-base, base]) for (const z of [-base, base]) fit(x, -1.7, z);
+    // The crown is an ellipsoid, not a box with wide corners at its highest
+    // point. Fitting that empty box made the real tree needlessly small.
+    if (this.crownPoints.length) {
+      for (const [x, y, z] of this.crownPoints) fit(x, y + gridSize * 0.025, z);
+    } else for (let j = 0; j <= 12; j++) {
+      const phi = j / 12 * Math.PI;
+      for (let i = 0; i < 24; i++) {
+        const a = i / 24 * Math.PI * 2;
+        fit(Math.cos(a) * Math.sin(phi) * gridSize * 0.59,
+          structureHeight * (0.65 + 0.35 * Math.cos(phi)) + 0.6,
+          Math.sin(a) * Math.sin(phi) * gridSize * 0.59);
       }
     }
     distance *= 1.05;

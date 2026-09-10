@@ -59,11 +59,11 @@
 .tree-dialog p { font-size: 13px; line-height: 1.8; margin: 12px 0; }
 .tree-dialog-action { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; border: 0; background: var(--tree-ink); color: #fff; border-radius: 12px; padding: 12px; margin-top: 24px; }
 @media (max-width: 1000px) {
-  .tree-intro { top: 96px; left: 0; right: 0; text-align: center; max-width: none; }
+  .tree-intro { top: 105px; left: 30px; right: auto; text-align: left; max-width: 205px; }
   .tree-intro h1 { font-size: 28px; margin: 10px 0 7px; letter-spacing: -.8px; }
-  .tree-intro p { max-width: none; font-size: 11px; }
+  .tree-intro p { max-width: 190px; font-size: 11px; }
   .tree-eyebrow { font-size: 8px; }
-  .tree-stage { top: 171px; bottom: 190px; }
+  .tree-stage { top: 76px; bottom: 163px; }
   .tree-specimen { display: none; }
 }
 @media (max-width: 600px) {
@@ -74,9 +74,10 @@
   .tree-brand-mark { width: 35px; height: 35px; }
   .tree-header-actions { gap: 6px; }
   .tree-icon-button { width: 34px; height: 34px; flex-basis: 34px; }
-  .tree-intro { top: 91px; }
+  .tree-intro { top: 91px; left: 0; right: 0; max-width: none; text-align: center; }
+  .tree-intro p { max-width: none; }
   .tree-intro h1 { font-size: 26px; }
-  .tree-stage { inset: 160px 0 184px; }
+  .tree-stage { inset: 177px 0 179px; }
   .tree-dock { bottom: max(14px, env(safe-area-inset-bottom)); width: calc(100% - 28px); }
   .tree-reveal { margin-bottom: 12px; }
   .tree-control-card { border-radius: 17px; }
