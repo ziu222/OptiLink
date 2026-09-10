@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
 import { ShortenedLinksPanel } from '../../components/workspace/panels/ShortenedLinksPanel/ShortenedLinksPanel';
 import { LinkConfigPanel } from '../../components/workspace/panels/LinkConfigPanel/LinkConfigPanel';
+import { QrPanel } from '../../components/workspace/panels/QrPanel/QrPanel';
 import { getLink } from '../../api/links';
 import type { ShortenedLink } from '../../api/links';
 import './workspace.css';
@@ -49,7 +50,10 @@ export function LinkDetailPage() {
           showViewDetail={false}
           onDeleted={() => navigate('/dashboard')}
         />
-        <LinkConfigPanel link={link} onSaved={setLink} />
+        <div className="link-detail-config-row">
+          <LinkConfigPanel link={link} onSaved={setLink} />
+          <QrPanel link={link} />
+        </div>
       </div>
     </>
   );

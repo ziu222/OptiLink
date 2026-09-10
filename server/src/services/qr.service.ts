@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import axios from 'axios';
 import mongoose from 'mongoose';
 import QRCodeModel, { IQRCode, IQRConfig } from '../models/QRCode.js';
+import Link from '../models/Link.js';
 import User from '../models/User.js';
 import { CreateQrInput } from '../validators/qr.validator.js';
 import { AppError } from '../utils/AppError.js';
@@ -255,6 +256,64 @@ export class QrService {
       .toBuffer();
 
     return finalQr;
+  }
+
+  /**
+   * Lấy mã QR gắn với một link, tự sinh mới nếu link chưa có mã QR nào.
+   * Dùng cho panel QR ở trang chi tiết link.
+   */
+  async getOrCreateForLink(userId: string, linkId: string): Promise<IQRCode> {
+    // 1. Kiểm tra ID link hợp lệ
+    if (!mongoose.Types.ObjectId.isValid(linkId)) {
+      throw AppError.badRequest('ID link không hợp lệ');
+    }
+
+    // 2. Tìm link thuộc về user (bỏ qua link đã archive)
+    const link = await Link.findOne({ _id: linkId, userId, isArchived: { $ne: true } });
+    if (!link) {
+      throw AppError.notFound('Không tìm thấy link hoặc bạn không có quyền truy cập');
+    }
+
+    // 3. Đã có mã QR cho link này thì trả về luôn
+    const existing = await QRCodeModel.findOne({ userId, linkId: link._id });
+    if (existing) {
+      return existing;
+    }
+
+    // 4. Chưa có thì sinh mới — config mặc định, không giới hạn gói FREE
+    const config: IQRConfig = {
+      fgColor: '#000000',
+      bgColor: '#ffffff',
+      logoUrl: null,
+      eyeType: 'square',
+      dotType: 'square',
+      size: 512,
+      errorCorrectionLevel: 'M',
+    };
+
+    // 5. Mã QR trỏ tới shortUrl kèm ?src=qr để redirect ghi nhận lượt truy cập
+    //    này đến từ việc quét QR (phân biệt với mở link trực tiếp)
+    const targetUrl = `${link.shortUrl}?src=qr`;
+
+    // 6. Sinh preview base64 nhỏ (256px) để hiển thị nhanh trên client
+    let previewUrl = '';
+    try {
+      previewUrl = await this.renderBase64Preview(targetUrl, config);
+    } catch (err: any) {
+      logger.warn(`Lỗi khi tạo preview QR cho link: ${err.message}`);
+    }
+
+    const qrCode = new QRCodeModel({
+      userId,
+      linkId: link._id,
+      title: link.title || 'My QR Code',
+      targetUrl,
+      config,
+      previewUrl,
+    });
+
+    await qrCode.save();
+    return qrCode;
   }
 }
 
