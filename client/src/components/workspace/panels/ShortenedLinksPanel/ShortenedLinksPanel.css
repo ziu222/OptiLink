@@ -1,39 +1,41 @@
-/* Bleeds ContentPanel's 1rem body padding (ContentPanel/ContentPanel.css) so the
-   row separators reach the panel's border instead of stopping at the padding —
-   the project's standing divider convention (see .profile-grid /
-   .profile-actions in workspace.css). The row's own 1rem padding
-   (.info-row, InfoRow/InfoRow.css) re-applies the inset. */
+/* Tràn qua padding body 1rem của ContentPanel (ContentPanel/ContentPanel.css) để
+   các đường phân cách hàng chạm tới viền panel thay vì dừng ở padding —
+   quy ước đường phân cách cố hữu của dự án (xem .profile-grid /
+   .profile-actions trong workspace.css). Padding 1rem của chính hàng
+   (.info-row, InfoRow/InfoRow.css) áp lại phần thụt vào. */
 .link-list {
   margin: -1rem;
 }
 
-/* When a toolbar precedes the list, drop the list's top pull-up so the first
-   row sits directly under the toolbar border — the row's own 1rem padding
-   then matches its left/right inset (keep the side/bottom bleed). */
+/* Khi có toolbar đứng trước danh sách, bỏ phần kéo lên phía trên của danh sách
+   để hàng đầu tiên nằm ngay dưới viền toolbar — padding 1rem của chính hàng
+   khi đó khớp với phần thụt trái/phải (vẫn giữ phần tràn ở hai bên/phía dưới). */
 .toolbar + .link-list {
   margin-top: 0;
 }
 
-/* Only the paginated lists (a `pagination` prop passed in) fetch PAGE_SIZE=5
-   rows at a time (ShortenLinkPage.tsx / AnalyticsPage.tsx); LinkDetailPage's
-   single-link usage has no pagination and must stay content-sized. Height is
-   fixed to exactly 5 row-heights rather than resizing per page — a short page
-   just leaves blank space below its last row instead of shrinking the panel.
-   overflow-y guards the rare row that wraps to two lines.
+/* Chỉ những danh sách có phân trang (được truyền prop `pagination`) mới lấy
+   PAGE_SIZE=5 hàng mỗi lần (ShortenLinkPage.tsx / AnalyticsPage.tsx);
+   LinkDetailPage dùng cho một link đơn không có phân trang và phải giữ kích
+   thước theo nội dung. Chiều cao cố định đúng bằng 5 lần chiều cao hàng thay vì
+   thay đổi theo từng trang — một trang ngắn chỉ để lại khoảng trống dưới hàng
+   cuối chứ không thu nhỏ panel. overflow-y phòng cho hàng hiếm hoi bị xuống
+   hai dòng.
 
-   A row measures ~6.5rem (104px): .info-row 1rem padding top + bottom + 1px
-   divider + the tallest (name) cell's three stacked lines (.info-cell-main
-   1rem, .info-cell-sub + .info-cell-extra 0.875rem, +2px). Kept in rem so it
-   tracks the root font size; erring ~1rem short of 6 rows so a short bottom
-   page never peeks the next row (it only trims the last row's 1rem padding). */
+   Một hàng cao ~6.5rem (104px): .info-row padding 1rem trên + dưới + 1px
+   đường phân cách + ba dòng xếp chồng của ô cao nhất (name) (.info-cell-main
+   1rem, .info-cell-sub + .info-cell-extra 0.875rem, +2px). Giữ theo rem để nó
+   bám theo cỡ chữ gốc; cố ý thiếu ~1rem so với 6 hàng để một trang cuối ngắn
+   không bao giờ ló hàng kế tiếp (nó chỉ cắt bớt padding 1rem của hàng cuối). */
 .link-list--paged {
   height: 32.5rem;
   overflow-y: auto;
 }
 
-/* InfoRow drops the border on its true last child; a paged list always wants
-   a divider there so a short page's blank space still reads as part of the
-   list rather than butting the row against empty space with no separator. */
+/* InfoRow bỏ viền ở phần tử con cuối cùng thật sự; một danh sách có phân trang
+   luôn muốn có đường phân cách ở đó để khoảng trống của trang ngắn vẫn được
+   nhìn như một phần của danh sách, thay vì để hàng áp vào khoảng trống mà
+   không có đường ngăn. */
 .link-list--paged .info-row:last-child {
   border-bottom: 1px solid var(--border);
 }

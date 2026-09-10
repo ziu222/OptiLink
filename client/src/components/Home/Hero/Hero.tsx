@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { createLink } from '../../api/links';
-import { useAuth } from '../../contexts/AuthContext';
-import shortenIllustration from '../../assets/hero-shorten-illustration.png';
-import './home.css';
+import { createLink } from '../../../api/links';
+import { useAuth } from '../../../contexts/AuthContext';
+import shortenIllustration from '../../../assets/hero-shorten-illustration.png';
+import './Hero.css';
 
 export function Hero() {
   const { user } = useAuth();

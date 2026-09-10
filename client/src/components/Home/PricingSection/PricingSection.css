@@ -1,0 +1,13 @@
+/* Bảng giá */
+.tier-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 4rem;
+}
+
+/* Dưới 1024px các thẻ giá xếp chồng một cột. */
+@media (min-width: 1024px) {
+  .tier-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

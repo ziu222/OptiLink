@@ -21,29 +21,29 @@ const footerLinks: Record<string, { label: string; to: string }[]> = {
 export function Footer() {
   return (
     <footer className="site-footer">
-      <div className="site-footer__top">
-        <div className="site-footer__brand">
-          <Link to="/" className="site-footer__logo">
+      <div className="site-footer-top">
+        <div className="site-footer-brand">
+          <Link to="/" className="site-footer-logo">
             OptiLink
           </Link>
-          <p className="site-footer__tagline">
+          <p className="site-footer-tagline">
             Shorten, share, and track every link — all in one place.
           </p>
         </div>
 
-        <div className="site-footer__columns">
+        <div className="site-footer-columns">
           {Object.entries(footerLinks).map(([section, links]) => (
-            <div key={section} className="site-footer__column">
-              <h3 className="site-footer__heading">{section}</h3>
-              <ul className="site-footer__list">
+            <div key={section} className="site-footer-column">
+              <h3 className="site-footer-heading">{section}</h3>
+              <ul className="site-footer-list">
                 {links.map(({ label, to }) => (
                   <li key={label}>
                     {to.startsWith('/') ? (
-                      <Link to={to} className="site-footer__link">
+                      <Link to={to} className="site-footer-link">
                         {label}
                       </Link>
                     ) : (
-                      <a href={to} className="site-footer__link">
+                      <a href={to} className="site-footer-link">
                         {label}
                       </a>
                     )}
@@ -55,7 +55,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="site-footer__bottom">© {new Date().getFullYear()} OptiLink. All rights reserved.</div>
+      <div className="site-footer-bottom">© {new Date().getFullYear()} OptiLink. All rights reserved.</div>
     </footer>
   );
 }

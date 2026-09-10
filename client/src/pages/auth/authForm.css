@@ -1,7 +1,6 @@
-/* Styles for the marketing-matched Login/Register pages. Named distinctly
-   from auth.css's .auth-* classes (shared by DashboardPage) to avoid
-   collisions, since plain CSS here is global regardless of which component
-   imports a file. */
+/* Style cho các trang Login/Register khớp phong cách marketing. Đặt tên khác
+   hẳn các class .auth-* của auth.css (dùng chung bởi DashboardPage) để tránh
+   trùng, vì CSS thuần ở đây là global bất kể component nào import file. */
 
 .authform-shell {
   position: fixed;
@@ -22,6 +21,15 @@
   padding: 4rem 0;
 }
 
+/* Thu padding trên/dưới còn 24px khi cửa sổ hẹp (< 1280px — không hiện cột ảnh)
+   hoặc thật sự thấp (< 720px, ví dụ điện thoại xoay ngang). Cửa sổ desktop bình
+   thường (cao ~700–1000px) vẫn giữ 4rem. */
+@media (max-width: 1279.98px), (max-height: 719.98px) {
+  .authform-main {
+    padding: 24px 0;
+  }
+}
+
 .authform-layout {
   display: grid;
   gap: 3rem;
@@ -32,12 +40,15 @@
   width: 100%;
 }
 
-/* Borderless, padding-free image column — the hero art bleeds straight onto
-   the page instead of sitting inside the .picture-frame placeholder box, and
-   its top edge lines up with the top of the form panel. */
+/* Cột ảnh không viền, không padding — hình hero tràn thẳng ra trang thay vì
+   nằm trong hộp placeholder .picture-frame, và cạnh trên của nó thẳng hàng
+   với đỉnh của panel form. */
 .authform-frame {
   display: none;
   min-height: 0;
+  /* PictureFrame giờ tự nạp css riêng (margin-inline: -24px cho bố cục tràn ở
+     trang chủ) — huỷ nó ở đây để cột ảnh auth không bị tràn. */
+  margin-inline: 0;
   border: none;
   padding: 0;
   align-items: flex-start;
@@ -215,7 +226,8 @@
   text-decoration: underline;
 }
 
-@media (min-width: 1024px) {
+/* Cột ảnh chỉ hiện khi bề rộng >= 1280px; hẹp hơn thì chỉ còn một panel căn giữa. */
+@media (min-width: 1280px) {
   .authform-layout {
     grid-template-columns: 1fr auto;
   }
@@ -231,7 +243,7 @@
   }
 }
 
-/* Link password gate: single centered panel (no PictureFrame column). */
+/* Cổng mật khẩu của link: một panel căn giữa duy nhất (không có cột PictureFrame). */
 .gate-center {
   display: flex;
   justify-content: center;

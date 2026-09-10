@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import './home.css';
+import './FAQ.css';
 
 const faqs: { question: string; answer: ReactNode }[] = [
   {

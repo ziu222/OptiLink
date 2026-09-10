@@ -20,7 +20,7 @@ export function SegmentedToggle<T>({ options, value, onChange, ariaLabel }: Segm
     <div role="radiogroup" aria-label={ariaLabel} className="segmented-toggle">
       <span
         aria-hidden="true"
-        className="segmented-toggle__highlight"
+        className="segmented-toggle-highlight"
         style={{ transform: activeIndex === 1 ? 'translateX(100%)' : 'translateX(0)' }}
       />
       {options.map((opt) => (
@@ -30,7 +30,7 @@ export function SegmentedToggle<T>({ options, value, onChange, ariaLabel }: Segm
           role="radio"
           aria-checked={opt.value === value}
           onClick={() => onChange(opt.value)}
-          className={`segmented-toggle__option${opt.value === value ? ' is-active' : ''}`}
+          className={`segmented-toggle-option${opt.value === value ? ' is-active' : ''}`}
         >
           {opt.label}
         </button>

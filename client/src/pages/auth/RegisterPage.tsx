@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { applyServerError } from '../../lib/formError';
 import { Header } from '../../components/Header/Header';
 import { Footer } from '../../components/Footer/Footer';
-import { PictureFrame } from '../../components/Home/PictureFrame';
+import { PictureFrame } from '../../components/PictureFrame/PictureFrame';
 import { OAuthButtons } from './OAuthButtons';
 import { registerSchema } from './schemas';
 import type { RegisterValues } from './schemas';

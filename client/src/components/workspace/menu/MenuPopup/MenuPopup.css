@@ -1,6 +1,6 @@
-/* Shared dropdown panel + option/action buttons, rendered by MenuPopup and
-   reused by InputSelect's listbox. Each component's own trigger chrome lives in
-   its own css. */
+/* Panel dropdown dùng chung + các nút tuỳ chọn/hành động, do MenuPopup render và
+   được listbox của InputSelect dùng lại. Phần giao diện nút kích hoạt của mỗi
+   component nằm trong css riêng của nó. */
 
 .menu-popup {
   position: absolute;
@@ -64,7 +64,7 @@
   cursor: not-allowed;
 }
 
-/* Destructive action: red label, standard hover border like every other item. */
+/* Hành động nguy hiểm: nhãn đỏ, viền hover tiêu chuẩn như mọi mục khác. */
 .menu-item--danger {
   color: #dc2626;
 }

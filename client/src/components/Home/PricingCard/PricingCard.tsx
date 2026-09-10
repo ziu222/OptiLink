@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import './home.css';
+import './PricingCard.css';
 
 export interface PricingTier {
   id: string;

@@ -1,0 +1,51 @@
+/* Phần vấn đề.
+   Tablet/điện thoại: xếp dọc theo thứ tự tiêu đề → ảnh → đoạn văn. .problem-text
+   dùng display: contents nên h2 và .problem-copy thành flex item trực tiếp của
+   .problem-grid, nhờ đó chèn khung ảnh vào giữa bằng order.
+   Desktop: lưới 2 cột — cột trái tiêu đề + đoạn văn, cột phải nguyên khung ảnh
+   cao trọn cột. */
+.problem-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.problem-text {
+  display: contents;
+}
+
+.problem-grid > .picture-frame {
+  order: 1;
+}
+
+.problem-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  order: 2;
+}
+
+.problem-copy .home-eyebrow {
+  font-size: 1.125rem;
+}
+
+.problem-copy p {
+  margin: 0.5rem 0 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+@media (min-width: 1024px) {
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+
+  .problem-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+}

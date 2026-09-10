@@ -1,0 +1,32 @@
+/* Placeholder khung ảnh.
+   Trên tablet/điện thoại (<1024px) ảnh tràn hết chiều ngang màn hình: triệt
+   tiêu gutter 24px của .home-container, bỏ viền và padding. Từ 1024px trở lên
+   khôi phục lại khung có viền, thụt vào theo container. */
+.picture-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24rem;
+  margin-inline: -24px;
+  background: transparent;
+  color: var(--border);
+}
+
+@media (min-width: 1024px) {
+  .picture-frame {
+    width: 100%;
+    margin-inline: 0;
+    padding: 1.5rem;
+  }
+}
+
+.picture-frame-icon {
+  width: 4rem;
+  height: 4rem;
+}
+
+.picture-frame-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

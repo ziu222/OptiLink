@@ -1,7 +1,7 @@
-import { useAuth } from '../../contexts/AuthContext';
-import { PricingCard } from './PricingCard';
-import type { PricingTier } from './PricingCard';
-import './home.css';
+import { useAuth } from '../../../contexts/AuthContext';
+import { PricingCard } from '../PricingCard/PricingCard';
+import type { PricingTier } from '../PricingCard/PricingCard';
+import './PricingSection.css';
 
 const tiers: PricingTier[] = [
   {

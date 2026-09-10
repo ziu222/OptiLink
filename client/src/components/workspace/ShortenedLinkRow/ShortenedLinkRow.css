@@ -1,12 +1,12 @@
-/* Action cell fixed at 1/8; name + URL keep a quarter each; the sparkline cell
-   takes the rest. Scoped to this row so InfoRow's generic "equal columns"
-   contract for a numeric `columns` prop is left intact. */
+/* Ô hành động cố định ở mức 1/8; name + URL mỗi cái giữ một phần tư; ô sparkline
+   chiếm phần còn lại. Chỉ giới hạn trong hàng này để giữ nguyên giao ước "các
+   cột bằng nhau" của InfoRow cho prop `columns` dạng số. */
 .info-row.shortened-link-row[data-columns='4'] {
   grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 3fr) 12.5%;
 }
 
-/* Re-assert the mobile stack: the scoped rule above (specificity 0,3,0)
-   outweighs InfoRow.css's generic @media rule (0,2,0). */
+/* Khẳng định lại kiểu xếp chồng trên mobile: quy tắc có phạm vi ở trên
+   (specificity 0,3,0) thắng quy tắc @media chung của InfoRow.css (0,2,0). */
 @media (max-width: 640px) {
   .info-row.shortened-link-row[data-columns='4'] {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -21,12 +21,12 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 40px; /* matches the stacked Main + Sub height of the other cells */
+  min-height: 40px; /* khớp chiều cao Main + Sub xếp chồng của các ô khác */
 }
 
 .clicks-cell-total {
   flex: 0 0 auto;
-  font-size: 14px; /* matches .info-cell-sub */
-  color: var(--text); /* a text token, never the sparkline line colour */
+  font-size: 14px; /* khớp .info-cell-sub */
+  color: var(--text); /* dùng token màu chữ, không bao giờ là màu đường sparkline */
   white-space: nowrap;
 }

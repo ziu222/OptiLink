@@ -1,7 +1,7 @@
-/* Escapes the shared #root { width: 1126px; margin: 0 auto } constraint
-   (index.css) the same way home.css's .home-page and authForm.css's
-   .authform-shell do, so the sidebar sits flush against the actual left
-   edge of the viewport instead of floating inside a centered column. */
+/* Thoát khỏi ràng buộc #root { width: 1126px; margin: 0 auto } dùng chung
+   (index.css) theo cùng cách mà .home-page của home.css và .authform-shell
+   của authForm.css làm, để sidebar nằm sát cạnh trái thật của khung nhìn
+   thay vì trôi bên trong một cột căn giữa. */
 .workspace-shell {
   position: fixed;
   inset: 0;
@@ -16,20 +16,20 @@
   flex: 1;
   min-width: 0;
   min-height: 0;
-  /* border-box so height:100% includes the padding — otherwise the element is
-     viewport + 5rem tall and its bottom (incl. the scroll area's end) is
-     clipped by .workspace-shell's overflow:hidden, making the last rows and
-     the pager unreachable. No global box-sizing reset exists in this app. */
-  box-sizing: border-box;
+  /* border-box để height:100% bao gồm cả padding — nếu không, phần tử sẽ cao
+     bằng khung nhìn + 5rem và đáy của nó (kể cả điểm cuối vùng cuộn) bị
+     .workspace-shell overflow:hidden cắt mất, khiến các hàng cuối và bộ phân
+     trang không với tới được. */
+  /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
   height: 100%;
   overflow-y: auto;
   padding: 2.5rem;
 }
 
-/* Shared column layout for everything below a page's PageHeader — a single
-   gap replaces the old pattern of every panel declaring its own
-   margin-top: 1.5rem. The header-to-first-panel gap stays separate: it's
-   .page-header's own margin-bottom (2rem), not part of this gap. */
+/* Bố cục cột dùng chung cho mọi thứ nằm dưới PageHeader của một trang — một
+   gap duy nhất thay cho kiểu cũ là mỗi panel tự khai báo margin-top: 1.5rem.
+   Khoảng cách từ header tới panel đầu tiên vẫn tách riêng: đó là
+   margin-bottom (2rem) của chính .page-header, không thuộc gap này. */
 .page-content {
   display: flex;
   flex-direction: column;
@@ -67,7 +67,7 @@
   font-weight: 600;
 }
 
-/* Profile page */
+/* Trang hồ sơ */
 .profile-page {
   max-width: none;
 }
@@ -76,23 +76,23 @@
   margin-top: 1.5rem;
 }
 
-/* No `gap` here — spacing between children is deliberate per-element margin
-   so .profile-grid's bottom edge can sit flush against .profile-actions'
-   border-top (see below): the vertical divider's bottom end must touch the
-   horizontal divider, not float above it with a gap. */
+/* Không dùng `gap` ở đây — khoảng cách giữa các phần tử con là margin cố ý đặt
+   trên từng phần tử để cạnh dưới của .profile-grid nằm sát border-top của
+   .profile-actions (xem bên dưới): đầu dưới của đường phân cách dọc phải chạm
+   đường phân cách ngang, không lơ lửng phía trên nó bằng một gap. */
 .profile-form {
   display: flex;
   flex-direction: column;
 }
 
-/* Bleeds ContentPanel's body padding (contentPanel.css: 1rem) at the top
-   only, so the divider border below reaches the panel header's bottom
-   border instead of stopping short at the padding edge — this project's
-   standing convention for any separator line inside a padded container:
-   cancel the container's padding on the bleeding axis via negative margin,
-   then re-apply that padding on the inner pieces so content still sits
-   inset. No bottom bleed here — the bottom end of this divider must touch
-   .profile-actions' border-top instead of the panel's outer border. */
+/* Tràn qua padding body của ContentPanel (contentPanel.css: 1rem) chỉ ở phía
+   trên, để viền phân cách bên dưới chạm tới viền dưới của header panel thay vì
+   dừng non ở mép padding — quy ước cố hữu của dự án cho mọi đường phân cách
+   bên trong một container có padding: triệt tiêu padding của container trên
+   trục tràn bằng margin âm, rồi áp lại padding đó lên các phần bên trong để
+   nội dung vẫn thụt vào. Không tràn ở phía dưới — đầu dưới của đường phân cách
+   này phải chạm border-top của .profile-actions chứ không phải viền ngoài của
+   panel. */
 .profile-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -107,10 +107,10 @@
   border-right: 1px solid var(--border);
 }
 
-/* 16:9 via the padding-top trick rather than `aspect-ratio` — percentage
-   padding is always resolved against the element's own width regardless of
-   layout context, so this stays locked to the ratio even nested in
-   flex/grid, where `aspect-ratio` was not resolving correctly here. */
+/* Tỉ lệ 16:9 bằng mẹo padding-top thay vì `aspect-ratio` — padding theo phần
+   trăm luôn tính theo chiều rộng của chính phần tử bất kể ngữ cảnh bố cục,
+   nên nó giữ đúng tỉ lệ ngay cả khi lồng trong flex/grid, nơi `aspect-ratio`
+   không tính đúng ở đây. */
 .profile-avatar-frame {
   position: relative;
   width: 100%;
@@ -198,8 +198,8 @@
   cursor: not-allowed;
 }
 
-/* datetime-local shows its mm/dd/yyyy format text in the input's own color;
-   mute it while empty so it reads like the other fields' placeholders. */
+/* datetime-local hiển thị chữ định dạng mm/dd/yyyy bằng màu chữ của chính
+   input; làm mờ khi trống để nó trông như placeholder của các field khác. */
 .profile-input[type='datetime-local']:placeholder-shown {
   color: var(--text);
 }
@@ -223,9 +223,9 @@
   margin: 0 0 1.5rem;
 }
 
-/* Bleeds ContentPanel's horizontal body padding (1rem) so this divider
-   touches the panel's left/right border — same convention as .profile-grid
-   above, applied on the horizontal axis instead of vertical. */
+/* Tràn qua padding body ngang (1rem) của ContentPanel để đường phân cách này
+   chạm viền trái/phải của panel — cùng quy ước như .profile-grid ở trên,
+   nhưng áp trên trục ngang thay vì trục dọc. */
 .profile-actions {
   display: flex;
   align-items: center;
@@ -241,21 +241,21 @@
   color: #16a34a;
 }
 
-/* Link detail page */
+/* Trang chi tiết link */
 .link-detail-config-row {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: 2rem; /* matches .page-content's vertical gap */
-  align-items: stretch; /* QR panel matches the config panel's height */
+  gap: 2rem; /* khớp gap dọc của .page-content */
+  align-items: stretch; /* panel QR khớp chiều cao của config panel */
 }
 
 @media (max-width: 900px) {
   .link-detail-config-row {
-    grid-template-columns: 1fr; /* stack once the sidebar leaves too little room */
+    grid-template-columns: 1fr; /* xếp chồng khi sidebar chừa lại quá ít chỗ */
   }
 }
 
-/* Shorten Link page */
+/* Trang rút gọn link */
 .shorten-form {
   display: flex;
   flex-direction: column;
@@ -293,9 +293,9 @@
   gap: 1rem;
 }
 
-/* Below this, the sidebar leaves too little room for two fields side by
-   side (a tablet in portrait or landscape, or a phone) — each field gets
-   its own full-width row instead of being squeezed into a cramped column. */
+/* Dưới mức này, sidebar chừa lại quá ít chỗ cho hai field đứng cạnh nhau
+   (máy tính bảng dọc hay ngang, hoặc điện thoại) — mỗi field có riêng một
+   hàng rộng hết cỡ thay vì bị ép vào một cột chật chội. */
 @media (min-width: 1024px) {
   .shorten-tab-content {
     flex-direction: row;
@@ -339,16 +339,16 @@
   outline: none;
 }
 
-/* Analytics page */
+/* Trang phân tích */
 .analytics-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 
-/* LinkAnalyticsPage: two tiles (Total Clicks / Clicks Today) instead of
-   AnalyticsPage's three — must come before the mobile media query below so
-   that query still wins and collapses to one column on small screens. */
+/* LinkAnalyticsPage: hai ô (Total Clicks / Clicks Today) thay vì ba như
+   AnalyticsPage — phải đặt trước media query mobile bên dưới để query đó vẫn
+   thắng và thu về một cột trên màn hình nhỏ. */
 .analytics-stats--pair {
   grid-template-columns: repeat(2, 1fr);
 }

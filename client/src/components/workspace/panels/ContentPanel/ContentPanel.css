@@ -1,6 +1,6 @@
-/* Bordered card with an optional fixed-height title bar, matching Thesis's
-   DashboardPanel — used to group content within a workspace page (which
-   already has its own PageHeader for the page-level title). */
+/* Thẻ có viền với thanh tiêu đề chiều cao cố định tuỳ chọn, giống
+   DashboardPanel của Thesis — dùng để nhóm nội dung trong một trang workspace
+   (trang này đã có PageHeader riêng cho tiêu đề cấp trang). */
 .content-panel {
   display: flex;
   flex-direction: column;

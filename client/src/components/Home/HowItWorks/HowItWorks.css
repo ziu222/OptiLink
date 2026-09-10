@@ -1,0 +1,61 @@
+/* Cách hoạt động */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  margin-top: 4rem;
+}
+
+.step {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+}
+
+.step-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.step-title {
+  margin: 0.5rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-h);
+}
+
+.step-description {
+  margin: 1rem 0 0;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.step-frame {
+  /* Chiều cao cố định (không phải min-height) giữ khung của mọi step cùng kích
+     thước dù nó chứa glyph placeholder rỗng hay một ảnh chụp màn hình thật —
+     nếu không, một flex container không có chiều cao xác định sẽ chỉ giãn ra
+     ôm lấy nội dung thay vì giữ một hộp nhất quán qua các step. */
+  height: 18rem;
+}
+
+@media (min-width: 1024px) {
+  .step {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .step-frame {
+    grid-column: span 2;
+  }
+
+  .step--reverse .step-copy {
+    order: 2;
+    text-align: right;
+  }
+
+  .step--reverse .step-frame {
+    order: 1;
+  }
+}

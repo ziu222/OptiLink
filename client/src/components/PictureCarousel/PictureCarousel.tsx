@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './PictureCarousel.css';
 
 interface Slide {
   src: string;
@@ -34,14 +35,14 @@ export function PictureCarousel({ className = '', slides, intervalMs = 3000 }: P
       {slides.map((slide, index) => (
         <img
           key={slide.src}
-          className={`picture-carousel__image${index === active ? ' is-active' : ''}`}
+          className={`picture-carousel-image${index === active ? ' is-active' : ''}`}
           src={slide.src}
           alt={slide.alt}
         />
       ))}
-      <div className="picture-carousel__dots">
+      <div className="picture-carousel-dots">
         {slides.map((slide, index) => (
-          <span key={slide.src} className={`picture-carousel__dot${index === active ? ' is-active' : ''}`} />
+          <span key={slide.src} className={`picture-carousel-dot${index === active ? ' is-active' : ''}`} />
         ))}
       </div>
     </div>

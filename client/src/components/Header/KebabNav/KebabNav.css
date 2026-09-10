@@ -1,0 +1,92 @@
+/* Mobile-first: bản nav thu gọn này là bố cục cho điện thoại/máy tính bảng;
+   media query ở cuối file sẽ gỡ nó đi khi thanh nav ngang tiếp quản. */
+.kebab-nav {
+  position: relative;
+  display: flex;
+}
+
+.kebab-nav-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-h);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background-color 0.15s;
+}
+
+.kebab-nav-trigger:hover,
+.kebab-nav-trigger[aria-expanded='true'] {
+  border-color: var(--text-h);
+}
+
+/* Nút mở khi đã đăng nhập: khung hồ sơ, khớp với .site-header-avatar. */
+.kebab-nav-trigger--avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-color: var(--text-h);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.kebab-nav-trigger--avatar:hover,
+.kebab-nav-trigger--avatar[aria-expanded='true'] {
+  background: var(--code-bg);
+}
+
+.kebab-nav-panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  min-width: 13rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+
+.kebab-nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
+  padding: 0.625rem 1rem;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.kebab-nav-item:hover {
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.kebab-nav-divider {
+  margin: 0.25rem 0;
+  border-top: 1px solid var(--border);
+}
+
+@media (min-width: 1024px) {
+  .kebab-nav {
+    display: none;
+  }
+}

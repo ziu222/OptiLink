@@ -3,7 +3,7 @@
   background: color-mix(in srgb, var(--bg) 80%, transparent);
 }
 
-.site-footer__top {
+.site-footer-top {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
@@ -12,11 +12,11 @@
   padding: 3rem 24px;
 }
 
-.site-footer__brand {
+.site-footer-brand {
   max-width: 20rem;
 }
 
-.site-footer__logo {
+.site-footer-logo {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -24,26 +24,26 @@
   text-decoration: none;
 }
 
-.site-footer__tagline {
+.site-footer-tagline {
   margin-top: 0.75rem;
   font-size: 1rem;
   color: var(--text);
 }
 
-.site-footer__columns {
+.site-footer-columns {
   display: flex;
   flex-wrap: wrap;
   gap: 2.5rem;
 }
 
-.site-footer__heading {
+.site-footer-heading {
   margin: 0 0 0.75rem;
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-h);
 }
 
-.site-footer__list {
+.site-footer-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -52,18 +52,18 @@
   gap: 0.5rem;
 }
 
-.site-footer__link {
+.site-footer-link {
   font-size: 1rem;
   color: var(--text);
   text-decoration: none;
   transition: color 0.15s;
 }
 
-.site-footer__link:hover {
+.site-footer-link:hover {
   color: var(--text-h);
 }
 
-.site-footer__bottom {
+.site-footer-bottom {
   border-top: 1px solid var(--border);
   padding: 1.5rem 24px;
   text-align: center;
@@ -72,7 +72,7 @@
 }
 
 @media (min-width: 768px) {
-  .site-footer__top {
+  .site-footer-top {
     flex-direction: row;
     justify-content: space-between;
   }

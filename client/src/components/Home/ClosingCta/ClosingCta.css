@@ -1,0 +1,40 @@
+/* CTA cuối trang */
+.closing-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  text-align: center;
+}
+
+.closing-cta-title {
+  max-width: 40rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.closing-cta-lede {
+  max-width: 34rem;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0;
+}
+
+.closing-cta-button {
+  margin-top: 1rem;
+  display: inline-block;
+  padding: 1.125rem 2.75rem;
+  border: 1px solid var(--text-h);
+  color: var(--text-h);
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+
+.closing-cta-button:hover {
+  background: var(--code-bg);
+}

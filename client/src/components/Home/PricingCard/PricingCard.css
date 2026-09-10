@@ -1,0 +1,85 @@
+.tier-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  padding: 2rem;
+}
+
+.tier-card--featured {
+  border-color: var(--text-h);
+  box-shadow: var(--shadow);
+}
+
+.tier-name {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.tier-price {
+  margin: 0.5rem 0 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-h);
+}
+
+.tier-price span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.tier-perks {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tier-perks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.tier-check {
+  flex-shrink: 0;
+  color: var(--text-h);
+  font-weight: 700;
+}
+
+.tier-cta {
+  display: block;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--text-h);
+  color: var(--text-h);
+  background: none;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.tier-cta:hover {
+  background: var(--code-bg);
+}
+
+.tier-cta--primary {
+  background: var(--text-h);
+  color: var(--bg);
+}
+
+.tier-cta--primary:hover {
+  opacity: 0.9;
+  background: var(--text-h);
+}

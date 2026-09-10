@@ -2,6 +2,6 @@
   display: block;
   flex: 1 1 auto;
   min-width: 0;
-  /* Near-black line; flips to near-white in dark mode via the heading token. */
+  /* Đường gần đen; chuyển sang gần trắng ở dark mode nhờ token heading. */
   color: var(--text-h);
 }
