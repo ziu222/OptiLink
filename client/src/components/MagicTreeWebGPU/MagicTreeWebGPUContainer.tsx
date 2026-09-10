@@ -175,6 +175,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
     <header className="tree-header">
       <a className="tree-brand" href={embedded ? '/dashboard' : '/'} aria-label="Về OptiLink"><span className="tree-brand-mark"><Sprout size={23} strokeWidth={1.6} /></span><span>OptiLink <small>MAGIC TREE</small></span></a>
       <div className="tree-header-actions">
+        {flat && support === 'ready' && <button className="tree-icon-button" onClick={() => toggle()} aria-label="Trở về khu vườn" title="Trở về khu vườn"><ArrowLeft size={18} /></button>}
         {embedded && <a href={`/magic-tree?q=${encodeURIComponent(encodeShareState(config))}`} className="tree-icon-button" aria-label="Mở toàn màn hình"><ArrowUpRight size={19} /></a>}
         <button className="tree-icon-button" onClick={download} disabled={!!error || pending} aria-label="Tải mã QR" title="Tải mã QR"><Download size={18} /></button>
         <button className="tree-icon-button" onClick={() => setInfo(true)} aria-label="Giới thiệu Magic Tree"><Info size={18} /></button>
@@ -200,7 +201,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
 
     <aside className="tree-specimen" aria-hidden="true"><span>GARDEN / {current.number}</span><span>{current.detail}</span></aside>
     <div className="tree-dock">
-      {support === 'ready' && <button className="tree-reveal" onClick={() => toggle()}>
+      {support === 'ready' && !flat && <button className="tree-reveal" onClick={() => toggle()}>
         {flat ? <ArrowLeft size={14} /> : <ScanLine size={15} />}
         {flat ? 'Trở về khu vườn' : 'Chạm vào cây để xem QR'}
       </button>}

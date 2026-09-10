@@ -18,11 +18,12 @@ export interface GrassBlade {
   seed: number;
 }
 
-const MARGIN_CELLS = 0.6;
-const BAND_CELLS = 1.8;
-const BLADES_PER_CELL = 65;
-const MIN_HEIGHT_CELLS = 0.45;
-const HEIGHT_JITTER_CELLS = 1.1;
+const MARGIN_CELLS = 0.7;
+const BAND_CELLS = 2.1;
+const BLADES_PER_CELL = 112;
+const MIN_HEIGHT_CELLS = 0.65;
+const HEIGHT_JITTER_CELLS = 1.85;
+const BLADES_PER_TUFT = 14;
 
 /** Half-width of the grid's own footprint, in world units. */
 export function gridHalfExtent(gridSize: number, cellSize = 1): number {
@@ -38,8 +39,10 @@ export function generateGrassRing(gridSize: number, seed: number, cellSize = 1):
   for (let i = 0; i < count; i++) {
     // Walk the ring's perimeter, then push outward — no rejection sampling,
     // so the count is exact and the layout stays reproducible.
-    const t = pseudoRandom(i, 0, seed + 12);
-    const depth = pseudoRandom(i, 1, seed + 13) * band;
+    const tuft = Math.floor(i / BLADES_PER_TUFT);
+    const tuftCount = Math.ceil(count / BLADES_PER_TUFT);
+    const t = (tuft + 0.5) / tuftCount;
+    const depth = pseudoRandom(tuft, 1, seed + 13) * band;
     const edge = Math.floor(t * 4) % 4;
     const along = (t * 4 - Math.floor(t * 4)) * 2 * inner - inner;
 
@@ -59,10 +62,13 @@ export function generateGrassRing(gridSize: number, seed: number, cellSize = 1):
       z = along;
     }
 
+    const scatterAngle = pseudoRandom(i, 5, seed + 18) * Math.PI * 2;
+    const scatter = pseudoRandom(i, 6, seed + 19) * 0.42 * cellSize;
+    const tuftHeight = 0.65 + pseudoRandom(tuft, 2, seed + 20) * 0.6;
     blades.push({
-      x,
-      z,
-      height: (MIN_HEIGHT_CELLS + pseudoRandom(i, 2, seed + 14) * HEIGHT_JITTER_CELLS) * cellSize,
+      x: x + Math.cos(scatterAngle) * scatter,
+      z: z + Math.sin(scatterAngle) * scatter,
+      height: (MIN_HEIGHT_CELLS + pseudoRandom(i, 2, seed + 14) * HEIGHT_JITTER_CELLS) * cellSize * tuftHeight,
       rotation: pseudoRandom(i, 3, seed + 15) * Math.PI,
       seed: pseudoRandom(i, 4, seed + 16),
     });
