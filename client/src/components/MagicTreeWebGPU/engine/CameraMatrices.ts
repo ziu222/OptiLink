@@ -15,7 +15,7 @@ import { Matrix4, Vector3, WebGPUCoordinateSystem } from 'three';
 
 export type CameraViewState = 'isometric' | 'flat';
 
-const ISO_DIRECTION = new Vector3(22, 24, 22).normalize();
+const ISO_DIRECTION = new Vector3(22, 20, 26).normalize();
 const BASE_FLAT_Y = 32;
 const TRANSITION_SECONDS = 0.9;
 const FRAME_PADDING_FACTOR = 1.3;
@@ -86,18 +86,28 @@ export class CameraMatrices {
    */
   frameStructure(gridSize: number, structureHeight = 0): void {
     const halfTan = Math.tan((FOV_DEG * Math.PI) / 180 / 2);
-    const width = gridSize * FRAME_PADDING_FACTOR;
+    const width = (gridSize + 10) * 1.04;
     let flatY = width / (2 * halfTan);
     if (this.aspect < 1) flatY /= this.aspect;
 
     this.flatY = Math.max(flatY, BASE_FLAT_Y);
     this.orthoHalfWidth = width / 2;
 
-    const radius = Math.max(gridSize * 0.5, structureHeight * 0.5) * FRAME_PADDING_FACTOR;
-    let distance = radius / Math.sin(((FOV_DEG * Math.PI) / 180) / 2);
-    if (this.aspect < 1) distance /= this.aspect;
-
-    this.isoTarget.set(0, structureHeight * 0.45, 0);
+    const radius = (gridSize / 2 + 5) * FRAME_PADDING_FACTOR;
+    this.isoTarget.set(0, structureHeight * 0.44, 0);
+    const right = new Vector3().crossVectors(ISO_UP, ISO_DIRECTION).normalize();
+    const up = new Vector3().crossVectors(ISO_DIRECTION, right).normalize();
+    let distance = 0;
+    // Fit the platform's corners and the canopy volume in camera space.
+    for (const y of [-1.7, structureHeight + 1]) {
+      const extent = y < 0 ? gridSize / 2 + 5 : gridSize * 0.6;
+      for (const x of [-extent, extent]) for (const z of [-extent, extent]) {
+        const p = new Vector3(x, y, z).sub(this.isoTarget);
+        distance = Math.max(distance, p.dot(ISO_DIRECTION) + Math.abs(p.dot(right)) / (halfTan * this.aspect),
+          p.dot(ISO_DIRECTION) + Math.abs(p.dot(up)) / halfTan);
+      }
+    }
+    distance *= 1.05;
     this.isoPos.copy(ISO_DIRECTION).multiplyScalar(distance).add(this.isoTarget);
     this.far = Math.max(100, Math.max(this.flatY, distance + radius) * 3);
   }
@@ -107,12 +117,15 @@ export class CameraMatrices {
    * duration by the remaining distance — a tap mid-transition is honoured
    * instead of being dropped.
    */
-  toggle(): void {
+  toggle(immediate = false): void {
     this.target = this.target >= 1 ? 0 : 1;
     this.from = this.progress;
     this.elapsed = 0;
     this.duration = TRANSITION_SECONDS * Math.max(0.25, Math.abs(this.target - this.from));
+    if (immediate) this.progress = this.target;
   }
+
+  get targetIsFlat(): boolean { return this.target === 1; }
 
   update(deltaSeconds: number): void {
     if (this.progress === this.target) return;

@@ -23,7 +23,10 @@ fn vertexMain(
 
   var out: VertexOut;
   out.clipPosition = frame.viewProj * vec4<f32>(world, 1.0);
-  out.color = mix(palette.groundLight.rgb, palette.groundDark.rgb, cell.z);
+  let noise = fract(sin(dot(cell.xy, vec2<f32>(12.9898, 78.233))) * 43758.5453);
+  let stone = palette.groundLight.rgb * (0.87 + noise * 0.1 - cell.z * 0.035);
+  let qr = mix(palette.groundLight.rgb, palette.groundDark.rgb, cell.z);
+  out.color = mix(qr, stone, frame.treeAlpha);
   return out;
 }
 

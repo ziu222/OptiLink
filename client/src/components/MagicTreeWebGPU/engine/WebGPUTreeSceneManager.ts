@@ -17,6 +17,8 @@ import fallingWgsl from './shaders/fallingParticles.wgsl?raw';
 import grassWgsl from './shaders/grass.wgsl?raw';
 import groundWgsl from './shaders/ground.wgsl?raw';
 import decalWgsl from './shaders/groundingDecal.wgsl?raw';
+import platformWgsl from './shaders/platform.wgsl?raw';
+import { buildPlatformMesh } from './PlatformMesh';
 
 /**
  * Owns the render loop and the rebuild/dispose lifecycle — spec §4/§8.
@@ -67,6 +69,15 @@ export class WebGPUTreeSceneManager {
   private readonly fallingPipeline: GPURenderPipeline;
   private readonly grassPipeline: GPURenderPipeline;
   private readonly decalPipeline: GPURenderPipeline;
+  private readonly platformPipeline: GPURenderPipeline;
+  private platformVertices: GPUBuffer | null = null;
+  private platformCount = 0;
+  onUnavailable: (() => void) | null = null;
+  onViewSettled: ((flat: boolean) => void) | null = null;
+  private notifiedFlat: boolean | null = null;
+  private motionPaused = false;
+  private reducedMotion = false;
+  private animationTime = 0;
 
   private groundInstances: GPUBuffer | null = null;
   private groundCount = 0;
@@ -85,8 +96,7 @@ export class WebGPUTreeSceneManager {
   private structureHeight = 0;
   private readonly frameData = new Float32Array(FRAME_UNIFORM_BYTES / 4);
   private frameId: number | null = null;
-  private startTime = performance.now();
-  private lastTime = this.startTime;
+  private lastTime = performance.now();
   private disposed = false;
 
   private constructor(gpu: WebGPUContext) {
@@ -161,6 +171,16 @@ export class WebGPUTreeSceneManager {
       PARTICLE_INSTANCE_LAYOUT,
     ]);
     this.decalPipeline = this.createPipeline(layout, decalWgsl, [cornerLayout], true);
+    this.platformPipeline = this.createPipeline(layout, platformWgsl, [{
+      arrayStride: 24, attributes: [
+        { shaderLocation: 0, offset: 0, format: 'float32x3' },
+        { shaderLocation: 1, offset: 12, format: 'float32x3' },
+      ],
+    }]);
+    gpu.onFailure = () => {
+      this.dispose();
+      this.onUnavailable?.();
+    };
 
     this.camera.setViewport(gpu.pixelWidth, gpu.pixelHeight);
     gpu.onResize = (width, height) => {
@@ -174,7 +194,18 @@ export class WebGPUTreeSceneManager {
 
   static async create(canvas: HTMLCanvasElement): Promise<WebGPUTreeSceneManager | null> {
     const gpu = await WebGPUContext.create(canvas);
-    return gpu ? new WebGPUTreeSceneManager(gpu) : null;
+    if (!gpu) return null;
+    gpu.device.pushErrorScope('validation');
+    let manager: WebGPUTreeSceneManager | null = null;
+    try {
+      manager = new WebGPUTreeSceneManager(gpu);
+      const error = await gpu.device.popErrorScope();
+      if (error) { manager.dispose(); return null; }
+      return manager;
+    } catch {
+      if (manager) manager.dispose(); else gpu.destroy();
+      return null;
+    }
   }
 
   /**
@@ -212,7 +243,7 @@ export class WebGPUTreeSceneManager {
 
   private createGpuBuffer(data: Float32Array | Uint32Array, usage: number): GPUBuffer {
     const buffer = this.gpu.device.createBuffer({
-      size: data.byteLength,
+      size: Math.max(4, data.byteLength),
       usage: usage | GPUBufferUsage.COPY_DST,
     });
     this.gpu.device.queue.writeBuffer(buffer, 0, data);
@@ -259,6 +290,9 @@ export class WebGPUTreeSceneManager {
     });
 
     this.destroySceneBuffers();
+    const platform = buildPlatformMesh(size);
+    this.platformVertices = this.createGpuBuffer(platform, GPUBufferUsage.VERTEX);
+    this.platformCount = platform.length / 6;
     this.groundInstances = this.createGpuBuffer(ground, GPUBufferUsage.VERTEX);
     this.groundCount = size * size;
     this.branchVertices = this.createGpuBuffer(mesh.vertices, GPUBufferUsage.VERTEX);
@@ -272,8 +306,8 @@ export class WebGPUTreeSceneManager {
     this.grassCount = blades.length;
 
     const palette = new Float32Array(PALETTE_UNIFORM_BYTES / 4);
-    palette.set([...hexToRgb(theme.groundLight), 1], 0);
-    palette.set([...hexToRgb(theme.groundDark), 1], 4);
+    palette.set([...hexToRgb('#faf8f0'), 1], 0);
+    palette.set([...hexToRgb(art.ink), 1], 4);
     palette.set([...hexToRgb(art.trunk), 1], 8);
     palette.set([...hexToRgb(art.canopy), 1], 12);
     palette.set([...hexToRgb(art.petal), 1], 16);
@@ -288,8 +322,15 @@ export class WebGPUTreeSceneManager {
     this.camera.frameStructure(this.gridSize, this.structureHeight);
   }
 
-  toggleView(): void {
-    this.camera.toggle();
+  toggleView(immediate = false): boolean {
+    this.camera.toggle(immediate || this.reducedMotion);
+    this.notifiedFlat = null;
+    return this.camera.targetIsFlat;
+  }
+
+  setMotion(paused: boolean, reduced: boolean): void {
+    this.motionPaused = paused;
+    this.reducedMotion = reduced;
   }
 
   private readonly renderLoop = (): void => {
@@ -299,6 +340,12 @@ export class WebGPUTreeSceneManager {
     this.lastTime = now;
 
     this.camera.update(delta);
+    if (!this.motionPaused && !this.reducedMotion && !document.hidden) this.animationTime += delta;
+    const settled = this.camera.transitionProgress === 0 || this.camera.isSettledFlat;
+    if (settled && this.notifiedFlat !== this.camera.isSettledFlat) {
+      this.notifiedFlat = this.camera.isSettledFlat;
+      this.onViewSettled?.(this.notifiedFlat);
+    }
 
     if (this.groundInstances) {
       const { device } = this.gpu;
@@ -307,8 +354,8 @@ export class WebGPUTreeSceneManager {
       this.frameData.set(this.camera.viewProj(), 0);
       this.frameData.set(this.camera.cameraRight, 16);
       this.frameData.set(this.camera.cameraUp, 20);
-      this.frameData[24] = (now - this.startTime) / 1000;
-      this.frameData[25] = 1;
+      this.frameData[24] = this.animationTime;
+      this.frameData[25] = this.reducedMotion ? 0 : 1;
       this.frameData[26] = treeAlpha;
       device.queue.writeBuffer(this.frameUniform, 0, this.frameData);
 
@@ -316,13 +363,19 @@ export class WebGPUTreeSceneManager {
       const pass = this.gpu.beginPass(encoder, this.background);
       pass.setBindGroup(0, this.bindGroup);
 
+      if (this.platformVertices) {
+        pass.setPipeline(this.platformPipeline);
+        pass.setVertexBuffer(0, this.platformVertices);
+        pass.draw(this.platformCount);
+      }
+
       pass.setPipeline(this.groundPipeline);
       pass.setVertexBuffer(0, this.quadBuffer);
       pass.setVertexBuffer(1, this.groundInstances);
       pass.draw(6, this.groundCount);
 
       // Outside the grid, so it can't cover a module and never dissolves.
-      if (this.grassInstances && this.grassCount > 0) {
+      if (treeAlpha > DISSOLVE_EPSILON && this.grassInstances && this.grassCount > 0) {
         pass.setPipeline(this.grassPipeline);
         pass.setVertexBuffer(0, this.quadBuffer);
         pass.setVertexBuffer(1, this.grassInstances);
@@ -364,6 +417,8 @@ export class WebGPUTreeSceneManager {
   };
 
   private destroySceneBuffers(): void {
+    this.platformVertices?.destroy();
+    this.platformVertices = null;
     this.groundInstances?.destroy();
     this.branchVertices?.destroy();
     this.branchIndices?.destroy();
@@ -379,6 +434,7 @@ export class WebGPUTreeSceneManager {
   }
 
   dispose(): void {
+    if (this.disposed) return;
     this.disposed = true;
     if (this.frameId !== null) cancelAnimationFrame(this.frameId);
     this.frameId = null;

@@ -8,9 +8,9 @@ struct VertexOut {
   @location(0) corner: vec2<f32>,
 }
 
-const DECAL_LIFT: f32 = 0.02;
-const DECAL_RADIUS_FACTOR: f32 = 0.35;
-const DECAL_STRENGTH: f32 = 0.35;
+const DECAL_LIFT: f32 = -1.65;
+const DECAL_RADIUS_FACTOR: f32 = 1.9;
+const DECAL_STRENGTH: f32 = 0.22;
 
 @vertex
 fn vertexMain(@location(0) corner: vec2<f32>) -> VertexOut {
@@ -28,7 +28,8 @@ fn vertexMain(@location(0) corner: vec2<f32>) -> VertexOut {
 
 @fragment
 fn fragmentMain(in: VertexOut) -> @location(0) vec4<f32> {
-  let falloff = 1.0 - smoothstep(0.0, 0.5, length(in.corner));
+  let distance = length(max(abs(in.corner) - vec2<f32>(0.19), vec2<f32>(0.0)));
+  let falloff = 1.0 - smoothstep(0.03, 0.23, distance);
   // Fades out with the tree: in the settled flat view nothing may darken a
   // QR module, not even a shadow (§1.5.1 outranks the decal).
   let strength = DECAL_STRENGTH * frame.treeAlpha;

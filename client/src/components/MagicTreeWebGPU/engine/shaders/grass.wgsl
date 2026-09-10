@@ -4,6 +4,7 @@
 struct VertexOut {
   @builtin(position) clipPosition: vec4<f32>,
   @location(0) color: vec3<f32>,
+  @location(1) hash: f32,
 }
 
 const BLADE_WIDTH: f32 = 0.22;
@@ -32,10 +33,12 @@ fn vertexMain(
   var out: VertexOut;
   out.clipPosition = frame.viewProj * vec4<f32>(world, 1.0);
   out.color = mix(palette.grass.rgb * (0.55 + seed * 0.2), palette.grass.rgb * 1.38, tipT);
+  out.hash = seed;
   return out;
 }
 
 @fragment
 fn fragmentMain(in: VertexOut) -> @location(0) vec4<f32> {
+  if (dissolve(in.hash)) { discard; }
   return vec4<f32>(in.color, 1.0);
 }
