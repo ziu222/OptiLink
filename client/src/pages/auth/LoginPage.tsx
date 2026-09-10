@@ -9,6 +9,7 @@ import { PictureFrame } from '../../components/Home/PictureFrame';
 import { OAuthButtons } from './OAuthButtons';
 import { loginSchema } from './schemas';
 import type { LoginValues } from './schemas';
+import heroIllustration from '../../assets/hero-shorten-illustration.png';
 import './authForm.css';
 
 export function LoginPage() {
@@ -40,7 +41,11 @@ export function LoginPage() {
 
       <main className="authform-main">
         <div className="authform-layout">
-          <PictureFrame className="authform-frame" />
+          <PictureFrame
+            className="authform-frame"
+            src={heroIllustration}
+            alt="Shorten a long link into a branded opti.link URL"
+          />
 
           <form className="authform-panel" onSubmit={onSubmit} noValidate>
             <h1 className="authform-title">Welcome Back</h1>

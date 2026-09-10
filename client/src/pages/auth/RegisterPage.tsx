@@ -9,6 +9,7 @@ import { PictureFrame } from '../../components/Home/PictureFrame';
 import { OAuthButtons } from './OAuthButtons';
 import { registerSchema } from './schemas';
 import type { RegisterValues } from './schemas';
+import heroIllustration from '../../assets/hero-shorten-illustration.png';
 import './authForm.css';
 
 export function RegisterPage() {
@@ -40,7 +41,11 @@ export function RegisterPage() {
 
       <main className="authform-main">
         <div className="authform-layout">
-          <PictureFrame className="authform-frame" />
+          <PictureFrame
+            className="authform-frame"
+            src={heroIllustration}
+            alt="Shorten a long link into a branded opti.link URL"
+          />
 
           <form className="authform-panel" onSubmit={onSubmit} noValidate>
             <h1 className="authform-title">Create an Account</h1>
