@@ -80,6 +80,8 @@ export class WebGPUTreeSceneManager {
   private grassCount = 0;
 
   private background: GPUColor = { r: 1, g: 1, b: 1, a: 1 };
+  private gridSize = 0;
+  private structureHeight = 0;
   private readonly frameData = new Float32Array(FRAME_UNIFORM_BYTES / 4);
   private frameId: number | null = null;
   private startTime = performance.now();
@@ -160,6 +162,12 @@ export class WebGPUTreeSceneManager {
     this.decalPipeline = this.createPipeline(layout, decalWgsl, [cornerLayout], true);
 
     this.camera.setViewport(gpu.pixelWidth, gpu.pixelHeight);
+    gpu.onResize = (width, height) => {
+      this.camera.setViewport(width, height);
+      // Re-frame, not just re-project: the framing distance itself depends on
+      // the aspect ratio, so a resize leaves it stale otherwise.
+      if (this.gridSize > 0) this.camera.frameStructure(this.gridSize, this.structureHeight);
+    };
     this.frameId = requestAnimationFrame(this.renderLoop);
   }
 
@@ -274,7 +282,9 @@ export class WebGPUTreeSceneManager {
 
     const [r, g0, b] = hexToRgb(theme.background);
     this.background = { r, g: g0, b, a: 1 };
-    this.camera.frameStructure(size, canopy.minY + canopy.height);
+    this.gridSize = size;
+    this.structureHeight = canopy.minY + canopy.height;
+    this.camera.frameStructure(this.gridSize, this.structureHeight);
   }
 
   toggleView(): void {
@@ -287,9 +297,6 @@ export class WebGPUTreeSceneManager {
     const delta = Math.min((now - this.lastTime) / 1000, 0.1);
     this.lastTime = now;
 
-    if (this.gpu.resize()) {
-      this.camera.setViewport(this.gpu.pixelWidth, this.gpu.pixelHeight);
-    }
     this.camera.update(delta);
 
     if (this.groundInstances) {

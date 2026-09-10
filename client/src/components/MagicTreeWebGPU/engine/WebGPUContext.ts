@@ -30,6 +30,10 @@ export class WebGPUContext {
   private msaaTexture: GPUTexture | null = null;
   private width = 0;
   private height = 0;
+  private readonly observer: ResizeObserver;
+
+  /** Called after the render targets have been resized. */
+  onResize: ((width: number, height: number) => void) | null = null;
 
   private constructor(canvas: HTMLCanvasElement, device: GPUDevice, context: GPUCanvasContext) {
     this.canvas = canvas;
@@ -38,6 +42,12 @@ export class WebGPUContext {
     this.format = navigator.gpu.getPreferredCanvasFormat();
     this.context.configure({ device, format: this.format, alphaMode: 'premultiplied' });
     this.resize();
+    // Layout may not have given the canvas a width yet when the device
+    // resolves — without this the first frames render into a 1px target.
+    this.observer = new ResizeObserver(() => {
+      if (this.resize()) this.onResize?.(this.width, this.height);
+    });
+    this.observer.observe(canvas);
   }
 
   static async create(canvas: HTMLCanvasElement): Promise<WebGPUContext | null> {
@@ -117,8 +127,12 @@ export class WebGPUContext {
   }
 
   destroy(): void {
+    this.observer.disconnect();
     this.destroyTargets();
-    this.context.unconfigure();
+    // Deliberately not unconfigure(): the canvas context is shared, and a
+    // remount can configure it with a new device before this dispose runs.
+    // Unconfiguring here would blank the canvas that already belongs to the
+    // newer context.
     this.device.destroy();
   }
 }
