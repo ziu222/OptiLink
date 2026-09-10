@@ -309,7 +309,7 @@ export class WebGPUTreeSceneManager {
     palette.set([...hexToRgb('#faf8f0'), 1], 0);
     palette.set([...hexToRgb(art.ink), 1], 4);
     palette.set([...hexToRgb(art.trunk), 1], 8);
-    palette.set([...hexToRgb(art.canopy), 1], 12);
+    palette.set([...hexToRgb(art.canopy), ['spring', 'summer', 'autumn', 'winter'].indexOf(config.season)], 12);
     palette.set([...hexToRgb(art.petal), 1], 16);
     palette.set([...hexToRgb(art.grass), 1], 20);
     palette.set([canopy.minY, canopy.height, GROUND_Y, size / 2], 24);
@@ -319,6 +319,7 @@ export class WebGPUTreeSceneManager {
     this.background = { r, g: g0, b, a: 1 };
     this.gridSize = size;
     this.structureHeight = canopy.minY + canopy.height;
+    this.camera.setCrownPoints(canopy.leaves.map(leaf => leaf.position));
     this.camera.frameStructure(this.gridSize, this.structureHeight);
   }
 
