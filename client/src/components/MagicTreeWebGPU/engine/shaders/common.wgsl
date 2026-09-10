@@ -18,6 +18,7 @@ struct Palette {
   trunk: vec4<f32>,
   canopy: vec4<f32>,
   petal: vec4<f32>,
+  grass: vec4<f32>,
   // x = canopy min Y, y = canopy height, z = ground Y, w = grid half extent
   bounds: vec4<f32>,
 }
