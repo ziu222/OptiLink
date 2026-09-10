@@ -1,0 +1,101 @@
+/* Ràng buộc #root { width: 1126px } dùng chung (index.css) là dành cho các bố
+   cục thẻ kiểu tài liệu hẹp ở nơi khác trong app; trang chủ marketing cần
+   trọn khung nhìn, nên nó thoát ra theo cùng cách mà .auth-page của auth.css
+   làm. */
+.home-page {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  /* Luôn chừa chỗ cho thanh cuộn dọc để bề rộng nội dung không nhảy khi
+     trang cao thêm/bớt (ví dụ mở/đóng câu hỏi FAQ). */
+  scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+  font: 16px/145% var(--sans);
+}
+
+.home-main {
+  flex: 1;
+}
+
+/* Section CTA + footer cùng chiếm đúng một màn hình cuối (đã trừ header sticky):
+   CTA giãn lấp phần còn lại, footer giữ chiều cao theo nội dung. */
+.home-outro {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - 4rem - 1px);
+}
+
+/* grow để lấp phần còn lại trên màn hình cao, nhưng shrink: 0 + basis: auto để
+   không bao giờ co nhỏ hơn nội dung (tránh CTA đè lên footer khi màn hình thấp,
+   ví dụ điện thoại xoay ngang). min-height: 0 vẫn cần để ghi đè min-height
+   100svh của .home-section. */
+.home-outro .home-section {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+/* width: 100% để .home-container không co lại theo nội dung — nó là flex item
+   của .home-section, mà margin: 0 auto (trục ngang) sẽ vô hiệu hoá
+   align-items: stretch nên nếu không có width nó sẽ shrink-wrap. */
+.home-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Mỗi section cao đúng một màn hình (đã trừ header sticky 4rem + 1px viền),
+   nội dung căn giữa theo chiều dọc; section nào có nội dung cao hơn thì tự
+   giãn ra (min-height, không phải height) nên không bị cắt và không sinh
+   thanh cuộn bên trong. box-sizing: border-box để padding nằm trong
+   min-height chứ không cộng thêm (app này không có reset toàn cục). */
+.home-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
+  min-height: calc(100svh - 4rem - 1px);
+  border-top: 1px solid var(--border);
+  padding: 4rem 0;
+}
+
+.home-section--muted {
+  background: var(--code-bg);
+}
+
+.home-heading {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.home-heading--center {
+  text-align: center;
+}
+
+.home-subheading {
+  max-width: 42rem;
+  margin: 1rem auto 0;
+  font-size: 1.125rem;
+  color: var(--text);
+}
+
+.home-subheading--center {
+  text-align: center;
+}
+
+.home-eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-h);
+}

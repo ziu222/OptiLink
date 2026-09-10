@@ -1,3 +1,5 @@
+import './PictureFrame.css';
+
 // Placeholder image frame: a bordered box with a picture glyph, shown in
 // place of real illustrations or screenshots until those are dropped in. Pass
 // `src` once a real image is ready; the glyph placeholder drops out.
@@ -11,9 +13,9 @@ export function PictureFrame({ className = '', src, alt = '' }: PictureFrameProp
   return (
     <div className={`picture-frame ${className}`.trim()}>
       {src ? (
-        <img className="picture-frame__image" src={src} alt={alt} />
+        <img className="picture-frame-image" src={src} alt={alt} />
       ) : (
-        <svg className="picture-frame__icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <svg className="picture-frame-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path
             strokeLinecap="round"
             strokeLinejoin="round"

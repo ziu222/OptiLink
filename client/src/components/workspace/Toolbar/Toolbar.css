@@ -1,15 +1,15 @@
-/* Control bar meant to live as the first child of a ContentPanel body: the
-   negative margin cancels the body's 1rem top/side padding so the bar bleeds
-   to the panel's borders and butts against the title bar's bottom border,
-   matching the divider convention used by .link-list / .profile-actions. */
+/* Thanh điều khiển dự kiến đặt làm phần tử con đầu tiên trong body của
+   ContentPanel: margin âm triệt tiêu padding 1rem phía trên/hai bên của body
+   để thanh tràn ra sát viền panel và áp vào viền dưới của thanh tiêu đề,
+   theo quy ước đường phân cách mà .link-list / .profile-actions dùng. */
 .toolbar {
   display: flex;
   align-items: stretch;
-  box-sizing: border-box;
+  /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
   height: 3rem;
-  /* Extra -1px on the top and sides so the toolbar's own border lands on top
-     of the panel + title-bar borders it butts against, rather than doubling
-     them — lets all four sides recolour together on focus. */
+  /* Thêm -1px ở trên và hai bên để viền của toolbar nằm đè lên viền panel +
+     thanh tiêu đề mà nó áp vào, thay vì nhân đôi chúng — nhờ đó cả bốn cạnh
+     đổi màu cùng lúc khi focus. */
   margin: calc(-1rem - 1px) calc(-1rem - 1px) 0;
   border: 1px solid var(--border);
   background: var(--bg);
@@ -43,7 +43,7 @@
   color: var(--text);
 }
 
-/* Drop the native clear/decoration on type=search where the browser adds one. */
+/* Bỏ nút xoá/trang trí mặc định của type=search ở những trình duyệt có thêm nó. */
 .toolbar-search-input::-webkit-search-decoration,
 .toolbar-search-input::-webkit-search-cancel-button {
   appearance: none;
@@ -61,9 +61,9 @@
   background: var(--border);
 }
 
-/* Focus / open state: darken every side of the bar plus the segment
-   separators while the search field is focused or a menu button is
-   focused/open (the trigger keeps focus while its popup is open). */
+/* Trạng thái focus / mở: làm đậm mọi cạnh của thanh cùng các đường phân cách
+   giữa các đoạn khi ô tìm kiếm đang focus hoặc một nút menu đang
+   focus/mở (nút kích hoạt vẫn giữ focus khi popup của nó đang mở). */
 .toolbar:focus-within {
   border-color: var(--text-h);
 }
@@ -72,7 +72,7 @@
   background: var(--text-h);
 }
 
-/* Make the shared MenuButton fill the bar's height and sit centered. */
+/* Cho MenuButton dùng chung lấp đầy chiều cao thanh và căn giữa. */
 .toolbar .menu-button {
   display: flex;
 }

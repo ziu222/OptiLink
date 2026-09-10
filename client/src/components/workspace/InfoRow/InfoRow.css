@@ -1,4 +1,4 @@
-/* Frame */
+/* Khung */
 .info-row {
   display: grid;
   gap: 0.5rem 1.5rem;
@@ -27,13 +27,13 @@
   cursor: pointer;
 }
 
-/* Selected row: a thick left rule drawn inside the padding (inset shadow, so it
-   adds no width and never shifts the row content). */
+/* Hàng được chọn: một đường kẻ trái dày vẽ bên trong padding (inset shadow, nên
+   không thêm chiều rộng và không bao giờ làm xê dịch nội dung hàng). */
 .info-row.is-selected {
   box-shadow: inset 3px 0 0 var(--text-h);
 }
 
-/* Cell */
+/* Ô */
 .info-cell {
   display: flex;
   flex-direction: column;
@@ -44,7 +44,7 @@
   align-items: flex-end;
 }
 
-/* Cell content */
+/* Nội dung ô */
 .info-cell-main {
   font-size: 1rem;
   font-weight: 600;
@@ -111,9 +111,9 @@ a.info-cell-main:hover {
   gap: 0.5rem;
 }
 
-/* Responsive: mobileLayout="stack" collapses the row to a flexible primary
-   column + an auto trailing column, with mobileSpan cells dropping full-width
-   below. Placed after the [data-columns] rules so it wins on equal specificity. */
+/* Responsive: mobileLayout="stack" thu hàng lại thành một cột chính co giãn +
+   một cột đuôi tự động, các ô mobileSpan rớt xuống chiếm trọn chiều ngang phía
+   dưới. Đặt sau các quy tắc [data-columns] để thắng khi specificity bằng nhau. */
 @media (max-width: 640px) {
   .info-row[data-mobile='stack'] {
     grid-template-columns: minmax(0, 1fr) auto;

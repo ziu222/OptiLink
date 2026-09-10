@@ -1,0 +1,61 @@
+/* Ở desktop, sidebar vẫn nằm trong luồng nên thanh này bị ẩn. Nó chỉ xuất hiện
+   khi sidebar trở thành drawer trượt ngoài khung nhìn (<1024px). */
+.workspace-topbar {
+  display: none;
+}
+
+@media (max-width: 1023.98px) {
+  .workspace-topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    height: 3.5rem;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .workspace-topbar-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-left: -0.25rem;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--text-h);
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .workspace-topbar-menu:hover {
+    border-color: var(--border);
+  }
+
+  .workspace-topbar-brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-h);
+    text-decoration: none;
+  }
+
+  .workspace-topbar-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    margin-left: auto;
+    border: 1px solid var(--border);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+  }
+}

@@ -1,6 +1,6 @@
-/* Make the panel body a column so the preview can absorb the height the
-   config panel forces on this row (see .link-detail-config-row in
-   workspace.css) and the actions stay pinned to the bottom. */
+/* Cho body của panel thành cột để phần preview hấp thụ được chiều cao mà
+   config panel ép lên hàng này (xem .link-detail-config-row trong
+   workspace.css) và các nút hành động vẫn ghim ở đáy. */
 .qr-panel .content-panel-body {
   display: flex;
   flex-direction: column;
@@ -15,9 +15,9 @@
   padding: 0.5rem 0 1.5rem;
 }
 
-/* Square, grows to fill whatever space the row gives it (capped so it doesn't
-   get absurd next to a very tall config panel). The source preview is 256px,
-   so pixelated keeps the modules crisp when it scales up. */
+/* Hình vuông, giãn ra để lấp mọi khoảng trống hàng dành cho nó (có giới hạn để
+   không phình quá mức khi đứng cạnh một config panel rất cao). Preview gốc là
+   256px, nên pixelated giữ các module sắc nét khi phóng to. */
 .qr-panel-preview img {
   max-width: min(100%, 400px);
   max-height: 100%;
@@ -27,7 +27,7 @@
   object-fit: contain;
   image-rendering: pixelated;
   border: 1px solid var(--border);
-  background: #fff; /* keep the QR quiet zone white in dark mode */
+  background: #fff; /* giữ vùng lặng của QR màu trắng khi ở dark mode */
 }
 
 .qr-panel-status {
@@ -37,8 +37,8 @@
   color: var(--text);
 }
 
-/* The shared .button is a filled CTA; the "Customize" link is a quiet outline:
-   gray by default, black text + border on hover. */
+/* .button dùng chung là CTA tô đầy; link "Customize" là kiểu viền nhẹ:
+   xám mặc định, chữ + viền đen khi hover. */
 .qr-panel-customize {
   background: var(--bg);
   border-color: var(--text);

@@ -1,14 +1,14 @@
-import { PictureCarousel } from './PictureCarousel';
-import shortenBasicScreenshot from '../../assets/how-it-works-shorten.png';
-import shortenAccessScreenshot from '../../assets/how-it-works-access.png';
-import shortenedLinksScreenshot from '../../assets/how-it-works-links.png';
-import bioDesignScreenshot from '../../assets/how-it-works-bio-design.png';
-import bioBlocksScreenshot from '../../assets/how-it-works-bio-blocks.png';
-import bioPreviewScreenshot from '../../assets/how-it-works-bio-preview.png';
-import statsScreenshot from '../../assets/how-it-works-stats.png';
-import countriesScreenshot from '../../assets/how-it-works-countries.png';
-import devicesScreenshot from '../../assets/how-it-works-devices.png';
-import './home.css';
+import { PictureCarousel } from '../../PictureCarousel/PictureCarousel';
+import shortenBasicScreenshot from '../../../assets/how-it-works-shorten.png';
+import shortenAccessScreenshot from '../../../assets/how-it-works-access.png';
+import shortenedLinksScreenshot from '../../../assets/how-it-works-links.png';
+import bioDesignScreenshot from '../../../assets/how-it-works-bio-design.png';
+import bioBlocksScreenshot from '../../../assets/how-it-works-bio-blocks.png';
+import bioPreviewScreenshot from '../../../assets/how-it-works-bio-preview.png';
+import statsScreenshot from '../../../assets/how-it-works-stats.png';
+import countriesScreenshot from '../../../assets/how-it-works-countries.png';
+import devicesScreenshot from '../../../assets/how-it-works-devices.png';
+import './HowItWorks.css';
 
 const shortenSlides = [
   { src: shortenBasicScreenshot, alt: 'Shortening a long URL with title, slug, redirect mode, and status options' },

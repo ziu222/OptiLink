@@ -8,7 +8,7 @@
   backdrop-filter: blur(8px);
 }
 
-.site-header__bar {
+.site-header-bar {
   position: relative;
   display: flex;
   align-items: center;
@@ -19,7 +19,7 @@
   padding: 0 24px;
 }
 
-.site-header__logo {
+.site-header-logo {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -27,18 +27,22 @@
   text-decoration: none;
 }
 
-.site-header__nav {
+/* Mobile-first (xem docs/responsive-conventions.md): thanh nav căn giữa và các
+   link đăng nhập trên thanh là bố cục desktop, bị ẩn cho tới >=1024px, nơi khối
+   @media ở cuối file này khôi phục chúng. Dưới mức đó, KebabNav mang các link
+   tương tự. */
+.site-header-nav {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   gap: 2rem;
 }
 
-.site-header__link {
+.site-header-link {
   font-size: 1rem;
   font-weight: 500;
   color: var(--text);
@@ -46,17 +50,18 @@
   transition: color 0.15s;
 }
 
-.site-header__link:hover {
+.site-header-link:hover {
   color: var(--text-h);
 }
 
-.site-header__actions {
+.site-header-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.site-header__login {
+.site-header-login {
+  display: none;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   font-weight: 500;
@@ -65,11 +70,12 @@
   transition: background-color 0.15s;
 }
 
-.site-header__login:hover {
+.site-header-login:hover {
   background: var(--code-bg);
 }
 
-.site-header__register {
+.site-header-register {
+  display: none;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   font-weight: 500;
@@ -79,11 +85,12 @@
   transition: background-color 0.15s;
 }
 
-.site-header__register:hover {
+.site-header-register:hover {
   background: var(--code-bg);
 }
 
-.site-header__logout {
+.site-header-logout {
+  display: none;
   background: none;
   border: none;
   padding: 0;
@@ -94,12 +101,15 @@
   transition: color 0.15s;
 }
 
-.site-header__logout:hover {
+.site-header-logout:hover {
   color: #dc2626;
 }
 
-.site-header__avatar {
-  display: flex;
+/* Dưới 1024px, nút đổi giao diện và avatar này nằm trong KebabNav, với nút mở
+   chính là khung hồ sơ; cả hai được khôi phục lên thanh ở >=1024px khi KebabNav
+   bị ẩn. */
+.site-header-avatar {
+  display: none;
   align-items: center;
   justify-content: center;
   width: 2.5rem;
@@ -112,12 +122,37 @@
   transition: background-color 0.15s;
 }
 
-.site-header__avatar:hover {
+.site-header-actions .darkmode-compact {
+  display: none;
+  /* Khớp cỡ chữ với các nút còn lại trên thanh (mặc định .darkmode-compact là 0.875rem). */
+  font-size: 1rem;
+}
+
+.site-header-avatar:hover {
   background: var(--code-bg);
 }
 
-@media (max-width: 768px) {
-  .site-header__nav {
-    display: none;
+/* Desktop: thanh nav ngang và các link đăng nhập trên thanh tiếp quản; KebabNav
+   tự ẩn ở cùng mức width này (KebabNav.css). */
+@media (min-width: 1024px) {
+  .site-header-nav {
+    display: flex;
+  }
+
+  .site-header-login,
+  .site-header-register {
+    display: inline-block;
+  }
+
+  .site-header-logout {
+    display: inline;
+  }
+
+  .site-header-avatar {
+    display: flex;
+  }
+
+  .site-header-actions .darkmode-compact {
+    display: inline-block;
   }
 }

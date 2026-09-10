@@ -1,8 +1,8 @@
-/* aspect-ratio lives on this wrapping div, not the SVG itself: CSS
-   aspect-ratio doesn't reliably override an <svg>'s own intrinsic
-   width/height attributes (ComposableMap's default 800x600) the way it does
-   for a plain element - matches ComposableMap's default 4:3 viewBox so the
-   rendered map isn't stretched or letterboxed. */
+/* aspect-ratio đặt trên div bọc này, không phải trên chính SVG: CSS
+   aspect-ratio không ghi đè một cách đáng tin các thuộc tính
+   width/height nội tại của <svg> (mặc định 800x600 của ComposableMap) như khi
+   áp cho một phần tử thường - khớp viewBox 4:3 mặc định của ComposableMap để
+   bản đồ hiển thị không bị kéo giãn hay có viền đen. */
 .country-map-frame {
   width: 100%;
   aspect-ratio: 4 / 3;

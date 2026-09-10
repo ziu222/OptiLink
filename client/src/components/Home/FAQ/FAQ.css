@@ -1,0 +1,66 @@
+/* Câu hỏi thường gặp */
+
+/* Căn nội dung từ trên xuống thay vì giữa, để khi mở/đóng câu hỏi danh sách chỉ
+   giãn xuống dưới chứ không nhảy lên cả hai phía do bị căn giữa. */
+#faq.home-section {
+  justify-content: flex-start;
+}
+
+/* Khoảng cách giữa các câu hỏi là một giá trị cố định (chỉ phụ thuộc chiều cao
+   màn hình, không phụ thuộc nội dung) — được tính sao cho khi mọi câu hỏi đang
+   đóng, danh sách trải vừa kín màn hình. Mở một câu hỏi KHÔNG làm đổi gap: câu
+   trả lời chỉ đẩy nội dung xuống dưới và section tự cao thêm.
+   48rem ≈ chiều cao h2 + margin 3rem + 7 hàng câu hỏi lúc đóng; chỉnh số này
+   nếu thêm/bớt câu hỏi. max(1.5rem, …) giữ khoảng cách tối thiểu trên màn hình
+   thấp. */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: max(1.5rem, calc((100svh - 48rem) / 6));
+  width: 100%;
+  max-width: 48rem;
+  margin: 3rem auto 0;
+}
+
+.faq-item {
+  padding: 1.25rem 0;
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-plus {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  color: var(--text);
+  transition: transform 0.15s;
+}
+
+.faq-item[open] .faq-plus {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  margin: 0.75rem 0 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.faq-answer a {
+  font-weight: 600;
+  color: var(--text-h);
+}

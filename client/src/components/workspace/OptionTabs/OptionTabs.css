@@ -1,13 +1,13 @@
 .option-tabs {
   display: inline-flex;
-  align-items: stretch; /* separators span full height */
+  align-items: stretch; /* các đường phân cách chạy hết chiều cao */
   align-self: flex-start;
   border: 1px solid var(--border);
-  /* no padding, no gap — tabs sit flush */
+  /* không padding, không gap — các tab nằm sát nhau */
 }
 
 .option-tab {
-  padding: 0.5rem 0.75rem; /* matches the toolbar menu buttons */
+  padding: 0.5rem 0.75rem; /* khớp với các nút menu của toolbar */
   border: none;
   background: transparent;
   color: var(--text);
@@ -18,7 +18,7 @@
 }
 
 .option-tab + .option-tab {
-  border-left: 1px solid var(--border); /* separator between tabs, meets outer border */
+  border-left: 1px solid var(--border); /* đường phân cách giữa các tab, chạm vào viền ngoài */
 }
 
 .option-tab:hover {
@@ -31,7 +31,7 @@
   color: var(--bg);
 }
 
-/* keep separators clean around the filled/inverted tab */
+/* giữ các đường phân cách gọn quanh tab được tô/đảo màu */
 .option-tab.is-active,
 .option-tab.is-active + .option-tab {
   border-left-color: transparent;

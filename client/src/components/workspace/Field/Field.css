@@ -32,7 +32,7 @@
   height: 1rem;
 }
 
-/* The hint icons stay hidden until the surrounding panel is hovered. */
+/* Các icon gợi ý vẫn ẩn cho tới khi panel bao quanh được hover. */
 .content-panel:hover .field-hint {
   opacity: 1;
 }
@@ -43,7 +43,7 @@
   color: #dc2626;
 }
 
-/* Bare text control inside a Field. */
+/* Ô nhập văn bản trần bên trong một Field. */
 .field-input {
   padding: 0.625rem 0.75rem;
   border: 1px solid var(--border);
@@ -69,8 +69,8 @@
   cursor: not-allowed;
 }
 
-/* datetime-local renders its mm/dd/yyyy text in the input colour; mute it while
-   empty so it reads like the other fields' placeholders. */
+/* datetime-local hiển thị chữ mm/dd/yyyy bằng màu chữ của input; làm mờ khi
+   trống để nó trông như placeholder của các field khác. */
 .field-input[type='datetime-local']:placeholder-shown {
   color: var(--text);
 }

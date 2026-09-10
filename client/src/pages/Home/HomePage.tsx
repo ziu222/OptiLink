@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Header } from '../../components/Header/Header';
 import { Footer } from '../../components/Footer/Footer';
-import { Hero } from '../../components/Home/Hero';
-import { Problem } from '../../components/Home/Problem';
-import { HowItWorks } from '../../components/Home/HowItWorks';
-import { FeatureGrid } from '../../components/Home/FeatureGrid';
-import { PricingSection } from '../../components/Home/PricingSection';
-import { AboutUs } from '../../components/Home/AboutUs';
-import { FAQ } from '../../components/Home/FAQ';
-import { ClosingCta } from '../../components/Home/ClosingCta';
-import '../../components/Home/home.css';
+import { Hero } from '../../components/Home/Hero/Hero';
+import { Problem } from '../../components/Home/Problem/Problem';
+import { HowItWorks } from '../../components/Home/HowItWorks/HowItWorks';
+import { FeatureGrid } from '../../components/Home/FeatureGrid/FeatureGrid';
+import { PricingSection } from '../../components/Home/PricingSection/PricingSection';
+import { AboutUs } from '../../components/Home/AboutUs/AboutUs';
+import { FAQ } from '../../components/Home/FAQ/FAQ';
+import { ClosingCta } from '../../components/Home/ClosingCta/ClosingCta';
+import './HomePage.css';
 
 export function HomePage() {
   // React Router doesn't scroll to #hash targets on its own; do it here so
@@ -33,10 +33,12 @@ export function HomePage() {
         <PricingSection />
         <AboutUs />
         <FAQ />
-        <ClosingCta />
       </main>
 
-      <Footer />
+      <div className="home-outro">
+        <ClosingCta />
+        <Footer />
+      </div>
     </div>
   );
 }

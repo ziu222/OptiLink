@@ -1,0 +1,61 @@
+/* Giới thiệu.
+   Tablet/điện thoại: xếp dọc theo thứ tự tiêu đề → ảnh → đoạn văn (.about-text
+   dùng display: contents, chèn ảnh vào giữa bằng order). Khung ảnh giữ tỉ lệ 4:3.
+   Desktop: lưới 2 cột — ảnh bên trái cao trọn section, chữ bên phải, bỏ tỉ lệ. */
+.about-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.about-text {
+  display: contents;
+}
+
+.about-grid > .picture-frame {
+  order: 1;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+}
+
+.about-copy {
+  order: 2;
+}
+
+.about-copy p {
+  margin: 1.25rem 0 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+@media (min-width: 1024px) {
+  .about-copy p {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* .about-grid là flex item của .home-section — cho nó giãn để lấp đầy chiều
+     cao section, rồi align-items: stretch kéo khung ảnh cao theo. */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    align-items: stretch;
+    flex-grow: 1;
+  }
+
+  .about-text {
+    display: block;
+    grid-column: 2;
+  }
+
+  /* order về 0 để ảnh không bị đẩy xuống hàng 2 (nó xin grid-column: 1 sau khi
+     con trỏ auto-placement đã đi qua cột đó). */
+  .about-grid > .picture-frame {
+    grid-column: 1;
+    order: 0;
+    aspect-ratio: auto;
+  }
+}

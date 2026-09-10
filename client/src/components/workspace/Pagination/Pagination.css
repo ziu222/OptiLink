@@ -1,5 +1,5 @@
-/* Fills a ContentPanel's footer slot (which supplies the top border); mirrors
-   the Toolbar's height and button styling. */
+/* Lấp vào ô footer của ContentPanel (phần này cung cấp đường viền trên); dùng
+   lại chiều cao và kiểu nút của Toolbar. */
 .pagination {
   display: flex;
   align-items: stretch;
@@ -46,8 +46,8 @@
   font-weight: 700;
 }
 
-/* The … is a button that opens the page-jump input; keep its horizontal
-   footprint tight so swapping to the input doesn't shift the bar much. */
+/* Dấu … là một nút mở ô nhập số trang; giữ bề ngang của nó gọn để khi đổi
+   sang ô nhập, thanh không bị xê dịch nhiều. */
 .pagination-gap {
   padding: 0 0.5rem;
 }

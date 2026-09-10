@@ -48,7 +48,7 @@
   width: 100%;
   border: 1px solid var(--border);
   padding: 0.25rem;
-  box-sizing: border-box;
+  /* box-sizing: border-box; — thừa do reset toàn cục ở index.css */
 }
 
 .breakdown-bar-fill {

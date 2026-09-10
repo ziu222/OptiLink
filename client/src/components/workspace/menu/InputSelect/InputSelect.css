@@ -2,8 +2,8 @@
   position: relative;
 }
 
-/* Mirrors .profile-input (workspace.css) so the closed control reads as the
-   same field frame as the other form fields. */
+/* Giống .profile-input (workspace.css) để control khi đóng trông cùng một
+   khung field như các field khác trong form. */
 .input-select {
   display: flex;
   align-items: center;

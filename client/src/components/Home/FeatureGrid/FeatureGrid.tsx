@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import './home.css';
+import './FeatureGrid.css';
 
 const iconProps = {
   fill: 'none',

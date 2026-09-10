@@ -1,5 +1,5 @@
-/* Bleeds edge-to-edge by canceling .workspace-main's 2.5rem padding
-   (pages/Workspace/workspace.css), matching Thesis's User.jsx title bar. */
+/* Tràn ra sát mép bằng cách triệt tiêu padding 2.5rem của .workspace-main
+   (pages/Workspace/workspace.css), giống thanh tiêu đề User.jsx của Thesis. */
 .page-header {
   margin: -2.5rem -2.5rem 2rem;
   padding: 0.5rem 2.5rem;
