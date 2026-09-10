@@ -82,6 +82,9 @@ export interface ToolbarMenu {
 interface ToolbarProps {
   search: string;
   onSearchChange: (value: string) => void;
+  /** Fired when the search field is submitted (Enter). The list only refetches
+      on this, not on every keystroke. */
+  onSearchSubmit?: () => void;
   searchPlaceholder?: string;
   /** Select-style menus (Sort, Filter, …). Each renders as a MenuButton whose
       label reflects the current selection. */
@@ -96,6 +99,7 @@ interface ToolbarProps {
 export function Toolbar({
   search,
   onSearchChange,
+  onSearchSubmit,
   searchPlaceholder = 'Search',
   menus = [],
   actions,
@@ -103,7 +107,14 @@ export function Toolbar({
 }: ToolbarProps) {
   return (
     <div className="toolbar">
-      <div className="toolbar-search">
+      <form
+        className="toolbar-search"
+        role="search"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSearchSubmit?.();
+        }}
+      >
         <svg
           className="toolbar-search-icon"
           width="16"
@@ -124,7 +135,7 @@ export function Toolbar({
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
         />
-      </div>
+      </form>
 
       {menus.map((menu) => {
         const current =
