@@ -107,6 +107,9 @@ export function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // New accounts have no fullName — fall back to the username.
+  const displayName = user?.fullName || user?.username || '';
+
   const handleLogout = async () => {
     await logout();
     navigate('/login', { replace: true });
@@ -134,9 +137,11 @@ export function Sidebar() {
 
       <div className="sidebar-footer">
         <Link to="/dashboard/profile" className="sidebar-profile" title="My Profile">
-          <span className="sidebar-avatar">{user?.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}</span>
+          <span className="sidebar-avatar">
+            {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
+          </span>
           <div className="sidebar-profile-text">
-            <p className="sidebar-profile-name">{user?.fullName ?? 'User'}</p>
+            <p className="sidebar-profile-name">{displayName || 'User'}</p>
             <p className="sidebar-profile-email">{user?.email}</p>
           </div>
         </Link>

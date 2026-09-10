@@ -15,9 +15,9 @@ const refreshCookieOptions = (): CookieOptions => ({
 
 export class AuthController {
   async register(req: Request, res: Response): Promise<void> {
-    const { fullName, email, password } = req.body;
+    const { username, email, password } = req.body;
     const { user, accessToken, refreshToken } = await authService.register({
-      fullName,
+      username,
       email,
       password,
     });
@@ -31,8 +31,8 @@ export class AuthController {
   }
 
   async login(req: Request, res: Response): Promise<void> {
-    const { email, password } = req.body;
-    const { user, accessToken, refreshToken } = await authService.login({ email, password });
+    const { identifier, password } = req.body;
+    const { user, accessToken, refreshToken } = await authService.login({ identifier, password });
 
     res.cookie(REFRESH_COOKIE, refreshToken, refreshCookieOptions());
     res.status(200).json({

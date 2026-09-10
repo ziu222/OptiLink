@@ -1,6 +1,7 @@
 export interface User {
   _id: string;
   email: string;
+  username: string;
   fullName: string;
   avatarUrl: string;
   role: 'user' | 'admin';
@@ -12,18 +13,19 @@ export interface User {
 }
 
 export interface RegisterPayload {
-  fullName: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
 export interface LoginPayload {
-  email: string;
+  identifier: string;
   password: string;
 }
 
 export interface UpdateProfilePayload {
+  username?: string;
   fullName?: string;
   avatarUrl?: string;
   timezone?: string;

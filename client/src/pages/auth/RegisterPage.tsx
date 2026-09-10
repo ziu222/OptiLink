@@ -48,9 +48,14 @@ export function RegisterPage() {
             {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
             <label className="authform-field">
-              <span className="authform-label">Full name</span>
-              <input type="text" autoComplete="name" className="authform-input" {...register('fullName')} />
-              {errors.fullName && <em className="authform-field-error">{errors.fullName.message}</em>}
+              <span className="authform-label">Username</span>
+              <input
+                type="text"
+                autoComplete="username"
+                className="authform-input"
+                {...register('username')}
+              />
+              {errors.username && <em className="authform-field-error">{errors.username.message}</em>}
             </label>
 
             <label className="authform-field">

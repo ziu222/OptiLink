@@ -27,7 +27,7 @@ export function LoginPage() {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await login(values.email, values.password);
+      await login(values.identifier, values.password);
       navigate('/dashboard', { replace: true });
     } catch (err) {
       applyServerError<LoginValues>(err, setError);
@@ -48,9 +48,16 @@ export function LoginPage() {
             {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
             <label className="authform-field">
-              <span className="authform-label">Email</span>
-              <input type="email" autoComplete="email" className="authform-input" {...register('email')} />
-              {errors.email && <em className="authform-field-error">{errors.email.message}</em>}
+              <span className="authform-label">Email or username</span>
+              <input
+                type="text"
+                autoComplete="username"
+                className="authform-input"
+                {...register('identifier')}
+              />
+              {errors.identifier && (
+                <em className="authform-field-error">{errors.identifier.message}</em>
+              )}
             </label>
 
             <label className="authform-field">

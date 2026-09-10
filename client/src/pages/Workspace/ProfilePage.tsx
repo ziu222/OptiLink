@@ -20,6 +20,7 @@ export function ProfilePage() {
   } = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
+      username: user?.username ?? '',
       fullName: user?.fullName ?? '',
       avatarUrl: user?.avatarUrl ?? '',
     },
@@ -30,6 +31,7 @@ export function ProfilePage() {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await updateProfile({
+        username: values.username.trim().toLowerCase(),
         fullName: values.fullName.trim(),
         avatarUrl: values.avatarUrl?.trim() || undefined,
       });
@@ -53,7 +55,9 @@ export function ProfilePage() {
                     {avatarUrl ? (
                       <img src={avatarUrl} alt="" className="profile-avatar-image" />
                     ) : (
-                      <span>{user?.fullName ? user.fullName.charAt(0).toUpperCase() : 'U'}</span>
+                      <span>
+                        {(user?.fullName || user?.username || '').charAt(0).toUpperCase() || 'U'}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -78,13 +82,11 @@ export function ProfilePage() {
                 </label>
 
                 <label className="profile-field">
-                  <span className="profile-label">Username</span>
-                  <input
-                    type="text"
-                    disabled
-                    placeholder="Not available yet"
-                    className="profile-input"
-                  />
+                  <span className="profile-label">User name</span>
+                  <input type="text" className="profile-input" {...register('username')} />
+                  {errors.username && (
+                    <em className="profile-field-error">{errors.username.message}</em>
+                  )}
                 </label>
 
                 <label className="profile-field">

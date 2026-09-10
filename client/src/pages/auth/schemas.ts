@@ -1,13 +1,17 @@
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-  email: z.email('Enter a valid email'),
+  identifier: z.string().min(1, 'Enter your email or username'),
   password: z.string().min(1, 'Password is required'),
 });
 
 export const registerSchema = z
   .object({
-    fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+    username: z
+      .string()
+      .min(3, 'Username must be at least 3 characters')
+      .max(30, 'Username must be at most 30 characters')
+      .regex(/^[a-zA-Z0-9_.-]+$/, 'Letters, numbers, dots, dashes and underscores only'),
     email: z.email('Enter a valid email'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string().min(1, 'Please confirm your password'),
