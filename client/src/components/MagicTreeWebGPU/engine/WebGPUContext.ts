@@ -34,6 +34,8 @@ export class WebGPUContext {
 
   /** Called after the render targets have been resized. */
   onResize: ((width: number, height: number) => void) | null = null;
+  onFailure: (() => void) | null = null;
+  private destroyed = false;
 
   private constructor(canvas: HTMLCanvasElement, device: GPUDevice, context: GPUCanvasContext) {
     this.canvas = canvas;
@@ -48,17 +50,21 @@ export class WebGPUContext {
       if (this.resize()) this.onResize?.(this.width, this.height);
     });
     this.observer.observe(canvas);
+    void device.lost.then(() => { if (!this.destroyed) this.onFailure?.(); });
+    device.addEventListener('uncapturederror', () => { if (!this.destroyed) this.onFailure?.(); });
   }
 
   static async create(canvas: HTMLCanvasElement): Promise<WebGPUContext | null> {
     const device = await requestDevice();
     if (!device) return null;
-    const context = canvas.getContext('webgpu');
-    if (!context) {
+    try {
+      const context = canvas.getContext('webgpu');
+      if (!context) { device.destroy(); return null; }
+      return new WebGPUContext(canvas, device, context);
+    } catch {
       device.destroy();
       return null;
     }
-    return new WebGPUContext(canvas, device, context);
   }
 
   get pixelWidth(): number {
@@ -127,6 +133,8 @@ export class WebGPUContext {
   }
 
   destroy(): void {
+    if (this.destroyed) return;
+    this.destroyed = true;
     this.observer.disconnect();
     this.destroyTargets();
     // Deliberately not unconfigure(): the canvas context is shared, and a
