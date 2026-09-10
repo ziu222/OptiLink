@@ -1,8 +1,14 @@
 import { buildQRMatrix, cellToWorld } from '../../MagicTreeQR/engine/QRMatrixBuilder';
 import { PALETTE_PRESETS, SEASON_THEMES } from '../../MagicTreeQR/types/magicTree';
 import type { MagicTreeConfig } from '../../MagicTreeQR/types/magicTree';
+import { generateBranches } from './BranchGenerator';
+import { BRANCH_VERTEX_FLOATS, buildBranchMesh } from './BranchMesh';
 import { CameraMatrices } from './CameraMatrices';
+import { generateLeaves } from './LeafInstances';
+import { seedFromUrl } from './seedFromUrl';
 import { DEPTH_FORMAT, SAMPLE_COUNT, WebGPUContext } from './WebGPUContext';
+import branchWgsl from './shaders/branch.wgsl?raw';
+import canopyWgsl from './shaders/canopyLeaves.wgsl?raw';
 import commonWgsl from './shaders/common.wgsl?raw';
 import groundWgsl from './shaders/ground.wgsl?raw';
 
@@ -14,12 +20,14 @@ import groundWgsl from './shaders/ground.wgsl?raw';
  * wrapper goes out of scope.
  */
 
-const FRAME_UNIFORM_BYTES = 80;
-const PALETTE_UNIFORM_BYTES = 80;
+const FRAME_UNIFORM_BYTES = 112;
+const PALETTE_UNIFORM_BYTES = 96;
 const GROUND_Y = 0;
+/** Below this the tree contributes nothing, so its draws are skipped (§6.1). */
+const DISSOLVE_EPSILON = 0.001;
 
-/** Unit quad in XZ, triangle list. */
-const QUAD_XZ = new Float32Array([
+/** Unit quad, triangle list. Ground uses it in XZ, billboards as corners. */
+const QUAD = new Float32Array([
   -0.5, -0.5, 0.5, -0.5, -0.5, 0.5,
   -0.5, 0.5, 0.5, -0.5, 0.5, 0.5,
 ]);
@@ -38,9 +46,16 @@ export class WebGPUTreeSceneManager {
   private readonly quadBuffer: GPUBuffer;
   private readonly bindGroup: GPUBindGroup;
   private readonly groundPipeline: GPURenderPipeline;
+  private readonly branchPipeline: GPURenderPipeline;
+  private readonly canopyPipeline: GPURenderPipeline;
 
   private groundInstances: GPUBuffer | null = null;
   private groundCount = 0;
+  private branchVertices: GPUBuffer | null = null;
+  private branchIndices: GPUBuffer | null = null;
+  private branchIndexCount = 0;
+  private canopyInstances: GPUBuffer | null = null;
+  private canopyCount = 0;
 
   private background: GPUColor = { r: 1, g: 1, b: 1, a: 1 };
   private readonly frameData = new Float32Array(FRAME_UNIFORM_BYTES / 4);
@@ -62,10 +77,10 @@ export class WebGPUTreeSceneManager {
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
     this.quadBuffer = device.createBuffer({
-      size: QUAD_XZ.byteLength,
+      size: QUAD.byteLength,
       usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
     });
-    device.queue.writeBuffer(this.quadBuffer, 0, QUAD_XZ);
+    device.queue.writeBuffer(this.quadBuffer, 0, QUAD);
 
     const layout = device.createBindGroupLayout({
       entries: [
@@ -81,20 +96,39 @@ export class WebGPUTreeSceneManager {
       ],
     });
 
-    this.camera.setViewport(gpu.pixelWidth, gpu.pixelHeight);
+    const cornerLayout: GPUVertexBufferLayout = {
+      arrayStride: 8,
+      attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }],
+    };
 
     this.groundPipeline = this.createPipeline(layout, groundWgsl, [
-      {
-        arrayStride: 8,
-        attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }],
-      },
+      cornerLayout,
       {
         arrayStride: 12,
         stepMode: 'instance',
         attributes: [{ shaderLocation: 1, offset: 0, format: 'float32x3' }],
       },
     ]);
+    this.branchPipeline = this.createPipeline(layout, branchWgsl, [
+      {
+        arrayStride: BRANCH_VERTEX_FLOATS * 4,
+        attributes: [
+          { shaderLocation: 0, offset: 0, format: 'float32x3' },
+          { shaderLocation: 1, offset: 12, format: 'float32x3' },
+          { shaderLocation: 2, offset: 24, format: 'float32' },
+        ],
+      },
+    ]);
+    this.canopyPipeline = this.createPipeline(layout, canopyWgsl, [
+      cornerLayout,
+      {
+        arrayStride: 16,
+        stepMode: 'instance',
+        attributes: [{ shaderLocation: 1, offset: 0, format: 'float32x4' }],
+      },
+    ]);
 
+    this.camera.setViewport(gpu.pixelWidth, gpu.pixelHeight);
     this.frameId = requestAnimationFrame(this.renderLoop);
   }
 
@@ -120,12 +154,22 @@ export class WebGPUTreeSceneManager {
     });
   }
 
+  private createGpuBuffer(data: Float32Array | Uint32Array, usage: number): GPUBuffer {
+    const buffer = this.gpu.device.createBuffer({
+      size: data.byteLength,
+      usage: usage | GPUBufferUsage.COPY_DST,
+    });
+    this.gpu.device.queue.writeBuffer(buffer, 0, data);
+    return buffer;
+  }
+
   rebuild(config: MagicTreeConfig): void {
     if (this.disposed) return;
     const { device } = this.gpu;
     const theme = SEASON_THEMES[config.season];
     const accent = PALETTE_PRESETS.find((p) => p.id === config.palette) ?? PALETTE_PRESETS[0];
     const { size, matrix } = buildQRMatrix(config.targetUrl);
+    const seed = seedFromUrl(config.targetUrl);
 
     const ground = new Float32Array(size * size * 3);
     let g = 0;
@@ -138,25 +182,35 @@ export class WebGPUTreeSceneManager {
       }
     }
 
-    this.groundInstances?.destroy();
-    this.groundInstances = device.createBuffer({
-      size: ground.byteLength,
-      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+    const segments = generateBranches(seed, size);
+    const mesh = buildBranchMesh(segments, seed);
+    const canopy = generateLeaves(segments, seed);
+    const leaves = new Float32Array(canopy.leaves.length * 4);
+    canopy.leaves.forEach((leaf, i) => {
+      leaves.set([leaf.position[0], leaf.position[1], leaf.position[2], leaf.seed], i * 4);
     });
-    device.queue.writeBuffer(this.groundInstances, 0, ground);
+
+    this.destroySceneBuffers();
+    this.groundInstances = this.createGpuBuffer(ground, GPUBufferUsage.VERTEX);
     this.groundCount = size * size;
+    this.branchVertices = this.createGpuBuffer(mesh.vertices, GPUBufferUsage.VERTEX);
+    this.branchIndices = this.createGpuBuffer(mesh.indices, GPUBufferUsage.INDEX);
+    this.branchIndexCount = mesh.indexCount;
+    this.canopyInstances = this.createGpuBuffer(leaves, GPUBufferUsage.VERTEX);
+    this.canopyCount = canopy.leaves.length;
 
     const palette = new Float32Array(PALETTE_UNIFORM_BYTES / 4);
     palette.set([...hexToRgb(theme.groundLight), 1], 0);
     palette.set([...hexToRgb(theme.groundDark), 1], 4);
     palette.set([...hexToRgb(theme.trunk), 1], 8);
-    palette.set([...hexToRgb(accent.color), 1], 12);
-    palette.set([0, 1, GROUND_Y, size / 2], 16);
+    palette.set([...hexToRgb(accent.color || theme.canopyPrimary), 1], 12);
+    palette.set([...hexToRgb(theme.canopySecondary), 1], 16);
+    palette.set([canopy.minY, canopy.height, GROUND_Y, size / 2], 20);
     device.queue.writeBuffer(this.paletteUniform, 0, palette);
 
     const [r, g0, b] = hexToRgb(theme.background);
     this.background = { r, g: g0, b, a: 1 };
-    this.camera.frameGrid(size);
+    this.camera.frameStructure(size, canopy.minY + canopy.height);
   }
 
   toggleView(): void {
@@ -176,20 +230,41 @@ export class WebGPUTreeSceneManager {
 
     if (this.groundInstances) {
       const { device } = this.gpu;
+      const treeAlpha = this.camera.treeAlpha;
+
       this.frameData.set(this.camera.viewProj(), 0);
-      this.frameData[16] = (now - this.startTime) / 1000;
-      this.frameData[17] = 1;
-      this.frameData[18] = this.camera.treeAlpha;
+      this.frameData.set(this.camera.cameraRight, 16);
+      this.frameData.set(this.camera.cameraUp, 20);
+      this.frameData[24] = (now - this.startTime) / 1000;
+      this.frameData[25] = 1;
+      this.frameData[26] = treeAlpha;
       device.queue.writeBuffer(this.frameUniform, 0, this.frameData);
 
       const encoder = device.createCommandEncoder();
       const pass = this.gpu.beginPass(encoder, this.background);
       pass.setBindGroup(0, this.bindGroup);
-      pass.setVertexBuffer(0, this.quadBuffer);
 
       pass.setPipeline(this.groundPipeline);
+      pass.setVertexBuffer(0, this.quadBuffer);
       pass.setVertexBuffer(1, this.groundInstances);
       pass.draw(6, this.groundCount);
+
+      // Nothing above ground once the flat view is settled, so the QR can
+      // never be covered, whatever the dissolve does.
+      if (treeAlpha > DISSOLVE_EPSILON) {
+        if (this.branchVertices && this.branchIndices) {
+          pass.setPipeline(this.branchPipeline);
+          pass.setVertexBuffer(0, this.branchVertices);
+          pass.setIndexBuffer(this.branchIndices, 'uint32');
+          pass.drawIndexed(this.branchIndexCount);
+        }
+        if (this.canopyInstances && this.canopyCount > 0) {
+          pass.setPipeline(this.canopyPipeline);
+          pass.setVertexBuffer(0, this.quadBuffer);
+          pass.setVertexBuffer(1, this.canopyInstances);
+          pass.draw(6, this.canopyCount);
+        }
+      }
 
       pass.end();
       device.queue.submit([encoder.finish()]);
@@ -198,12 +273,22 @@ export class WebGPUTreeSceneManager {
     this.frameId = requestAnimationFrame(this.renderLoop);
   };
 
+  private destroySceneBuffers(): void {
+    this.groundInstances?.destroy();
+    this.branchVertices?.destroy();
+    this.branchIndices?.destroy();
+    this.canopyInstances?.destroy();
+    this.groundInstances = null;
+    this.branchVertices = null;
+    this.branchIndices = null;
+    this.canopyInstances = null;
+  }
+
   dispose(): void {
     this.disposed = true;
     if (this.frameId !== null) cancelAnimationFrame(this.frameId);
     this.frameId = null;
-    this.groundInstances?.destroy();
-    this.groundInstances = null;
+    this.destroySceneBuffers();
     this.frameUniform.destroy();
     this.paletteUniform.destroy();
     this.quadBuffer.destroy();
