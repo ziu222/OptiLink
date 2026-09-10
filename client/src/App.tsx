@@ -17,9 +17,14 @@ import { ProfilePage } from './pages/Workspace/ProfilePage';
 import { QRCodePage } from './pages/Workspace/QRCodePage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
-// three.js is heavy — keep it out of the main bundle.
+const MagicTreeExperience = lazy(() => import('./components/MagicTreeWebGPU/MagicTreeWebGPUContainer').then(m => ({ default: m.MagicTreeWebGPUContainer })));
 const MagicTreePage = lazy(() =>
   import('./pages/Workspace/MagicTreePage').then((m) => ({ default: m.MagicTreePage }))
+);
+const MagicTreeWebGPUPage = lazy(() =>
+  import('./pages/Workspace/MagicTreeWebGPUPage').then((m) => ({
+    default: m.MagicTreeWebGPUPage,
+  }))
 );
 
 function App() {
@@ -31,6 +36,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/s/:slug" element={<LinkGatePage />} />
+          <Route path="/magic-tree" element={<RouteErrorBoundary><Suspense fallback={<p className="route-status">Đang gieo mầm…</p>}><MagicTreeExperience /></Suspense></RouteErrorBoundary>} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<WorkspaceLayout />}>
@@ -42,6 +48,16 @@ function App() {
                   <RouteErrorBoundary>
                     <Suspense fallback={<p className="route-status">Loading…</p>}>
                       <MagicTreePage />
+                    </Suspense>
+                  </RouteErrorBoundary>
+                }
+              />
+              <Route
+                path="magic-tree-webgpu"
+                element={
+                  <RouteErrorBoundary>
+                    <Suspense fallback={<p className="route-status">Loading…</p>}>
+                      <MagicTreeWebGPUPage />
                     </Suspense>
                   </RouteErrorBoundary>
                 }

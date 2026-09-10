@@ -59,6 +59,20 @@ const navItems = [
     ),
   },
   {
+    label: 'Magic Tree WebGPU',
+    to: '/dashboard/magic-tree-webgpu',
+    end: false,
+    icon: (
+      <svg {...iconProps}>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 21v-7m0 0 4.5-4.5M12 14 7.5 9.5M12 14V3m-4.5 6.5A2.5 2.5 0 1 1 10 7M16.5 9.5A2.5 2.5 0 1 0 14 7"
+        />
+      </svg>
+    ),
+  },
+  {
     label: 'Bio Page',
     to: '/builder',
     end: false,
