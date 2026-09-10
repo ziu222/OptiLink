@@ -1,11 +1,13 @@
 .button {
   flex-shrink: 0;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--text-h);
+  border: 1px solid #000;
   background: var(--text-h);
   color: var(--bg);
+  font-family: inherit;
   font-size: 1rem;
   font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
   cursor: pointer;
   transition: opacity 0.15s;

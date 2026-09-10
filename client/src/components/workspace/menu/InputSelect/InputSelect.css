@@ -58,4 +58,5 @@
 
 .input-select-popup .menu-item[aria-selected='true'] {
   border-color: var(--text-h);
+  color: var(--text-h);
 }
