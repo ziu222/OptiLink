@@ -1,5 +1,6 @@
 import { buildQRMatrix, cellToWorld } from '../../MagicTreeQR/engine/QRMatrixBuilder';
-import { PALETTE_PRESETS, SEASON_THEMES } from '../../MagicTreeQR/types/magicTree';
+import { SEASON_THEMES } from '../../MagicTreeQR/types/magicTree';
+import { TREE_ART } from './artDirection';
 import type { MagicTreeConfig } from '../../MagicTreeQR/types/magicTree';
 import { generateBranches } from './BranchGenerator';
 import { BRANCH_VERTEX_FLOATS, buildBranchMesh } from './BranchMesh';
@@ -222,7 +223,7 @@ export class WebGPUTreeSceneManager {
     if (this.disposed) return;
     const { device } = this.gpu;
     const theme = SEASON_THEMES[config.season];
-    const accent = PALETTE_PRESETS.find((p) => p.id === config.palette) ?? PALETTE_PRESETS[0];
+    const art = TREE_ART[config.season];
     const { size, matrix } = buildQRMatrix(config.targetUrl);
     const seed = seedFromUrl(config.targetUrl);
 
@@ -273,14 +274,14 @@ export class WebGPUTreeSceneManager {
     const palette = new Float32Array(PALETTE_UNIFORM_BYTES / 4);
     palette.set([...hexToRgb(theme.groundLight), 1], 0);
     palette.set([...hexToRgb(theme.groundDark), 1], 4);
-    palette.set([...hexToRgb(theme.trunk), 1], 8);
-    palette.set([...hexToRgb(accent.color || theme.canopyPrimary), 1], 12);
-    palette.set([...hexToRgb(theme.canopyPrimary), 1], 16);
-    palette.set([...hexToRgb(theme.canopySecondary), 1], 20);
+    palette.set([...hexToRgb(art.trunk), 1], 8);
+    palette.set([...hexToRgb(art.canopy), 1], 12);
+    palette.set([...hexToRgb(art.petal), 1], 16);
+    palette.set([...hexToRgb(art.grass), 1], 20);
     palette.set([canopy.minY, canopy.height, GROUND_Y, size / 2], 24);
     device.queue.writeBuffer(this.paletteUniform, 0, palette);
 
-    const [r, g0, b] = hexToRgb(theme.background);
+    const [r, g0, b] = hexToRgb(art.background);
     this.background = { r, g: g0, b, a: 1 };
     this.gridSize = size;
     this.structureHeight = canopy.minY + canopy.height;

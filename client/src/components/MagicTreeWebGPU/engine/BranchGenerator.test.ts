@@ -70,7 +70,7 @@ describe('generateBranches', () => {
     for (const seed of SEEDS) {
       const count = generateBranches(seed, GRID).length;
       expect(count).toBeGreaterThan(TRUNK_SEGMENTS);
-      expect(count).toBeLessThanOrEqual(TRUNK_SEGMENTS + 364);
+      expect(count).toBeLessThanOrEqual(TRUNK_SEGMENTS + 606);
     }
   });
 

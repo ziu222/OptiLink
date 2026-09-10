@@ -19,14 +19,14 @@ export interface BranchSegment {
 
 // Trunk — without this the tree branches straight off the ground and reads as a shrub.
 export const TRUNK_SEGMENTS = 3;
-const TRUNK_SEGMENT_LENGTH_FACTOR = 0.16;
+const TRUNK_SEGMENT_LENGTH_FACTOR = 0.145;
 const TRUNK_LEAN_JITTER_DEG = 4;
 const TRUNK_TAPER = 0.88;
 
 // Branching
 export const MAX_DEPTH = 5;
-const INITIAL_LENGTH_FACTOR = 0.35;
-const INITIAL_RADIUS_FACTOR = 0.045;
+const INITIAL_LENGTH_FACTOR = 0.12;
+const INITIAL_RADIUS_FACTOR = 0.027;
 const LENGTH_DECAY = 0.72;
 const RADIUS_DECAY = 0.68;
 const MIN_RADIUS_FACTOR = 0.05;
@@ -97,13 +97,18 @@ export function generateBranches(seed: number, gridSize: number): BranchSegment[
     segments.push({ start, end, startRadius: r, endRadius: r * RADIUS_DECAY, depth });
     if (depth >= MAX_DEPTH || r * RADIUS_DECAY < minRadius) return;
 
-    const childCount = pseudoRandom(depth, branchIndex, seed) < EXTRA_BRANCH_CHANCE ? 3 : 2;
+    const childCount = depth === 0 ? 5 : pseudoRandom(depth, branchIndex, seed) < EXTRA_BRANCH_CHANCE ? 3 : 2;
     for (let i = 0; i < childCount; i++) {
       const jitter =
         (pseudoRandom(depth, branchIndex * 10 + i, seed) * 2 - 1) * BRANCH_ANGLE_JITTER_DEG;
-      const azimuth = pseudoRandom(depth, branchIndex * 10 + i, seed + 1) * 360;
-      const childDir = tiltAndSpin(dir, BASE_BRANCH_ANGLE_DEG + jitter, azimuth);
-      recurse(end, childDir, length * LENGTH_DECAY, r * RADIUS_DECAY, depth + 1, branchIndex * 10 + i);
+      const azimuth = depth === 0
+        ? i * 137.508 + pseudoRandom(i, 0, seed + 1) * 24
+        : i * (360 / childCount) + pseudoRandom(depth, branchIndex, seed + 1) * 360;
+      const childDir = tiltAndSpin(dir, (depth === 0 ? 52 : BASE_BRANCH_ANGLE_DEG) + jitter, azimuth);
+      // A short central leader opens into five broad scaffold limbs. Unique
+      // node indices avoid reusing the first child's jitter at every depth.
+      recurse(end, childDir, depth === 0 ? gridSize * 0.24 : length * LENGTH_DECAY,
+        r * RADIUS_DECAY, depth + 1, branchIndex * 4 + i + 1);
     }
   };
 

@@ -19,10 +19,10 @@ export interface GrassBlade {
 }
 
 const MARGIN_CELLS = 0.6;
-const BAND_CELLS = 2.6;
-const BLADES_PER_CELL = 14;
-const MIN_HEIGHT_CELLS = 0.9;
-const HEIGHT_JITTER_CELLS = 0.9;
+const BAND_CELLS = 1.8;
+const BLADES_PER_CELL = 65;
+const MIN_HEIGHT_CELLS = 0.45;
+const HEIGHT_JITTER_CELLS = 1.1;
 
 /** Half-width of the grid's own footprint, in world units. */
 export function gridHalfExtent(gridSize: number, cellSize = 1): number {
