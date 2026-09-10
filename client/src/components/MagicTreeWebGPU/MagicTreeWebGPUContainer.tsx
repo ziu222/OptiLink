@@ -13,6 +13,8 @@ import '../MagicTreeQR/MagicTreeContainer.css';
 import './MagicTreeWebGPUContainer.css';
 
 const DEBOUNCE_MS = 500;
+/** Modules of white margin. Decoders need four; fewer and they give up. */
+const QUIET_ZONE = 4;
 
 type SupportState = 'checking' | 'ready' | 'unsupported';
 
@@ -43,11 +45,19 @@ function FallbackQR({ url }: { url: string }) {
   return (
     <svg
       className="magic-tree-fallback-qr"
-      viewBox={`-2 -2 ${grid.size + 4} ${grid.size + 4}`}
+      viewBox={`${-QUIET_ZONE} ${-QUIET_ZONE} ${grid.size + QUIET_ZONE * 2} ${
+        grid.size + QUIET_ZONE * 2
+      }`}
       role="img"
       aria-label={`Mã QR cho ${url}`}
     >
-      <rect x={-2} y={-2} width={grid.size + 4} height={grid.size + 4} fill="#ffffff" />
+      <rect
+        x={-QUIET_ZONE}
+        y={-QUIET_ZONE}
+        width={grid.size + QUIET_ZONE * 2}
+        height={grid.size + QUIET_ZONE * 2}
+        fill="#ffffff"
+      />
       <g fill="#111827" shapeRendering="crispEdges">
         {modules}
       </g>
