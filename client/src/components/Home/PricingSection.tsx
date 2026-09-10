@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { PricingCard } from './PricingCard';
+import type { PricingTier } from './PricingCard';
 import './home.css';
 
-const tiers = [
+const tiers: PricingTier[] = [
   {
     id: 'FREE',
     name: 'Free',
@@ -21,7 +22,7 @@ const tiers = [
     featured: true,
     perks: [
       'Everything in Free',
-      'Custom aliases and password-protected links',
+      'Custom aliases and links you can lock with a password',
       'Advanced analytics by country, device, and browser',
       'Priority support',
     ],
@@ -30,6 +31,9 @@ const tiers = [
 
 export function PricingSection() {
   const { status } = useAuth();
+  const authed = status === 'authenticated';
+  const ctaTo = authed ? '/dashboard' : '/register';
+  const ctaLabel = authed ? 'Go to dashboard' : 'Get started';
 
   return (
     <section id="pricing" className="home-section">
@@ -41,31 +45,7 @@ export function PricingSection() {
 
         <div className="tier-grid">
           {tiers.map((tier) => (
-            <div key={tier.id} className={`tier-card${tier.featured ? ' tier-card--featured' : ''}`}>
-              <div>
-                <h3 className="tier-name">{tier.name}</h3>
-                <p className="tier-price">
-                  {tier.price}
-                  <span>/month</span>
-                </p>
-              </div>
-
-              <ul className="tier-perks">
-                {tier.perks.map((perk) => (
-                  <li key={perk}>
-                    <span className="tier-check">✓</span>
-                    {perk}
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                to={status === 'authenticated' ? '/dashboard' : '/register'}
-                className={`tier-cta${tier.featured ? ' tier-cta--primary' : ''}`}
-              >
-                {status === 'authenticated' ? 'Go to dashboard' : 'Get started'}
-              </Link>
-            </div>
+            <PricingCard key={tier.id} tier={tier} ctaTo={ctaTo} ctaLabel={ctaLabel} />
           ))}
         </div>
       </div>
