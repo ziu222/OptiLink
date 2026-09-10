@@ -15,8 +15,7 @@ import { Matrix4, Vector3, WebGPUCoordinateSystem } from 'three';
 
 export type CameraViewState = 'isometric' | 'flat';
 
-const BASE_ISO_POS = new Vector3(22, 24, 22);
-const BASE_ISO_TARGET = new Vector3(0, 6, 0);
+const ISO_DIRECTION = new Vector3(22, 24, 22).normalize();
 const BASE_FLAT_Y = 32;
 const TRANSITION_SECONDS = 0.9;
 const FRAME_PADDING_FACTOR = 1.3;
@@ -51,9 +50,12 @@ export class CameraMatrices {
   private orthoHalfWidth = 10;
   private far = 500;
 
-  private isoPos = BASE_ISO_POS.clone();
+  private isoPos = ISO_DIRECTION.clone().multiplyScalar(40);
+  private isoTarget = new Vector3(0, 6, 0);
   private viewProjMatrix = new Matrix4();
   private out = new Float32Array(16);
+  private readonly right = new Float32Array(3);
+  private readonly up = new Float32Array(3);
 
   get state(): CameraViewState {
     return this.progress >= 0.5 ? 'flat' : 'isometric';
@@ -77,17 +79,27 @@ export class CameraMatrices {
     this.aspect = height > 0 ? width / height : 1;
   }
 
-  /** Scales both camera distances to fit a gridSize × gridSize structure. */
-  frameGrid(gridSize: number): void {
+  /**
+   * Frames the whole structure: the grid for the flat view, and the grid plus
+   * the tree's own height for the isometric one. Framing on the grid alone
+   * puts a tall canopy off-screen.
+   */
+  frameStructure(gridSize: number, structureHeight = 0): void {
     const halfTan = Math.tan((FOV_DEG * Math.PI) / 180 / 2);
     const width = gridSize * FRAME_PADDING_FACTOR;
     let flatY = width / (2 * halfTan);
     if (this.aspect < 1) flatY /= this.aspect;
 
     this.flatY = Math.max(flatY, BASE_FLAT_Y);
-    this.isoPos.copy(BASE_ISO_POS).multiplyScalar(this.flatY / BASE_FLAT_Y);
     this.orthoHalfWidth = width / 2;
-    this.far = Math.max(100, this.flatY * 3);
+
+    const radius = Math.max(gridSize * 0.5, structureHeight * 0.5) * FRAME_PADDING_FACTOR;
+    let distance = radius / Math.sin(((FOV_DEG * Math.PI) / 180) / 2);
+    if (this.aspect < 1) distance /= this.aspect;
+
+    this.isoTarget.set(0, structureHeight * 0.45, 0);
+    this.isoPos.copy(ISO_DIRECTION).multiplyScalar(distance).add(this.isoTarget);
+    this.far = Math.max(100, Math.max(this.flatY, distance + radius) * 3);
   }
 
   /**
@@ -110,6 +122,16 @@ export class CameraMatrices {
     if (t >= 1) this.progress = this.target;
   }
 
+  /** World-space camera right vector; valid after the last viewProj() call. */
+  get cameraRight(): Float32Array {
+    return this.right;
+  }
+
+  /** World-space camera up vector; valid after the last viewProj() call. */
+  get cameraUp(): Float32Array {
+    return this.up;
+  }
+
   /** Column-major mat4x4<f32>, ready to write into the frame uniform buffer. */
   viewProj(): Float32Array {
     const eye = new Vector3().lerpVectors(
@@ -117,11 +139,15 @@ export class CameraMatrices {
       new Vector3(0, this.flatY, 0),
       this.progress
     );
-    const target = new Vector3().lerpVectors(BASE_ISO_TARGET, new Vector3(0, 0, 0), this.progress);
+    const target = new Vector3().lerpVectors(this.isoTarget, new Vector3(0, 0, 0), this.progress);
     const up = new Vector3().lerpVectors(ISO_UP, FLAT_UP, this.progress).normalize();
 
     const world = new Matrix4().lookAt(eye, target, up);
     world.setPosition(eye);
+    // Basis columns, read before invert() mutates the matrix: leaves and
+    // petals billboard against these.
+    this.right.set([world.elements[0], world.elements[1], world.elements[2]]);
+    this.up.set([world.elements[4], world.elements[5], world.elements[6]]);
     const view = world.invert();
 
     // Perspective while moving, true orthographic once settled: by then the

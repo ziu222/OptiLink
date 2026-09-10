@@ -7,7 +7,7 @@ const GRID = 33;
 function makeCamera(width = 1200, height = 800): CameraMatrices {
   const camera = new CameraMatrices();
   camera.setViewport(width, height);
-  camera.frameGrid(GRID);
+  camera.frameStructure(GRID);
   return camera;
 }
 
