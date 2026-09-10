@@ -22,8 +22,8 @@ export interface CanopyData {
 
 /** The outer two levels carry leaves — a canopy needs volume, not a shell. */
 const LEAF_DEPTH_THRESHOLD = MAX_DEPTH - 2;
-const LEAVES_PER_TIP_MIN = 38;
-const LEAVES_PER_TIP_JITTER = 22;
+const LEAVES_PER_TIP_MIN = 18;
+const LEAVES_PER_TIP_JITTER = 12;
 const LEAF_CLUSTER_RADIUS_FACTOR = 1.3;
 
 /**
@@ -38,6 +38,32 @@ function segmentLength(s: BranchSegment): number {
 
 export function generateLeaves(segments: BranchSegment[], seed: number): CanopyData {
   const leaves: LeafInstance[] = [];
+
+  const trunk = segments.filter(segment => segment.depth === -1);
+  if (trunk.length) {
+    const grid = trunk[0].startRadius / 0.027;
+    const top = trunk.at(-1)!.end;
+    // Layered crown clusters fill the space between branch-tip sprays. Each
+    // cluster owns a patch of the crown, avoiding both isolated balls and a
+    // uniform point-cloud. Stratified centres keep every seed well balanced.
+    const clusters = 84;
+    for (let i = 0; i < clusters; i++) {
+      const angle = i * 2.399963;
+      const disk = Math.sqrt((i + 0.5) / clusters);
+      const tier = pseudoRandom(i, 41, seed);
+      const cx = top[0] + Math.cos(angle) * disk * grid * 0.43;
+      const cz = top[2] + Math.sin(angle) * disk * grid * 0.43;
+      const cy = top[1] + grid * (0.09 + 0.3 * (1 - disk * disk) + tier * 0.12);
+      const spread = grid * (0.07 + pseudoRandom(i, 42, seed) * 0.04);
+      for (let k = 0; k < 78; k++) {
+        const r = spread * Math.cbrt(pseudoRandom(i, k, seed + 43));
+        const a = pseudoRandom(i, k, seed + 44) * Math.PI * 2;
+        const y = pseudoRandom(i, k, seed + 45) * 2 - 1;
+        const radial = Math.sqrt(1 - y * y);
+        leaves.push({ position: [cx + Math.cos(a) * radial * r, cy + y * r * 0.8, cz + Math.sin(a) * radial * r], seed: pseudoRandom(i, k, seed + 46) });
+      }
+    }
+  }
 
   // Interleave the scaffold limbs before applying the budget, so a large
   // tree never loses all foliage on its last-generated side.

@@ -17,7 +17,7 @@ export type CameraViewState = 'isometric' | 'flat';
 
 const ISO_DIRECTION = new Vector3(22, 20, 26).normalize();
 const BASE_FLAT_Y = 32;
-const TRANSITION_SECONDS = 0.9;
+const TRANSITION_SECONDS = 1.1;
 const FRAME_PADDING_FACTOR = 1.3;
 const FOV_DEG = 45;
 const NEAR = 0.1;
@@ -30,7 +30,7 @@ const ISO_UP = new Vector3(0, 1, 0);
 const FLAT_UP = new Vector3(0, 0, -1);
 
 export function quinticEase(t: number): number {
-  return t < 0.5 ? 16 * t ** 5 : 1 - Math.pow(-2 * t + 2, 5) / 2;
+  return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
 export function smoothstep(edge0: number, edge1: number, x: number): number {
@@ -56,6 +56,9 @@ export class CameraMatrices {
   private out = new Float32Array(16);
   private readonly right = new Float32Array(3);
   private readonly up = new Float32Array(3);
+  private crownPoints: readonly [number, number, number][] = [];
+
+  setCrownPoints(points: readonly [number, number, number][]): void { this.crownPoints = points; }
 
   get state(): CameraViewState {
     return this.progress >= 0.5 ? 'flat' : 'isometric';
@@ -98,16 +101,27 @@ export class CameraMatrices {
     const right = new Vector3().crossVectors(ISO_UP, ISO_DIRECTION).normalize();
     const up = new Vector3().crossVectors(ISO_DIRECTION, right).normalize();
     let distance = 0;
-    // Fit the platform's corners and the canopy volume in camera space.
-    for (const y of [-1.7, structureHeight + 1]) {
-      const extent = y < 0 ? gridSize / 2 + 5 : gridSize * 0.6;
-      for (const x of [-extent, extent]) for (const z of [-extent, extent]) {
-        const p = new Vector3(x, y, z).sub(this.isoTarget);
-        distance = Math.max(distance, p.dot(ISO_DIRECTION) + Math.abs(p.dot(right)) / (halfTan * this.aspect),
-          p.dot(ISO_DIRECTION) + Math.abs(p.dot(up)) / halfTan);
+    const fit = (x: number, y: number, z: number) => {
+      const p = new Vector3(x, y, z).sub(this.isoTarget);
+      distance = Math.max(distance, p.dot(ISO_DIRECTION) + Math.abs(p.dot(right)) / (halfTan * this.aspect),
+        p.dot(ISO_DIRECTION) + Math.abs(p.dot(up)) / halfTan);
+    };
+    const base = gridSize / 2 + 5;
+    for (const x of [-base, base]) for (const z of [-base, base]) fit(x, -1.7, z);
+    // The crown is an ellipsoid, not a box with wide corners at its highest
+    // point. Fitting that empty box made the real tree needlessly small.
+    if (this.crownPoints.length) {
+      for (const [x, y, z] of this.crownPoints) fit(x, y + gridSize * 0.025, z);
+    } else for (let j = 0; j <= 12; j++) {
+      const phi = j / 12 * Math.PI;
+      for (let i = 0; i < 24; i++) {
+        const a = i / 24 * Math.PI * 2;
+        fit(Math.cos(a) * Math.sin(phi) * gridSize * 0.59,
+          structureHeight * (0.65 + 0.35 * Math.cos(phi)) + 0.6,
+          Math.sin(a) * Math.sin(phi) * gridSize * 0.59);
       }
     }
-    distance *= 1.05;
+    distance *= 1.015;
     this.isoPos.copy(ISO_DIRECTION).multiplyScalar(distance).add(this.isoTarget);
     this.far = Math.max(100, Math.max(this.flatY, distance + radius) * 3);
   }

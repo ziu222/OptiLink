@@ -22,6 +22,14 @@ function settleFlat(camera: CameraMatrices): void {
 }
 
 describe('CameraMatrices transitions', () => {
+  it('supports immediate keyboard and reduced-motion reveal', () => {
+    const camera = makeCamera();
+    camera.toggle(true);
+    expect(camera.isSettledFlat).toBe(true);
+    expect(camera.treeAlpha).toBe(0);
+    camera.toggle(true);
+    expect(camera.transitionProgress).toBe(0);
+  });
   it('starts isometric and reaches flat after a full transition', () => {
     const camera = makeCamera();
     expect(camera.state).toBe('isometric');
@@ -84,6 +92,20 @@ describe('treeAlpha (§6.1)', () => {
 });
 
 describe('projection', () => {
+  it('frames the four-module quiet zone at phone and desktop sizes', () => {
+    for (const size of [21, 33, 57, 97]) for (const [width, height] of [[340, 450], [1200, 650]]) {
+      const camera = new CameraMatrices();
+      camera.setViewport(width, height);
+      camera.frameStructure(size);
+      settleFlat(camera);
+      const extent = size / 2 + 4;
+      for (const x of [-extent, extent]) for (const z of [-extent, extent]) {
+        const p = project(camera, [x, 0, z]);
+        expect(Math.abs(p.x)).toBeLessThan(1);
+        expect(Math.abs(p.y)).toBeLessThan(1);
+      }
+    }
+  });
   it('emits 16 finite floats', () => {
     const viewProj = makeCamera().viewProj();
     expect(viewProj).toHaveLength(16);

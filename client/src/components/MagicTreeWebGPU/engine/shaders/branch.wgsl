@@ -15,7 +15,7 @@ fn vertexMain(
   @location(2) hash: f32,
 ) -> VertexOut {
   var out: VertexOut;
-  out.clipPosition = frame.viewProj * vec4<f32>(position + wind(position), 1.0);
+  out.clipPosition = frame.viewProj * vec4<f32>(revealPosition(position + wind(position)), 1.0);
   // Upward-facing surfaces brighter, undersides darker. A fixed ramp, not a
   // lighting response: what the code says is exactly what renders.
   let shade = 0.72 + 0.22 * normal.y + 0.2 * normal.x - 0.13 * normal.z;

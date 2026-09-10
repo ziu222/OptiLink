@@ -167,7 +167,6 @@ export class WebGPUTreeSceneManager {
       PARTICLE_INSTANCE_LAYOUT,
     ]);
     this.grassPipeline = this.createPipeline(layout, grassWgsl, [
-      cornerLayout,
       PARTICLE_INSTANCE_LAYOUT,
     ]);
     this.decalPipeline = this.createPipeline(layout, decalWgsl, [cornerLayout], true);
@@ -309,7 +308,7 @@ export class WebGPUTreeSceneManager {
     palette.set([...hexToRgb('#faf8f0'), 1], 0);
     palette.set([...hexToRgb(art.ink), 1], 4);
     palette.set([...hexToRgb(art.trunk), 1], 8);
-    palette.set([...hexToRgb(art.canopy), 1], 12);
+    palette.set([...hexToRgb(art.canopy), ['spring', 'summer', 'autumn', 'winter'].indexOf(config.season)], 12);
     palette.set([...hexToRgb(art.petal), 1], 16);
     palette.set([...hexToRgb(art.grass), 1], 20);
     palette.set([canopy.minY, canopy.height, GROUND_Y, size / 2], 24);
@@ -319,6 +318,7 @@ export class WebGPUTreeSceneManager {
     this.background = { r, g: g0, b, a: 1 };
     this.gridSize = size;
     this.structureHeight = canopy.minY + canopy.height;
+    this.camera.setCrownPoints(canopy.leaves.map(leaf => leaf.position));
     this.camera.frameStructure(this.gridSize, this.structureHeight);
   }
 
@@ -357,6 +357,7 @@ export class WebGPUTreeSceneManager {
       this.frameData[24] = this.animationTime;
       this.frameData[25] = this.reducedMotion ? 0 : 1;
       this.frameData[26] = treeAlpha;
+      this.frameData[27] = this.camera.transitionProgress;
       device.queue.writeBuffer(this.frameUniform, 0, this.frameData);
 
       const encoder = device.createCommandEncoder();
@@ -377,9 +378,8 @@ export class WebGPUTreeSceneManager {
       // Outside the grid, so it can't cover a module and never dissolves.
       if (treeAlpha > DISSOLVE_EPSILON && this.grassInstances && this.grassCount > 0) {
         pass.setPipeline(this.grassPipeline);
-        pass.setVertexBuffer(0, this.quadBuffer);
-        pass.setVertexBuffer(1, this.grassInstances);
-        pass.draw(6, this.grassCount);
+        pass.setVertexBuffer(0, this.grassInstances);
+        pass.draw(36, this.grassCount);
       }
 
       // Nothing above ground once the flat view is settled, so the QR can
