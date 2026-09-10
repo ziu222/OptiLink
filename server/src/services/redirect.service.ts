@@ -26,9 +26,10 @@ export class RedirectService {
 
   /**
    * Record a click: write an Analytics doc and bump the click counter.
+   * `source` marks whether the visit came from the short link or a QR scan.
    * Fire-and-forget — never blocks the redirect.
    */
-  recordHit(link: ILink, req: Request): void {
+  recordHit(link: ILink, req: Request, source: 'direct' | 'qr' = 'direct'): void {
     const userAgentString = req.headers['user-agent']?.toString() || '';
     const isMobile = /mobile|iphone|ipod|android.*mobile|windows.*phone/i.test(userAgentString);
     const isTablet = /ipad|android(?!.*mobile)/i.test(userAgentString);
@@ -46,6 +47,7 @@ export class RedirectService {
           referrer,
           country,
           city,
+          source,
         }).save(),
       )
       .catch((err) => console.error('Error saving analytics:', err));

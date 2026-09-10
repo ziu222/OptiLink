@@ -82,10 +82,13 @@ export const deleteLink = async (id: string): Promise<void> => {
 };
 
 // The verify route is public and lives at the server root (not under /api).
+// `src` ('qr' when the visitor reached the gate from a QR scan) is forwarded so
+// the click is attributed to the right traffic source.
 export const verifyLinkPassword = async (
   slug: string,
   password: string,
+  src?: string,
 ): Promise<string> => {
-  const res = await axios.post(`${SERVER_ORIGIN}/${slug}/verify`, { password });
+  const res = await axios.post(`${SERVER_ORIGIN}/${slug}/verify`, { password, src });
   return res.data.data.originalUrl;
 };

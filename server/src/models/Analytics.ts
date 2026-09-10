@@ -8,6 +8,7 @@ export interface IAnalytics extends Document {
   referrer: string;
   country: string;
   city: string;
+  source: 'direct' | 'qr'; // Truy cập qua link rút gọn hay quét mã QR
   createdAt: Date;
 }
 
@@ -22,7 +23,12 @@ const AnalyticsSchema = new Schema({
   },
   referrer: { type: String, default: '' },
   country: { type: String, default: 'unknown' },
-  city: { type: String, default: 'unknown' }
+  city: { type: String, default: 'unknown' },
+  source: {
+    type: String,
+    enum: ['direct', 'qr'],
+    default: 'direct'
+  }
 }, {
   timestamps: { createdAt: true, updatedAt: false } // Chỉ cần track thời gian click
 });

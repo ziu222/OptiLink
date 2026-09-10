@@ -57,6 +57,7 @@ export class LinksController {
   async redirectLink(req: Request, res: Response): Promise<void> {
     try {
       const slug = req.params.slug as string;
+      const source = req.query.src === 'qr' ? 'qr' : 'direct';
       const link = await redirectService.getActiveLink(slug);
 
       if (!link) {
@@ -66,11 +67,12 @@ export class LinksController {
 
       if (link.passwordHash) {
         const base = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '');
-        res.redirect(302, `${base}/s/${encodeURIComponent(slug)}`);
+        const suffix = source === 'qr' ? '?src=qr' : '';
+        res.redirect(302, `${base}/s/${encodeURIComponent(slug)}${suffix}`);
         return;
       }
 
-      redirectService.recordHit(link, req);
+      redirectService.recordHit(link, req, source);
       res.redirect(301, link.originalUrl);
     } catch (error) {
       console.error('Redirect Error:', error);
@@ -80,7 +82,8 @@ export class LinksController {
 
   async verifyLinkProtection(req: Request, res: Response): Promise<void> {
     const slug = req.params.slug as string;
-    const { password } = req.body as { password: string };
+    const { password, src } = req.body as { password: string; src?: string };
+    const source = src === 'qr' ? 'qr' : 'direct';
 
     const link = await redirectService.getActiveLink(slug);
     if (!link) {
@@ -90,7 +93,7 @@ export class LinksController {
       throw AppError.unauthorized('Incorrect password', 'INVALID_PASSWORD');
     }
 
-    redirectService.recordHit(link, req);
+    redirectService.recordHit(link, req, source);
     res.status(200).json({
       success: true,
       data: { originalUrl: link.originalUrl },
