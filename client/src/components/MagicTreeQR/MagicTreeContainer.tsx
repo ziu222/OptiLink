@@ -24,7 +24,6 @@ export function MagicTreeContainer() {
   const [urlInput, setUrlInput] = useState(initial.targetUrl);
   const [season, setSeason] = useState<SeasonId>(initial.season);
   const [palette, setPalette] = useState<PaletteId>(initial.palette);
-  const [muted, setMuted] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,10 +62,6 @@ export function MagicTreeContainer() {
     };
   }, [urlInput, season, palette]);
 
-  useEffect(() => {
-    managerRef.current?.audio.setMuted(muted);
-  }, [muted]);
-
   const handleTap = () => managerRef.current?.toggleView();
 
   const handleShare = async () => {
@@ -86,7 +81,20 @@ export function MagicTreeContainer() {
 
   return (
     <div className="magic-tree">
-      <canvas ref={canvasRef} className="magic-tree-canvas" onClick={handleTap} />
+      <canvas
+        ref={canvasRef}
+        className="magic-tree-canvas"
+        onClick={handleTap}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleTap();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="Chạm hoặc nhấn Enter để xem mã QR"
+      />
       <p className="magic-tree-hint">Chạm vào cây để xem mã QR</p>
 
       <div className="magic-tree-controls">
@@ -115,9 +123,6 @@ export function MagicTreeContainer() {
             {SEASON_THEMES[id].label}
           </button>
         ))}
-        <button type="button" onClick={() => setMuted((m) => !m)} className="magic-tree-mute">
-          {muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
-        </button>
       </div>
 
       <div className="magic-tree-palettes">

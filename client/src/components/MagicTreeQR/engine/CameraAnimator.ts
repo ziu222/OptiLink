@@ -1,17 +1,12 @@
 import * as THREE from 'three';
 
-export type CameraViewState = 'isometric' | 'topdown';
+export type CameraViewState = 'isometric' | 'flat';
 
-const ISO_TARGET = new THREE.Vector3(0, 2.5, 0);
-const ISO_UP = new THREE.Vector3(0, 1, 0);
-
-/** Baseline top-down height; framing only ever scales up from here. */
-const BASE_TOP_Y = 32;
-const TOP_TARGET = new THREE.Vector3(0, 0, 0);
-const TOP_UP = new THREE.Vector3(0, 0, -1);
-
+const BASE_ISO_POS = new THREE.Vector3(22, 24, 22);
+const BASE_ISO_TARGET = new THREE.Vector3(0, 6, 0);
+const BASE_FLAT_Y = 32;
 const TRANSITION_SECONDS = 0.9;
-const IDLE_ROTATE_SPEED = 0.08;
+export const FRAME_PADDING_FACTOR = 1.3;
 
 export function quinticEase(t: number): number {
   return t < 0.5 ? 16 * t ** 5 : 1 - Math.pow(-2 * t + 2, 5) / 2;
@@ -23,55 +18,45 @@ export class CameraAnimator {
   private toState: CameraViewState = 'isometric';
   private animating = false;
   private progress = 0;
-  private idleAngle = 0;
+
+  private isoPos = BASE_ISO_POS.clone();
+  private isoTarget = BASE_ISO_TARGET.clone();
+  private flatPos = new THREE.Vector3(0, BASE_FLAT_Y, 0);
+  private flatTarget = new THREE.Vector3(0, 0, 0);
+
   private camera: THREE.PerspectiveCamera;
-  private isoPos = new THREE.Vector3(22, 24, 22);
-  private topPos = new THREE.Vector3(0, BASE_TOP_Y, 0);
 
   constructor(camera: THREE.PerspectiveCamera) {
     this.camera = camera;
     this.camera.position.copy(this.isoPos);
-    this.camera.up.copy(ISO_UP);
-    this.camera.lookAt(ISO_TARGET);
+    this.camera.up.set(0, 1, 0);
+    this.camera.lookAt(this.isoTarget);
   }
 
   get currentState(): CameraViewState {
     return this.state;
   }
 
-  /**
-   * Pull the camera back far enough that a `gridSize` diorama fits the frustum
-   * top-down. Returns the scale relative to the baseline framing (>= 1).
-   */
-  frameGrid(gridSize: number): number {
-    const halfTan = Math.tan(((this.camera.fov * Math.PI) / 180) / 2);
-    const width = (gridSize + 1.6) * 1.15; // pedestal slab + safety margin
-    let y = width / (2 * halfTan);
-    // Vertical fov is the fixed one, so a portrait canvas is the tighter axis.
-    if (this.camera.aspect < 1) y /= this.camera.aspect;
-    y = Math.max(y, BASE_TOP_Y);
+  /** Scales both camera distances to fit a gridSize × gridSize structure. */
+  frameGrid(gridSize: number): void {
+    const fovRad = (this.camera.fov * Math.PI) / 180;
+    const halfTan = Math.tan(fovRad / 2);
+    const width = gridSize * FRAME_PADDING_FACTOR;
+    let flatY = width / (2 * halfTan);
+    if (this.camera.aspect < 1) flatY = flatY / this.camera.aspect;
+    flatY = Math.max(flatY, BASE_FLAT_Y);
 
-    const scale = y / BASE_TOP_Y;
-    this.topPos.set(0, y, 0);
-    this.isoPos.set(22 * scale, 24 * scale, 22 * scale);
-    // Keep the far plane behind the pulled-back camera.
-    this.camera.far = Math.max(100, y * 3);
+    const scale = flatY / BASE_FLAT_Y;
+    this.flatPos.set(0, flatY, 0);
+    this.isoPos.copy(BASE_ISO_POS).multiplyScalar(scale);
+    this.camera.far = Math.max(100, flatY * 3);
     this.camera.updateProjectionMatrix();
-
-    // The idle loop re-applies isoPos every frame, but a settled top-down
-    // camera is never written again — move it now or the new framing is ignored.
-    if (!this.animating && this.state === 'topdown') {
-      this.camera.position.copy(this.topPos);
-      this.camera.up.copy(TOP_UP);
-      this.camera.lookAt(TOP_TARGET);
-    }
-    return scale;
   }
 
   toggle(): void {
     if (this.animating) return;
     this.fromState = this.state;
-    this.toState = this.state === 'isometric' ? 'topdown' : 'isometric';
+    this.toState = this.state === 'isometric' ? 'flat' : 'isometric';
     this.progress = 0;
     this.animating = true;
   }
@@ -81,12 +66,12 @@ export class CameraAnimator {
       this.progress = Math.min(1, this.progress + deltaSeconds / TRANSITION_SECONDS);
       const eased = quinticEase(this.progress);
 
-      const startPos = this.fromState === 'isometric' ? this.isoPos : this.topPos;
-      const endPos = this.toState === 'isometric' ? this.isoPos : this.topPos;
-      const startTarget = this.fromState === 'isometric' ? ISO_TARGET : TOP_TARGET;
-      const endTarget = this.toState === 'isometric' ? ISO_TARGET : TOP_TARGET;
-      const startUp = this.fromState === 'isometric' ? ISO_UP : TOP_UP;
-      const endUp = this.toState === 'isometric' ? ISO_UP : TOP_UP;
+      const startPos = this.fromState === 'isometric' ? this.isoPos : this.flatPos;
+      const endPos = this.toState === 'isometric' ? this.isoPos : this.flatPos;
+      const startTarget = this.fromState === 'isometric' ? this.isoTarget : this.flatTarget;
+      const endTarget = this.toState === 'isometric' ? this.isoTarget : this.flatTarget;
+      const startUp = this.fromState === 'isometric' ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(0, 0, -1);
+      const endUp = this.toState === 'isometric' ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(0, 0, -1);
 
       this.camera.position.lerpVectors(startPos, endPos, eased);
       const target = new THREE.Vector3().lerpVectors(startTarget, endTarget, eased);
@@ -100,16 +85,18 @@ export class CameraAnimator {
       return;
     }
 
+    // Settled: re-apply every frame (not just during a transition) so a
+    // mid-idle frameGrid() rescale still takes effect immediately — an
+    // earlier attempt's top-down view stayed stale/clipped after a resize
+    // specifically because this branch was missing.
     if (this.state === 'isometric') {
-      this.idleAngle += deltaSeconds * IDLE_ROTATE_SPEED;
-      const radius = Math.hypot(this.isoPos.x, this.isoPos.z);
-      this.camera.position.set(
-        Math.cos(this.idleAngle) * radius,
-        this.isoPos.y,
-        Math.sin(this.idleAngle) * radius
-      );
-      this.camera.up.copy(ISO_UP);
-      this.camera.lookAt(ISO_TARGET);
+      this.camera.position.copy(this.isoPos);
+      this.camera.up.set(0, 1, 0);
+      this.camera.lookAt(this.isoTarget);
+    } else {
+      this.camera.position.copy(this.flatPos);
+      this.camera.up.set(0, 0, -1);
+      this.camera.lookAt(this.flatTarget);
     }
   }
 }

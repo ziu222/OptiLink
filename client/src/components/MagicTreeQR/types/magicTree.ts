@@ -22,7 +22,7 @@ export const SEASON_THEMES: Record<SeasonId, SeasonTheme> = {
     canopySecondary: '#F472B6',
     trunk: '#8B5A2B',
     groundLight: '#FDFBF7',
-    groundDark: '#FBCFE8',
+    groundDark: '#CA117A',
     background: '#F6F1E7',
     weather: 'sakura',
   },
@@ -55,7 +55,7 @@ export const SEASON_THEMES: Record<SeasonId, SeasonTheme> = {
     canopySecondary: '#93C5FD',
     trunk: '#374151',
     groundLight: '#F8FAFC',
-    groundDark: '#CBD5E1',
+    groundDark: '#49617E',
     background: '#F1F5F9',
     weather: 'snow',
   },
@@ -68,12 +68,12 @@ export interface PalettePreset {
 }
 
 export const PALETTE_PRESETS: PalettePreset[] = [
-  { id: 'rose', label: 'Pastel Rose', color: '#FFB7C5' },
-  { id: 'violet', label: 'Royal Violet', color: '#A855F7' },
-  { id: 'crimson', label: 'Crimson Red', color: '#EF4444' },
-  { id: 'gold', label: 'Golden Glow', color: '#EAB308' },
-  { id: 'azure', label: 'Azure Blue', color: '#3B82F6' },
-  { id: 'silver', label: 'Silver Stealth', color: '#94A3B8' },
+  { id: 'rose', label: 'Pastel Rose', color: '#FF1442' },
+  { id: 'violet', label: 'Royal Violet', color: '#942EF5' },
+  { id: 'crimson', label: 'Crimson Red', color: '#EB1A1A' },
+  { id: 'gold', label: 'Golden Glow', color: '#795C04' },
+  { id: 'azure', label: 'Azure Blue', color: '#0A5DE4' },
+  { id: 'silver', label: 'Silver Stealth', color: '#506078' },
 ];
 
 export interface MagicTreeConfig {
