@@ -21,16 +21,16 @@ export interface CanopyData {
 }
 
 /** The outer two levels carry leaves — a canopy needs volume, not a shell. */
-const LEAF_DEPTH_THRESHOLD = MAX_DEPTH - 1;
-const LEAVES_PER_TIP_MIN = 24;
-const LEAVES_PER_TIP_JITTER = 16;
-const LEAF_CLUSTER_RADIUS_FACTOR = 0.9;
+const LEAF_DEPTH_THRESHOLD = MAX_DEPTH - 2;
+const LEAVES_PER_TIP_MIN = 38;
+const LEAVES_PER_TIP_JITTER = 22;
+const LEAF_CLUSTER_RADIUS_FACTOR = 1.3;
 
 /**
  * Hard cap. 6000 instanced quads is nothing for the GPU; this keeps buffer
  * sizes predictable across pathological URLs, not the framerate.
  */
-export const MAX_LEAVES = 6000;
+export const MAX_LEAVES = 10000;
 
 function segmentLength(s: BranchSegment): number {
   return Math.hypot(s.end[0] - s.start[0], s.end[1] - s.start[1], s.end[2] - s.start[2]);
@@ -39,8 +39,13 @@ function segmentLength(s: BranchSegment): number {
 export function generateLeaves(segments: BranchSegment[], seed: number): CanopyData {
   const leaves: LeafInstance[] = [];
 
-  for (let i = 0; i < segments.length && leaves.length < MAX_LEAVES; i++) {
-    const segment = segments[i];
+  // Interleave the scaffold limbs before applying the budget, so a large
+  // tree never loses all foliage on its last-generated side.
+  const eligible = segments.map((segment, index) => ({ segment, index }))
+    .filter(({ segment }) => segment.depth >= LEAF_DEPTH_THRESHOLD)
+    .sort((a, b) => pseudoRandom(a.index, 9, seed) - pseudoRandom(b.index, 9, seed));
+  for (let n = 0; n < eligible.length && leaves.length < MAX_LEAVES; n++) {
+    const { segment, index: i } = eligible[n];
     if (segment.depth < LEAF_DEPTH_THRESHOLD) continue;
 
     const clusterRadius = segmentLength(segment) * LEAF_CLUSTER_RADIUS_FACTOR;
@@ -56,7 +61,7 @@ export function generateLeaves(segments: BranchSegment[], seed: number): CanopyD
       leaves.push({
         position: [
           segment.end[0] + radius * sinPhi * Math.cos(theta),
-          segment.end[1] + radius * cosPhi,
+          Math.max(0.5, segment.end[1] + radius * cosPhi * 0.65),
           segment.end[2] + radius * sinPhi * Math.sin(theta),
         ],
         seed: pseudoRandom(i, k, seed + 6),
