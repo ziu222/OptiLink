@@ -23,7 +23,7 @@ fn vertexMain(@location(0) position: vec3<f32>, @location(1) normal: vec3<f32>,
   let centre = vec3<f32>(instance.x + cos(seed * 31.0) * drift,
     mix(instance.y, 0.12, release), instance.z + sin(seed * 31.0) * drift) + wind(instance.xyz) * (1.0 - release);
   let flutter = sin(frame.time * 1.25 + seed * 39.0) * 0.035 * frame.windStrength;
-  let size = palette.bounds.w * 0.076 * (0.75 + seed * 0.45);
+  let size = palette.bounds.w * 0.064 * (0.82 + seed * 0.28);
   let local = orient(position, seed + flutter * 0.008) * size;
   var out: VertexOut;
   out.clipPosition = frame.viewProj * vec4<f32>(centre + local, 1.0);
@@ -41,7 +41,7 @@ fn fragmentMain(in: VertexOut, @builtin(front_facing) front: bool) -> @location(
   let key = max(0.0,dot(normal,normalize(vec3<f32>(-0.5,0.8,0.35))));
   // Broad diffuse wrap and subtle transmission, deliberately no specular lobe.
   let light = 0.62 + key * 0.27 + in.height * 0.1;
-  let pigment = mix(in.pigment, palette.petal.rgb * 0.75, 0.05);
-  let color = pow(clamp(pigment * light,vec3<f32>(0.0),vec3<f32>(1.0)),vec3<f32>(0.4545));
+  let pigment = mix(in.pigment, palette.petal.rgb * 0.75, 0.02);
+  let color = pow(clamp(pigment * light,vec3<f32>(0.0),vec3<f32>(1.0)),vec3<f32>(0.8));
   return vec4<f32>(color,1.0);
 }

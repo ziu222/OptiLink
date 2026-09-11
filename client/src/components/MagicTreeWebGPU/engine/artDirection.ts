@@ -2,10 +2,10 @@ import type { SeasonId } from '../../MagicTreeQR/types/magicTree';
 
 /** Scenic colours are independent of the high-contrast QR colours. */
 export const TREE_ART: Record<SeasonId, {
-  canopy: string; petal: string; grass: string; trunk: string; background: string; ink: string;
+  canopy: string; petal: string; grass: string; trunk: string; background: string; ink: string; qr: string;
 }> = {
-  spring: { canopy: '#f2acc7', petal: '#fff8e8', grass: '#79ad3d', trunk: '#805741', background: '#f5f1e8', ink: '#743448' },
-  summer: { canopy: '#83b74b', petal: '#d5e999', grass: '#669c32', trunk: '#785540', background: '#f5f1e8', ink: '#31572b' },
-  autumn: { canopy: '#dc8740', petal: '#f6c868', grass: '#9d9449', trunk: '#79503d', background: '#f5efe4', ink: '#754120' },
-  winter: { canopy: '#c6d8d6', petal: '#ffffff', grass: '#8faaa0', trunk: '#71645c', background: '#edf1ef', ink: '#35555c' },
+  spring: { canopy: '#d88fab', petal: '#f5c6d5', grass: '#687a3e', trunk: '#6d4936', background: '#f6f0e5', ink: '#743448', qr: '#315f3b' },
+  summer: { canopy: '#6d9c47', petal: '#c8dc87', grass: '#59733a', trunk: '#6e4a35', background: '#f5f1e6', ink: '#31572b', qr: '#315f3b' },
+  autumn: { canopy: '#c97635', petal: '#eab75a', grass: '#8c8044', trunk: '#704635', background: '#f6eee2', ink: '#754120', qr: '#315f3b' },
+  winter: { canopy: '#9aaead', petal: '#edf5f1', grass: '#83938a', trunk: '#625850', background: '#edf2ed', ink: '#35555c', qr: '#315f3b' },
 };

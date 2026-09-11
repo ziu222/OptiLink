@@ -176,13 +176,14 @@ assets['winter']=leaf('Winter / frost coated leaf',frost=True)
 
 def grass(season):
     v,f,c = [],[],[]
-    palettes=[((0.13,0.28,0.045),(0.48,0.66,0.20)),((0.12,0.27,0.045),(0.43,0.60,0.17)),
-              ((0.25,0.22,0.08),(0.64,0.53,0.25)),((0.24,0.31,0.25),(0.72,0.78,0.69))]
+    palettes=[((0.08,0.17,0.035),(0.34,0.43,0.13)),((0.075,0.16,0.035),(0.29,0.39,0.11)),
+              ((0.18,0.14,0.045),(0.48,0.37,0.12)),((0.17,0.23,0.19),(0.52,0.61,0.54))]
     low,high=palettes[season]
-    for i in range(17):
+    # One QR pixel is one intentionally simple tuft, not a high-detail meadow.
+    for i in range(7):
         a=i*2.399963+rng.uniform(-0.3,0.3)
-        h=rng.uniform(0.45,1.0)*(0.66 if season==3 else 1)
-        lean=rng.uniform(0.22,0.55)
+        h=rng.uniform(0.34,0.68)*(0.72 if season==3 else 1)
+        lean=rng.uniform(0.12,0.31)
         root=Vector((math.cos(a)*rng.uniform(0.02,0.13),math.sin(a)*rng.uniform(0.02,0.13),0))
         forward=Vector((math.cos(a),math.sin(a),0))
         side=Vector((-math.sin(a),math.cos(a),0))

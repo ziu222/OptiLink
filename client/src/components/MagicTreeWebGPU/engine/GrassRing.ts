@@ -1,11 +1,9 @@
 import { pseudoRandom } from './seedFromUrl';
+import { cellToWorld } from '../../MagicTreeQR/engine/QRMatrixBuilder';
 
 /**
- * Decorative grass blades around the QR grid — spec §5.3.
- *
- * Strictly outside the grid footprint (§1.4): the voxel feature's two shipped
- * bugs both came from something visually interacting with the ground layer's
- * colours, and keeping grass off the grid removes that whole risk class.
+ * Low-poly tufts for the QR garden. One tuft maps to one dark QR module while
+ * the sparse outer ring only frames the garden instead of competing with it.
  */
 
 export interface GrassBlade {
@@ -18,12 +16,11 @@ export interface GrassBlade {
   seed: number;
 }
 
-const MARGIN_CELLS = 0.7;
-const BAND_CELLS = 2.1;
-const BLADES_PER_CELL = 112;
-const MIN_HEIGHT_CELLS = 0.65;
-const HEIGHT_JITTER_CELLS = 1.85;
-const BLADES_PER_TUFT = 14;
+const MARGIN_CELLS = 0.55;
+const BAND_CELLS = 0.72;
+const TUFTS_PER_GRID_CELL = 4;
+const MIN_HEIGHT_CELLS = 0.36;
+const HEIGHT_JITTER_CELLS = 0.35;
 
 /** Half-width of the grid's own footprint, in world units. */
 export function gridHalfExtent(gridSize: number, cellSize = 1): number {
@@ -33,16 +30,14 @@ export function gridHalfExtent(gridSize: number, cellSize = 1): number {
 export function generateGrassRing(gridSize: number, seed: number, cellSize = 1): GrassBlade[] {
   const inner = gridHalfExtent(gridSize, cellSize) + MARGIN_CELLS * cellSize;
   const band = BAND_CELLS * cellSize;
-  const count = Math.round(gridSize * BLADES_PER_CELL);
+  const count = Math.round(gridSize * TUFTS_PER_GRID_CELL);
   const blades: GrassBlade[] = [];
 
   for (let i = 0; i < count; i++) {
     // Walk the ring's perimeter, then push outward — no rejection sampling,
     // so the count is exact and the layout stays reproducible.
-    const tuft = Math.floor(i / BLADES_PER_TUFT);
-    const tuftCount = Math.ceil(count / BLADES_PER_TUFT);
-    const t = (tuft + 0.5) / tuftCount;
-    const depth = pseudoRandom(tuft, 1, seed + 13) * band;
+    const t = (i + 0.5) / count;
+    const depth = pseudoRandom(i, 1, seed + 13) * band;
     const edge = Math.floor(t * 4) % 4;
     const along = (t * 4 - Math.floor(t * 4)) * 2 * inner - inner;
 
@@ -64,15 +59,32 @@ export function generateGrassRing(gridSize: number, seed: number, cellSize = 1):
 
     const scatterAngle = pseudoRandom(i, 5, seed + 18) * Math.PI * 2;
     const scatter = pseudoRandom(i, 6, seed + 19) * 0.42 * cellSize;
-    const tuftHeight = 0.65 + pseudoRandom(tuft, 2, seed + 20) * 0.6;
     blades.push({
       x: x + Math.cos(scatterAngle) * scatter,
       z: z + Math.sin(scatterAngle) * scatter,
-      height: (MIN_HEIGHT_CELLS + pseudoRandom(i, 2, seed + 14) * HEIGHT_JITTER_CELLS) * cellSize * tuftHeight,
+      height: (MIN_HEIGHT_CELLS + pseudoRandom(i, 2, seed + 14) * HEIGHT_JITTER_CELLS) * cellSize,
       rotation: pseudoRandom(i, 3, seed + 15) * Math.PI,
       seed: pseudoRandom(i, 4, seed + 16),
     });
   }
 
   return blades;
+}
+
+/** Every active QR module becomes one restrained, Blender-authored grass tuft. */
+export function generateQrGrass(matrix: readonly (readonly boolean[])[], seed: number, cellSize = 1): GrassBlade[] {
+  const size = matrix.length;
+  const tufts: GrassBlade[] = [];
+  for (let row = 0; row < size; row++) for (let col = 0; col < size; col++) {
+    if (!matrix[row]?.[col]) continue;
+    const { x, z } = cellToWorld(row, col, size);
+    tufts.push({
+      x,
+      z,
+      height: (0.4 + pseudoRandom(row, col, seed + 61) * 0.23) * cellSize,
+      rotation: pseudoRandom(row, col, seed + 62) * Math.PI,
+      seed: pseudoRandom(row, col, seed + 63),
+    });
+  }
+  return tufts;
 }
