@@ -88,8 +88,8 @@ export const BioBlocks: React.FC<BioBlocksProps> = ({ blocks }) => {
       case 'LINK':
         if (block.tabId && block.tabId !== activeTab) return null;
         return (
-          <a key={block.id} href={block.content.url} className="block-link" target="_blank" rel="noopener noreferrer">
-            {block.content.label}
+          <a key={block.id} href={block.content.clickUrl || block.content.url} className="block-link" target="_blank" rel="noopener noreferrer">
+            {block.content.title || block.content.label || 'Mở liên kết'}
           </a>
         );
 

@@ -6,6 +6,7 @@ import type { MagicTreeConfig, SeasonId } from '../MagicTreeQR/types/magicTree';
 import { DEFAULT_CONFIG } from '../MagicTreeQR/types/magicTree';
 import { WebGPUTreeSceneManager } from './engine/WebGPUTreeSceneManager';
 import { TREE_ART } from './engine/artDirection';
+import { listLinks, type ShortenedLink } from '../../api/links';
 import './MagicTreeWebGPUContainer.css';
 
 const SEASONS = [
@@ -57,6 +58,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
   });
   const [copied, setCopied] = useState(false);
   const [info, setInfo] = useState(false);
+  const [savedLinks, setSavedLinks] = useState<ShortenedLink[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const managerRef = useRef<WebGPUTreeSceneManager | null>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -72,6 +74,15 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
     media.addEventListener('change', change);
     return () => media.removeEventListener('change', change);
   }, []);
+
+  useEffect(() => {
+    if (!embedded) return;
+    let cancelled = false;
+    listLinks({ limit: 100, status: 'active', sort: 'newest' })
+      .then((result) => { if (!cancelled) setSavedLinks(result.links); })
+      .catch(() => { /* The public garden intentionally works without an account. */ });
+    return () => { cancelled = true; };
+  }, [embedded]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -224,6 +235,18 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
             {copied ? <Check size={18} /> : <ArrowUpRight size={19} />}<span>{copied ? 'Đã chép' : 'Chia sẻ'}</span>
           </button>
         </div>
+        {embedded && savedLinks.length > 0 && (
+          <label className="tree-library-select">
+            <span>Dùng link đã lưu</span>
+            <select value="" onChange={(event) => {
+              const link = savedLinks.find((item) => item.id === event.target.value);
+              if (link) setUrlInput(link.shortUrl);
+            }}>
+              <option value="">Chọn từ thư viện link ({savedLinks.length})</option>
+              {savedLinks.map((link) => <option key={link.id} value={link.id}>{link.title || 'Liên kết chưa đặt tên'} · {link.shortUrl}</option>)}
+            </select>
+          </label>
+        )}
         <div className="tree-season-row">
           <div className="tree-seasons" role="group" aria-label="Chọn mùa">
             {SEASONS.map(item => <button key={item.id} aria-pressed={season === item.id} onClick={() => setSeason(item.id)}>

@@ -19,10 +19,19 @@ export interface LinkQr {
   createdAt: string;
 }
 
+export interface QrCodeRecord extends LinkQr {
+  scansCount?: number;
+}
+
 // The QR for a link, created on the server on first request.
 export const getOrCreateLinkQr = async (linkId: string): Promise<LinkQr> => {
   const res = await api.get(`/qr/link/${linkId}`);
   return res.data.data.qr;
+};
+
+export const listQrs = async (): Promise<QrCodeRecord[]> => {
+  const res = await api.get('/qr/list');
+  return res.data.data.qrCodes;
 };
 
 // The download route needs the bearer header, so it can't be a plain <a href>.
