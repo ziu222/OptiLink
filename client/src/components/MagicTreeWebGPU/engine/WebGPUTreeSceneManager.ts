@@ -45,8 +45,8 @@ const BOTANICAL_PARTICLE_INSTANCE_LAYOUT: GPUVertexBufferLayout = {
   arrayStride: 20,
   stepMode: 'instance',
   attributes: [
-    { shaderLocation: 1, offset: 0, format: 'float32x4' },
-    { shaderLocation: 2, offset: 16, format: 'float32' },
+    { shaderLocation: 3, offset: 0, format: 'float32x4' },
+    { shaderLocation: 4, offset: 16, format: 'float32' },
   ],
 };
 
@@ -56,6 +56,12 @@ function hexToRgb(hex: string): [number, number, number] {
 }
 
 export class WebGPUTreeSceneManager {
+  private static initFailure: string | null = null;
+
+  static get initializationFailure(): string | null {
+    return WebGPUTreeSceneManager.initFailure;
+  }
+
   private readonly gpu: WebGPUContext;
   private readonly assets: BotanicalAssets;
   private readonly camera = new CameraMatrices();
@@ -212,16 +218,27 @@ export class WebGPUTreeSceneManager {
   }
 
   static async create(canvas: HTMLCanvasElement): Promise<WebGPUTreeSceneManager | null> {
+    WebGPUTreeSceneManager.initFailure = null;
     const gpu = await WebGPUContext.create(canvas);
-    if (!gpu) return null;
+    if (!gpu) {
+      WebGPUTreeSceneManager.initFailure = 'Chrome không cấp được WebGPU adapter cho trang này.';
+      return null;
+    }
     gpu.device.pushErrorScope('validation');
     let manager: WebGPUTreeSceneManager | null = null;
     try {
       manager = new WebGPUTreeSceneManager(gpu, await loadBotanicalAssets());
       const error = await gpu.device.popErrorScope();
-      if (error) { manager.dispose(); return null; }
+      if (error) {
+        WebGPUTreeSceneManager.initFailure = error.message;
+        console.error('[Magic Tree] WebGPU pipeline validation failed:', error.message);
+        manager.dispose();
+        return null;
+      }
       return manager;
-    } catch {
+    } catch (error) {
+      WebGPUTreeSceneManager.initFailure = error instanceof Error ? error.message : String(error);
+      console.error('[Magic Tree] WebGPU initialization failed:', error);
       if (manager) manager.dispose(); else gpu.destroy();
       return null;
     }

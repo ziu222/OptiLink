@@ -47,6 +47,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
   const [config, setConfig] = useState<MagicTreeConfig>(initial);
   const [season, setSeason] = useState<SeasonId>(initial.season);
   const [support, setSupport] = useState<'checking' | 'ready' | 'unsupported'>('checking');
+  const [rendererProblem, setRendererProblem] = useState('');
   const [error, setError] = useState('');
   const [flat, setFlat] = useState(false);
   const [settled, setSettled] = useState(false);
@@ -90,9 +91,14 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
     let cancelled = false;
     void WebGPUTreeSceneManager.create(canvas).then(manager => {
       if (cancelled) { manager?.dispose(); return; }
-      if (!manager) { setSupport('unsupported'); return; }
+      if (!manager) {
+        setRendererProblem(WebGPUTreeSceneManager.initializationFailure || 'Không rõ nguyên nhân.');
+        setSupport('unsupported');
+        return;
+      }
       manager.onUnavailable = () => {
         managerRef.current = null;
+        setRendererProblem('GPU device đã bị ngắt trong khi render.');
         setSupport('unsupported');
         setSettled(true);
         setFlat(true);
@@ -100,8 +106,14 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
       };
       manager.onViewSettled = isFlat => { setSettled(isFlat); setTransitioning(false); };
       managerRef.current = manager;
+      setRendererProblem('');
       setSupport('ready');
-    }).catch(() => { if (!cancelled) setSupport('unsupported'); });
+    }).catch((error) => {
+      if (!cancelled) {
+        setRendererProblem(error instanceof Error ? error.message : 'Không rõ nguyên nhân.');
+        setSupport('unsupported');
+      }
+    });
     return () => {
       cancelled = true;
       managerRef.current?.dispose();
@@ -256,7 +268,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
         </div>
       </div>
       <p className={`tree-footnote ${error ? 'tree-error' : ''}`} id="tree-error" role="status">
-        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : support === 'unsupported' ? 'Trình duyệt đang dùng QR tĩnh · Sẵn sàng để quét' : transitioning ? (flat ? 'Khu vườn đang hạ xuống · Đang mở mã QR…' : 'Khu vườn đang trở lại…') : effectiveReduced ? 'Thiết bị đang giảm chuyển động. Chọn “Bật hiệu ứng” để xem animation.' : settled ? 'Mã QR đã sẵn sàng · Mở camera để quét' : `${current.detail} · Chọn Mã QR 2D để chuyển cảnh`)}
+        {error || (copied ? 'Đã sao chép liên kết. Gửi khu vườn này đến một người bạn.' : support === 'unsupported' ? (import.meta.env.DEV && rendererProblem ? `WebGPU không khởi tạo: ${rendererProblem}` : 'Trình duyệt đang dùng QR tĩnh · Sẵn sàng để quét') : transitioning ? (flat ? 'Khu vườn đang hạ xuống · Đang mở mã QR…' : 'Khu vườn đang trở lại…') : effectiveReduced ? 'Thiết bị đang giảm chuyển động. Chọn “Bật hiệu ứng” để xem animation.' : settled ? 'Mã QR đã sẵn sàng · Mở camera để quét' : `${current.detail} · Chọn Mã QR 2D để chuyển cảnh`)}
       </p>
     </div>
     <dialog ref={dialogRef} className="tree-dialog" onCancel={() => setInfo(false)} onClick={event => { if (event.target === event.currentTarget) setInfo(false); }}>
