@@ -45,20 +45,6 @@ const navItems = [
     ),
   },
   {
-    label: 'Magic Tree',
-    to: '/dashboard/magic-tree',
-    end: false,
-    icon: (
-      <svg {...iconProps}>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 3v18M12 3c-2.5 0-4.5 2-4.5 4.5S9.5 12 12 12s4.5-2 4.5-4.5S14.5 3 12 3ZM12 12c-3 0-5.5 2.5-5.5 5.5S9 21 12 21s5.5-2 5.5-3.5S15 12 12 12Z"
-        />
-      </svg>
-    ),
-  },
-  {
     label: 'Magic Tree WebGPU',
     to: '/dashboard/magic-tree-webgpu',
     end: false,
