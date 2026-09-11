@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './builder.css';
+import './builder-polish.css';
 import { Sidebar } from '../../components/workspace/Sidebar/Sidebar';
 import { BuilderSidebar } from '../../components/builder/BuilderSidebar';
 import { TabLinksAndBlocks } from '../../components/builder/TabLinksAndBlocks';
@@ -14,6 +16,16 @@ export function BuilderPage() {
   const [activeTab, setActiveTab] = useState('tab-links');
   const [publishState, setPublishState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [fullPreview, setFullPreview] = useState(false);
+  const [motionPaused, setMotionPaused] = useState(false);
+  const [allowMotion, setAllowMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+  useEffect(() => {
+    const query = matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => { setReducedMotion(query.matches); setAllowMotion(false); };
+    query.addEventListener('change', sync);
+    return () => query.removeEventListener('change', sync);
+  }, []);
+  const motionStopped = motionPaused || (reducedMotion && !allowMotion);
 
   const handlePublish = async () => {
     if (!bioData) return;
@@ -108,11 +120,12 @@ export function BuilderPage() {
   } as React.CSSProperties;
 
   return (
-    <div className={`builder-layout${fullPreview ? ' is-full-preview' : ''}`}>
+    <div className={`builder-layout${fullPreview ? ' is-full-preview' : ''}`} data-motion-paused={motionPaused}>
       {!fullPreview && (
         <>
           {/* 1. APP NAV (shared with the rest of OptiLink) + BIO PAGE SUB-NAV */}
           <Sidebar />
+          <Link to="/dashboard" className="builder-back-link">← Dashboard</Link>
           <BuilderSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
           {/* 2. EDITOR PANEL */}
@@ -177,7 +190,11 @@ export function BuilderPage() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
           )}
         </button>
-        <FallingEffect effect={effect} />
+        <div className="preview-caption">LIVE PREVIEW</div>
+        <button type="button" className="bio-motion-toggle" aria-pressed={!motionStopped} onClick={() => { setMotionPaused(!motionStopped); if (motionStopped) setAllowMotion(true); }}>
+          {motionStopped ? 'Bật chuyển động' : 'Tạm dừng chuyển động'}
+        </button>
+        <FallingEffect effect={effect} paused={motionStopped} allowMotion={allowMotion} />
 
         <div className={`card-wrapper ${borderStyle === 'glow' ? 'border-glow' : ''} ${borderStyle === 'led' ? 'border-led' : ''}`} style={wrapperStyle}>
           <div className={`mock-bio-inner ${showBanner ? 'layout-banner-on' : 'layout-banner-off'}`} style={innerStyle}>
@@ -205,7 +222,9 @@ export function BuilderPage() {
             {bioData?.username && <p className="mock-username">@{bioData.username}</p>}
             <p className="mock-bio-text">{bioData?.bio || 'Mô tả ngắn của bạn...'}</p>
             
-            {blocks.map(block => {
+            {blocks.filter(block => !block.isHidden).slice().sort((a, b) => a.order - b.order).map(block => {
+              if (block.type === 'TEXT') return <p className="mock-text-block" key={block.id}>{block.content?.text || block.content?.title}</p>;
+              if (block.type === 'IMAGE') return block.content?.imageUrl ? <img className="mock-image-block" key={block.id} src={block.content.imageUrl} alt={block.content?.title || ''} /> : null;
               if (block.type === 'LINK') {
                 return (
                   <div key={block.id} className={`mock-link ${btnHover}`}>{block.content?.title || 'Chưa có tiêu đề'}</div>
