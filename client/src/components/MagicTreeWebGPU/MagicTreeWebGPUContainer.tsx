@@ -176,7 +176,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
 
   const download = () => {
     const { path, size } = qrPath(config.targetUrl);
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="-4 -4 ${size + 8} ${size + 8}"><rect x="-4" y="-4" width="${size + 8}" height="${size + 8}" fill="#faf8f0"/><path d="${path}" fill="${TREE_ART[config.season].ink}" shape-rendering="crispEdges"/></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="-4 -4 ${size + 8} ${size + 8}"><rect x="-4" y="-4" width="${size + 8}" height="${size + 8}" fill="#faf8f0"/><path d="${path}" fill="${TREE_ART[config.season].qr}" shape-rendering="crispEdges"/></svg>`;
     const objectUrl = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
     const a = document.createElement('a');
     a.href = objectUrl; a.download = 'optilink-magic-tree-qr.svg'; a.click();
@@ -202,7 +202,7 @@ export function MagicTreeWebGPUContainer({ embedded = false }: { embedded?: bool
     </div>
 
     <div className="tree-stage">
-      {support === 'unsupported' ? <div className="tree-fallback"><StaticQR url={config.targetUrl} ink={TREE_ART[config.season].ink} /><p>Chế độ QR tĩnh · Sẵn sàng để quét</p></div> : <>
+      {support === 'unsupported' ? <div className="tree-fallback"><StaticQR url={config.targetUrl} ink={TREE_ART[config.season].qr} /><p>Chế độ QR tĩnh · Sẵn sàng để quét</p></div> : <>
         <canvas ref={canvasRef} className="tree-canvas" role="button" tabIndex={0}
           aria-label={flat ? 'Quay lại cây 3D' : 'Xem mã QR'} aria-pressed={flat}
           onClick={() => toggle()} onKeyDown={event => {

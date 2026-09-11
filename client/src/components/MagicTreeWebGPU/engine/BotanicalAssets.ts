@@ -43,15 +43,21 @@ export function botanicalTransform(x: number, y: number, z: number, seed: number
 
 export function botanicalCanopy(seed: number, grid: number, season: SeasonId): CanopyData {
   const leaves: CanopyData['leaves'] = [];
-  const density = season === 'winter' ? 3 : season === 'autumn' ? 12 : 22;
+  // The authored scaffold is deliberately readable: flowers and leaves belong
+  // at branch tips, not as a uniform cloud over the trunk.
+  const density = season === 'spring' ? 4 : season === 'summer' ? 6 : season === 'autumn' ? 5 : 3;
   botanicalManifest.anchors.forEach(([x,y,z,r], i) => {
-    if (i % 2) return;
+    if (pseudoRandom(i, 31, seed) > 0.57) return;
+    const radial = Math.hypot(x, z);
+    // Preserve a clear vertical window through the lower crown so the trunk
+    // and the first primary fork never disappear behind foliage.
+    if (y < 0.62 && radial < 0.32) return;
     for (let k = 0; k < density; k++) {
       const a = pseudoRandom(i,k,seed+40) * Math.PI * 2;
       const v = pseudoRandom(i,k,seed+41) * 2 - 1;
-      const radius = r * 1.95 * Math.cbrt(pseudoRandom(i,k,seed+42));
+      const radius = r * 1.3 * Math.cbrt(pseudoRandom(i,k,seed+42));
       const ring = Math.sqrt(1-v*v) * radius;
-      leaves.push({ position: botanicalTransform((x+Math.cos(a)*ring)*1.3,(y+v*radius)*1.1,(z+Math.sin(a)*ring)*1.3,seed,grid),
+      leaves.push({ position: botanicalTransform((x+Math.cos(a)*ring)*1.18,(y+v*radius)*1.04,(z+Math.sin(a)*ring)*1.18,seed,grid),
         seed: pseudoRandom(i,k,seed+43) });
     }
   });

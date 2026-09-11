@@ -49,13 +49,13 @@ describe('Blender botanical asset contract', () => {
     expect(branch.indices.at(-1)).toBe(branch.indexCount-1);
     for (let i=0;i<branch.vertices.length;i+=7) expect(Math.hypot(...branch.vertices.subarray(i+3,i+6))).toBeCloseTo(1,4);
   });
-  it('is deterministic with denser summer and sparse winter foliage', () => {
+  it('is deterministic with a readable, sparse winter canopy', () => {
     const summer = botanicalCanopy(1234,33,'summer');
     expect(summer).toEqual(botanicalCanopy(1234,33,'summer'));
     expect(summer).not.toEqual(botanicalCanopy(5678,33,'summer'));
-    expect(summer.leaves.length).toBeGreaterThan(botanicalCanopy(1234,33,'winter').leaves.length*5);
+    expect(summer.leaves.length).toBeGreaterThan(botanicalCanopy(1234,33,'winter').leaves.length);
     expect(summer.minY).toBeGreaterThan(0);
-    expect(summer.leaves.length).toBeLessThan(10000);
+    expect(summer.leaves.length).toBeLessThan(3500);
   });
   it('retries failed loads and caches a successful asset fetch', async () => {
     const fetchMock = vi.fn().mockResolvedValueOnce({ok:false}).mockResolvedValue({ok:true,arrayBuffer:async()=>binary});

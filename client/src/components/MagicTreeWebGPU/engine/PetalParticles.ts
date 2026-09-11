@@ -3,9 +3,8 @@ import type { CanopyData } from './LeafInstances';
 import { pseudoRandom } from './seedFromUrl';
 
 /**
- * Falling petal/leaf/snow instance data — spec §5.2. Every particle is a
- * constant here plus a `time` uniform in the shader: no stored velocity, no
- * per-frame CPU work, no compute pipeline.
+ * Spring flower instance data. Every particle is a constant plus a `time`
+ * uniform in the shader: no stored velocity or per-frame CPU work.
  */
 
 export interface FallingParticle {
@@ -20,12 +19,38 @@ export interface FallingParticle {
   seed: number;
 }
 
-export const PARTICLE_COUNT = 110;
+export const PARTICLE_COUNT = 34;
 const DRIFT_FACTOR = 0.12;
 
-/** Summer is the one season the reference gives no falling particles. */
+/** Falling blossom belongs only to the Spring scene. */
 function countFor(weather: WeatherKind): number {
-  return weather === 'sunbeam' ? 0 : PARTICLE_COUNT;
+  return weather === 'sakura' ? 34 : 0;
+}
+
+export interface SettledPetal {
+  x: number;
+  z: number;
+  scale: number;
+  rotation: number;
+  seed: number;
+}
+
+/** A quiet, persistent carpet around the Spring trunk — not random confetti. */
+export function generatePetalCarpet(weather: WeatherKind, spreadRadius: number, seed: number): SettledPetal[] {
+  if (weather !== 'sakura') return [];
+  const petals: SettledPetal[] = [];
+  for (let i = 0; i < 52; i++) {
+    const angle = pseudoRandom(i, 21, seed) * Math.PI * 2;
+    const radius = spreadRadius * (0.045 + Math.sqrt(pseudoRandom(i, 22, seed)) * 0.31);
+    petals.push({
+      x: Math.cos(angle) * radius,
+      z: Math.sin(angle) * radius,
+      scale: 0.17 + pseudoRandom(i, 23, seed) * 0.13,
+      rotation: pseudoRandom(i, 24, seed) * Math.PI * 2,
+      seed: pseudoRandom(i, 25, seed),
+    });
+  }
+  return petals;
 }
 
 export function generateFallingParticles(

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { generateGrassRing, gridHalfExtent } from './GrassRing';
+import { generateGrassRing, generateQrGrass, gridHalfExtent } from './GrassRing';
+import { cellToWorld } from '../../MagicTreeQR/engine/QRMatrixBuilder';
 import { seedFromUrl } from './seedFromUrl';
 
 const SEED = seedFromUrl('https://optilink.app');
@@ -47,5 +48,26 @@ describe('generateGrassRing', () => {
       expect(blade.seed).toBeGreaterThanOrEqual(0);
       expect(blade.seed).toBeLessThan(1);
     }
+  });
+});
+
+describe('generateQrGrass', () => {
+  const matrix = [
+    [true, false, true],
+    [false, true, false],
+    [true, false, false],
+  ];
+
+  it('is deterministic and creates exactly one tuft for each dark QR module', () => {
+    const tufts = generateQrGrass(matrix, SEED);
+    expect(tufts).toEqual(generateQrGrass(matrix, SEED));
+    expect(tufts).toHaveLength(4);
+  });
+
+  it('places every tuft at the centre of its own QR module', () => {
+    const expected = matrix.flatMap((row, rowIndex) => row.flatMap((active, colIndex) =>
+      active ? [cellToWorld(rowIndex, colIndex, matrix.length)] : []
+    ));
+    expect(generateQrGrass(matrix, SEED).map(({ x, z }) => ({ x, z }))).toEqual(expected);
   });
 });
