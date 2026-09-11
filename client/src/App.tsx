@@ -18,9 +18,6 @@ import { QRCodePage } from './pages/Workspace/QRCodePage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
 const MagicTreeExperience = lazy(() => import('./components/MagicTreeWebGPU/MagicTreeWebGPUContainer').then(m => ({ default: m.MagicTreeWebGPUContainer })));
-const MagicTreePage = lazy(() =>
-  import('./pages/Workspace/MagicTreePage').then((m) => ({ default: m.MagicTreePage }))
-);
 const MagicTreeWebGPUPage = lazy(() =>
   import('./pages/Workspace/MagicTreeWebGPUPage').then((m) => ({
     default: m.MagicTreeWebGPUPage,
@@ -45,11 +42,7 @@ function App() {
               <Route
                 path="magic-tree"
                 element={
-                  <RouteErrorBoundary>
-                    <Suspense fallback={<p className="route-status">Loading…</p>}>
-                      <MagicTreePage />
-                    </Suspense>
-                  </RouteErrorBoundary>
+                  <Navigate to="/dashboard/magic-tree-webgpu" replace />
                 }
               />
               <Route

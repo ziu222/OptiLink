@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { IThemeConfig } from '../../types/bio';
 import { uploadBioMedia } from '../../api/bio';
 import { extractGradientColors } from '../../utils/color';
+import { SEASONAL_THEMES, seasonalTheme } from './seasonalThemes';
 
 interface TabDesignProps {
   themeConfig: IThemeConfig;
@@ -72,7 +73,7 @@ function Section({
   const isOpen = openId === id;
   return (
     <div className={`design-section ${isOpen ? 'open' : ''}`}>
-      <button type="button" className="design-section-header" onClick={() => setOpenId(isOpen ? '' : id)}>
+      <button type="button" className="design-section-header" aria-expanded={isOpen} onClick={() => setOpenId(isOpen ? '' : id)}>
         <span className="design-section-icon">{SECTION_ICONS[id]}</span>
         <span className="design-section-title">{title}</span>
         <span className="design-section-chevron">
@@ -151,13 +152,25 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
   };
 
   const handlePresetChange = (v: string) => {
-    handleUpdate({ ...(PRESETS[v] ?? PRESETS.commerce), preset: v });
+    handleUpdate({ ...(seasonalTheme(v) ?? PRESETS[v] ?? PRESETS.commerce), preset: v });
   };
 
   return (
     <>
       <Section id="templates" title="Templates (Giao diện cài sẵn)" openId={openId} setOpenId={setOpenId}>
-        <select className="preset-select" value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
+        <p className="season-intro">Một mùa, một không gian riêng. Màu sắc và chuyển động được phối sẵn.</p>
+        <div className="season-theme-grid">
+          {SEASONAL_THEMES.map(item => (
+            <button type="button" key={item.id} className="season-theme" aria-pressed={themeConfig.preset === item.id} onClick={() => handlePresetChange(item.id)}>
+              <span className="season-theme-art" style={{ background: `linear-gradient(135deg, ${item.colors[0]}, ${item.colors[1]})` }}>
+                <span style={{ background: item.colors[2], color: item.colors[3] }}>a<span>—</span><span>—</span></span>
+              </span>
+              <strong>{item.name}</strong><small>{item.season}</small>
+            </button>
+          ))}
+        </div>
+        <select aria-label="Giao diện cài sẵn" className="preset-select" value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
+          {SEASONAL_THEMES.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
           <option value="commerce">Mặc định: Storefront (Thương mại)</option>
           <option value="anime">Anime Pastel (Thẻ kính)</option>
           <option value="discord">Discord Gamer</option>
@@ -393,7 +406,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
 
       <Section id="effects" title="Hiệu ứng rơi (Falling Effects)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group" style={{ marginBottom: '0' }}>
-          <select value={themeConfig.effect} onChange={(e) => handleUpdate({ effect: e.target.value as any })}>
+          <select aria-label="Hiệu ứng rơi" value={themeConfig.effect} onChange={(e) => handleUpdate({ effect: e.target.value as IThemeConfig['effect'] })}>
             <option value="none">Không có</option>
             <option value="sakura">🌸 Hoa anh đào (Sakura)</option>
             <option value="snow">❄️ Tuyết rơi (Snow)</option>

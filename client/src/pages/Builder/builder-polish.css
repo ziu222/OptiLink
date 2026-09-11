@@ -1,0 +1,45 @@
+.builder-layout .editor-panel { flex: 0 0 clamp(320px, 32vw, 440px); min-width: 0; box-shadow: none; }
+.builder-layout .header { gap: 16px; }
+.builder-back-link { display: none; }
+.builder-layout .preview-toggle-btn { left: auto; right: 20px; }
+.builder-layout .btn-save { min-height: 42px; box-shadow: none; background: #285846; }
+.builder-layout .preview-area { min-width: 0; padding: 78px 28px 72px; }
+.builder-layout .card-wrapper { min-height: 420px; max-height: 100%; box-shadow: 0 24px 70px -32px #25332955, 0 1px 3px #25332912; transition: none; }
+.builder-layout .mock-bio-inner { padding-bottom: 32px; }
+.builder-layout .mock-title { font-size: 28px; letter-spacing: -.04em; line-height: 1.2; overflow-wrap: anywhere; }
+.builder-layout .mock-bio-text { max-width: 310px; margin: 12px auto 26px; line-height: 1.7; }
+.builder-layout .mock-link { min-height: 52px; text-decoration: none; }
+.builder-layout .mock-product-price { color: inherit; }
+.mock-text-block { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+.mock-image-block { width: 100%; border-radius: 16px; margin-bottom: 16px; }
+.preview-caption { position: absolute; top: 28px; left: 28px; color: #fff; background: #25332bc9; border-radius: 8px; padding: 8px 12px; font-size: 9px; letter-spacing: .1em; z-index: 11; }
+.bio-motion-toggle { position: absolute; bottom: 20px; z-index: 12; background: #fcfaf5; color: #38493f; border: 1px solid #38493f25; border-radius: 24px; padding: 12px 18px; min-height: 44px; font: inherit; font-size: 12px; cursor: pointer; }
+.season-intro { margin: 0 0 18px; font-size: 13px; line-height: 1.7; color: var(--text); }
+.season-theme-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+.season-theme { padding: 6px 6px 12px; background: var(--bg); color: var(--text-h); border: 1px solid var(--border); border-radius: 14px; text-align: left; cursor: pointer; }
+.season-theme[aria-pressed="true"] { outline: 2px solid #709780; outline-offset: 2px; }
+.season-theme-art { height: 100px; border-radius: 9px; display: grid; place-items: center; margin-bottom: 10px; }
+.season-theme-art > span { width: 50px; border-radius: 8px; text-align: center; padding: 7px; font: italic 22px Georgia,serif; box-shadow: 0 6px 12px #0001; }
+.season-theme-art > span > span { display: block; line-height: 12px; font-size: 24px; opacity: .5; }
+.season-theme strong,.season-theme small { display: block; padding: 0 5px; }
+.season-theme strong { font-size: 12px; }.season-theme small { font-size: 10px; color: var(--text); margin-top: 4px; }
+.builder-layout :is(button,a,select):focus-visible { outline: 2px solid #709780; outline-offset: 3px; }
+.builder-layout[data-motion-paused="true"] *, .builder-layout[data-motion-paused="true"] *::before { animation-play-state: paused !important; }
+@media (max-width: 1100px) {
+  .builder-layout:not(.is-full-preview) { position: relative; height: auto; min-height: 100dvh; width: 100%; display: grid; grid-template-columns: minmax(0,1fr); overflow: visible; }
+  .builder-layout > .sidebar { display: none; }
+  .builder-back-link { display: block; padding: 16px 24px; color: var(--text-h); text-align: left; font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--border); }
+  .builder-layout .builder-sidebar { width: 100%; border-right: 0; }
+  .builder-layout .builder-sidebar-nav { display: flex; flex-direction: row; flex-wrap: wrap; }
+  .builder-layout .builder-sidebar-link { width: auto; flex: 1; }
+  .builder-layout .editor-panel { width: 100%; border-right: 0; }
+  .builder-layout .content-area { max-height: 60dvh; padding: 20px; }
+  .builder-layout .preview-area { min-height: 680px; height: 80dvh; }
+  .builder-layout.is-full-preview .preview-area { height: 100dvh; min-height: 0; }
+}
+@media (max-width: 480px) { .builder-layout .preview-area { padding: 72px 18px; } }
+@media (prefers-reduced-motion: reduce) {
+  .builder-layout .tab-content, .builder-layout .preview-area, .builder-layout .card-wrapper, .builder-layout .mock-avatar-frame { animation: none !important; }
+  .builder-layout *, .builder-layout *::before, .builder-layout *::after { transition: none !important; }
+  .builder-layout .mock-link:hover { transform: none; }
+}
