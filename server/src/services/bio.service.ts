@@ -1,7 +1,5 @@
 import BioPage, { IBioPage } from '../models/BioPage';
-import Link from '../models/Link';
-import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { linksService } from './links.service.js';
 
 export class BioService {
   /**
@@ -27,21 +25,15 @@ export class BioService {
     if (bioData.blocks && Array.isArray(bioData.blocks)) {
       for (const block of bioData.blocks) {
         if ((block.type === 'PRODUCT_CARD' || block.type === 'LINK') && block.content) {
-          // Nếu có link gốc mà chưa có shortLinkId, tạo mới Link trong DB
-          if (!block.content.shortLinkId && block.content.originalUrl) {
-            const mockSlug = uuidv4().substring(0, 6); // Rút gọn UUID làm slug ngẫu nhiên
-            const shortUrl = `https://opti.link/s/${mockSlug}`; // Tùy biến domain theo env sau
-
-            const newLink = new Link({
-              userId,
-              originalUrl: block.content.originalUrl,
-              slug: mockSlug,
-              shortUrl
+          // Bio blocks use the same stored-link library as the dashboard and QR tools.
+          const destination = block.content.originalUrl || block.content.url;
+          if (!block.content.shortLinkId && destination) {
+            const newLink = await linksService.createLink(userId, {
+              originalUrl: destination,
+              title: block.content.title || block.content.label || 'Bio Page link',
             });
-            await newLink.save();
-
-            block.content.shortLinkId = newLink._id.toString();
-            block.content.clickUrl = shortUrl;
+            block.content.shortLinkId = newLink.id;
+            block.content.clickUrl = newLink.shortUrl;
           }
         }
       }
