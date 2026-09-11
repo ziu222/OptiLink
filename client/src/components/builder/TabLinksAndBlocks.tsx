@@ -1,209 +1,80 @@
-import React from 'react';
-import type { IBioPage } from '../../types/bio';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import type { IBioPage, IBlock } from '../../types/bio';
 import { uploadBioMedia } from '../../api/bio';
+import { listLinks, type ShortenedLink } from '../../api/links';
 
 interface TabLinksAndBlocksProps {
   bioData: IBioPage | null;
-  setBioData: React.Dispatch<React.SetStateAction<IBioPage | null>>;
+  setBioData: Dispatch<SetStateAction<IBioPage | null>>;
   handleAddBlock: (type: string) => void;
   handleDeleteBlock: (id: string) => void;
 }
 
-export function TabLinksAndBlocks({ bioData, setBioData, handleAddBlock, handleDeleteBlock }: TabLinksAndBlocksProps) {
-  const [showAddMenu, setShowAddMenu] = React.useState(false);
-  const [expandedBlockId, setExpandedBlockId] = React.useState<string | null>(null);
+const BLOCK_LABEL: Record<string, string> = { LINK: 'Liên kết', TEXT: 'Văn bản', IMAGE: 'Hình ảnh' };
 
+export function TabLinksAndBlocks({ bioData, setBioData, handleAddBlock, handleDeleteBlock }: TabLinksAndBlocksProps) {
+  const [showAddMenu, setShowAddMenu] = useState(false);
+  const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null);
+  const [savedLinks, setSavedLinks] = useState<ShortenedLink[]>([]);
+  const [uploading, setUploading] = useState(false);
   const blocks = bioData?.blocks || [];
 
-  const updateBlockTitle = (id: string, title: string) => {
+  useEffect(() => {
+    let cancelled = false;
+    listLinks({ limit: 100, status: 'active', sort: 'newest' })
+      .then((result) => { if (!cancelled) setSavedLinks(result.links); })
+      .catch(() => { /* A new account can build its first block without a library. */ });
+    return () => { cancelled = true; };
+  }, []);
+
+  const updateBio = (patch: Partial<IBioPage>) => {
     if (!bioData) return;
-    setBioData({
-      ...bioData,
-      blocks: bioData.blocks.map((b) => (b.id === id ? { ...b, content: { ...b.content, title } } : b)),
-    });
+    setBioData({ ...bioData, ...patch });
   };
 
-  return (
-    <>
-      <h3 className="section-title">Hồ sơ cá nhân (Profile)</h3>
-      <div className="card profile-card" style={{ padding: '16px' }}>
-        <div className="profile-header-edit">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div className="mock-avatar" style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--code-bg)', backgroundImage: `url('${bioData?.avatarUrl || 'https://i.pinimg.com/736x/5c/41/50/5c41506bf405e3fbf21f062ef902e864.jpg'}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-            <label style={{ display: 'inline-block', padding: '8px 16px', background: 'var(--code-bg)', borderRadius: '8px', fontSize: '12px', cursor: 'pointer', color: 'var(--text-h)', border: '1px solid var(--border)' }}>
-              Tải ảnh mới
-              <input 
-                type="file" 
-                accept="image/*" 
-                style={{ display: 'none' }} 
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file || !bioData) return;
-                  const previewUrl = URL.createObjectURL(file);
-                  setBioData({ ...bioData, avatarUrl: previewUrl });
-                  try {
-                    const url = await uploadBioMedia(file);
-                    setBioData((prev) => (prev ? { ...prev, avatarUrl: url } : prev));
-                  } catch (err) {
-                    console.error('Avatar upload failed', err);
-                  }
-                }}
-              />
-            </label>
-          </div>
-          <div className="profile-inputs">
-            <input
-              type="text"
-              value={bioData?.title || ''}
-              placeholder="Tên hiển thị"
-              onChange={(e) => bioData && setBioData({ ...bioData, title: e.target.value })}
-            />
-            <input
-              type="text"
-              value={bioData?.username || ''}
-              placeholder="Username (Tùy chọn)"
-              onChange={(e) => bioData && setBioData({ ...bioData, username: e.target.value })}
-            />
-          </div>
-        </div>
-        <div className="bio-editor-group">
-          <div className="rich-text-toolbar">
-            <button className="toolbar-btn">B</button>
-            <button className="toolbar-btn">I</button>
-            <button className="toolbar-btn">Spoiler</button>
-          </div>
-          <textarea
-            className="bio-textarea"
-            value={bioData?.bio || ''}
-            placeholder="Viết giới thiệu ngắn..."
-            onChange={(e) => bioData && setBioData({ ...bioData, bio: e.target.value })}
-          ></textarea>
-        </div>
-        <div>
-          <label style={{ fontSize: '12px', color: 'var(--text)', fontWeight: 600 }}>Huy hiệu hiển thị</label>
-          <div className="badges-selector">
-            <label className="badge-check">
-              <input
-                type="checkbox"
-                checked={bioData?.badges?.early ?? false}
-                onChange={(e) => bioData && setBioData({ ...bioData, badges: { ...bioData.badges, early: e.target.checked } })}
-              /> Early
-            </label>
-            <label className="badge-check">
-              <input
-                type="checkbox"
-                checked={bioData?.badges?.pro ?? false}
-                onChange={(e) => bioData && setBioData({ ...bioData, badges: { ...bioData.badges, pro: e.target.checked } })}
-              /> PRO
-            </label>
-          </div>
-        </div>
-      </div>
+  const updateBlock = (id: string, content: Record<string, unknown>) => {
+    if (!bioData) return;
+    setBioData({ ...bioData, blocks: bioData.blocks.map((block) => block.id === id ? { ...block, content: { ...block.content, ...content } } : block) });
+  };
 
-      <h3 className="section-title">Nội dung (Blocks)</h3>
-      <div className="block-list">
-        {blocks.map((block: any) => (
-          <div key={block.id} className="block-item" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-            <div className="block-header" style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-              <div className="drag-icon">⋮⋮</div>
-              <div className="block-info" style={{ flex: 1, display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span className="block-type" style={{ padding: '4px 8px', background: 'var(--code-bg)', borderRadius: '4px', fontSize: '11px' }}>{block.type}</span>
-                <span style={{ fontSize: '14px', fontWeight: 500, flex: 1 }}>{block.content?.title || 'Chưa có tiêu đề'}</span>
-              </div>
-              <div className="block-actions" style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => setExpandedBlockId(expandedBlockId === block.id ? null : block.id)} style={{ padding: '4px 8px', background: 'var(--primary)', color: 'white', borderRadius: '4px', border: 'none', cursor: 'pointer' }}>
-                  {expandedBlockId === block.id ? 'Thu gọn' : 'Sửa'}
-                </button>
-                <button onClick={() => handleDeleteBlock(block.id)} title="Xóa block" style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', color: 'var(--text-h)' }}>✕</button>
-              </div>
-            </div>
-            
-            {expandedBlockId === block.id && (
-              <div className="block-editor-inline" style={{ marginTop: '12px', padding: '12px', background: 'var(--bg)', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px' }}>Tiêu đề</label>
-                <input
-                  type="text"
-                  value={block.content?.title || ''}
-                  placeholder="Tiêu đề khối"
-                  style={{ width: '100%', marginBottom: '12px', padding: '8px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--code-bg)', color: 'var(--text)' }}
-                  onChange={(e) => updateBlockTitle(block.id, e.target.value)}
-                />
-                
-                {block.type === 'LINK' && (
-                  <>
-                    <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px' }}>URL đích</label>
-                    <input
-                      type="url"
-                      value={block.content?.url || ''}
-                      placeholder="https://..."
-                      style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--code-bg)', color: 'var(--text)' }}
-                      onChange={(e) => {
-                        if (!bioData) return;
-                        setBioData({
-                          ...bioData,
-                          blocks: bioData.blocks.map((b) => (b.id === block.id ? { ...b, content: { ...b.content, url: e.target.value } } : b)),
-                        });
-                      }}
-                    />
-                  </>
-                )}
+  const selectLibraryLink = (block: IBlock, linkId: string) => {
+    const link = savedLinks.find((item) => item.id === linkId);
+    if (!link) return;
+    updateBlock(block.id, { title: block.content?.title || link.title || 'Liên kết mới', url: link.originalUrl, clickUrl: link.shortUrl, shortLinkId: link.id });
+  };
 
-                {block.type === 'TEXT' && (
-                  <>
-                    <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px' }}>Nội dung văn bản</label>
-                    <textarea
-                      value={block.content?.text || ''}
-                      placeholder="Nhập nội dung..."
-                      style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--code-bg)', color: 'var(--text)', minHeight: '80px' }}
-                      onChange={(e) => {
-                        if (!bioData) return;
-                        setBioData({
-                          ...bioData,
-                          blocks: bioData.blocks.map((b) => (b.id === block.id ? { ...b, content: { ...b.content, text: e.target.value } } : b)),
-                        });
-                      }}
-                    ></textarea>
-                  </>
-                )}
+  const uploadAvatar = async (file: File | undefined) => {
+    if (!file || !bioData) return;
+    setUploading(true);
+    updateBio({ avatarUrl: URL.createObjectURL(file) });
+    try { updateBio({ avatarUrl: await uploadBioMedia(file) }); } finally { setUploading(false); }
+  };
 
-                {block.type === 'IMAGE' && (
-                  <>
-                    <label style={{ display: 'block', fontSize: '12px', marginBottom: '4px' }}>URL Hình ảnh</label>
-                    <input
-                      type="url"
-                      value={block.content?.imageUrl || ''}
-                      placeholder="https://..."
-                      style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--code-bg)', color: 'var(--text)', marginBottom: '8px' }}
-                      onChange={(e) => {
-                        if (!bioData) return;
-                        setBioData({
-                          ...bioData,
-                          blocks: bioData.blocks.map((b) => (b.id === block.id ? { ...b, content: { ...b.content, imageUrl: e.target.value } } : b)),
-                        });
-                      }}
-                    />
-                    {block.content?.imageUrl && <img src={block.content.imageUrl} alt="preview" style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '8px' }} />}
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
-        
-        <div style={{ position: 'relative', marginTop: '16px' }}>
-          <button className="btn-add" onClick={() => setShowAddMenu(!showAddMenu)} style={{ width: '100%', padding: '12px', background: 'var(--primary)', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
-            + Thêm Khối Mới
-          </button>
-          
-          {showAddMenu && (
-            <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
-              <button onClick={() => { handleAddBlock('LINK'); setShowAddMenu(false); }} style={{ padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--text-h)', textAlign: 'left', cursor: 'pointer', borderRadius: '4px' }}>🔗 Link (Liên kết)</button>
-              <button onClick={() => { handleAddBlock('TEXT'); setShowAddMenu(false); }} style={{ padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--text-h)', textAlign: 'left', cursor: 'pointer', borderRadius: '4px' }}>📝 Text (Văn bản)</button>
-              <button onClick={() => { handleAddBlock('IMAGE'); setShowAddMenu(false); }} style={{ padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--text-h)', textAlign: 'left', cursor: 'pointer', borderRadius: '4px' }}>🖼️ Image (Hình ảnh)</button>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
+  return <>
+    <div className="builder-section-heading"><span>HỒ SƠ</span><h3>Thông tin hiển thị</h3><p>Đây là phần đầu tiên mọi người nhìn thấy trên Bio Page.</p></div>
+    <section className="bio-profile-editor">
+      <div className="bio-avatar-editor"><div className="bio-avatar-preview" style={{ backgroundImage: bioData?.avatarUrl ? `url('${bioData.avatarUrl}')` : undefined }}>{!bioData?.avatarUrl && (bioData?.title || 'O').charAt(0)}</div><label className="bio-media-upload"><span>{uploading ? 'Đang tải ảnh…' : 'Thay ảnh avatar'}</span><small>PNG, JPG hoặc WebP</small><input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void uploadAvatar(event.target.files?.[0])} /></label></div>
+      <div className="bio-profile-fields"><label className="bio-editor-field"><span>Tên hiển thị</span><input type="text" value={bioData?.title || ''} placeholder="Tên của bạn hoặc thương hiệu" onChange={(event) => updateBio({ title: event.target.value })} /></label><label className="bio-editor-field"><span>Địa chỉ Bio Page</span><input type="text" value={bioData?.username || ''} placeholder="ten-cua-ban" onChange={(event) => updateBio({ username: event.target.value.toLowerCase().replace(/\s+/g, '-') })} /></label></div>
+      <label className="bio-editor-field bio-editor-field--wide"><span>Giới thiệu ngắn</span><textarea value={bioData?.bio || ''} placeholder="Một câu giới thiệu ngắn, rõ ràng và đáng nhớ…" onChange={(event) => updateBio({ bio: event.target.value })} /></label>
+      <fieldset className="bio-badge-field"><legend>Huy hiệu hiển thị</legend><p>Chọn những dấu mốc muốn hiện cạnh tên của bạn.</p><div className="bio-badge-options">
+        <label className={`bio-badge-option${bioData?.badges?.early ? ' is-selected' : ''}`}><input type="checkbox" checked={bioData?.badges?.early ?? false} onChange={(event) => updateBio({ badges: { ...bioData?.badges, early: event.target.checked } })} /><span className="bio-badge-mark">E</span><span><strong>Early</strong><small>Thành viên từ sớm</small></span></label>
+        <label className={`bio-badge-option${bioData?.badges?.pro ? ' is-selected' : ''}`}><input type="checkbox" checked={bioData?.badges?.pro ?? false} onChange={(event) => updateBio({ badges: { ...bioData?.badges, pro: event.target.checked } })} /><span className="bio-badge-mark">P</span><span><strong>Pro</strong><small>Không gian chuyên nghiệp</small></span></label>
+      </div></fieldset>
+    </section>
+
+    <div className="builder-section-heading builder-section-heading--blocks"><span>NỘI DUNG</span><h3>Blocks trên Bio Page</h3><p>Mỗi link mới sẽ tự được lưu vào Link Library khi bạn Publish.</p></div>
+    <div className="bio-block-list">
+      {blocks.map((block) => <article className={`bio-edit-block${expandedBlockId === block.id ? ' is-open' : ''}`} key={block.id}>
+        <button type="button" className="bio-edit-block-summary" onClick={() => setExpandedBlockId(expandedBlockId === block.id ? null : block.id)} aria-expanded={expandedBlockId === block.id}><span className="bio-edit-block-order">{String(block.order + 1).padStart(2, '0')}</span><span className="bio-edit-block-copy"><small>{BLOCK_LABEL[block.type] || block.type}</small><strong>{block.content?.title || block.content?.label || 'Khối chưa có tiêu đề'}</strong></span><span className="bio-edit-block-toggle">{expandedBlockId === block.id ? 'Thu gọn' : 'Chỉnh sửa'}</span></button>
+        {expandedBlockId === block.id && <div className="bio-edit-block-body">
+          <label className="bio-editor-field"><span>Tiêu đề</span><input type="text" value={block.content?.title || ''} placeholder="Đặt tên cho block" onChange={(event) => updateBlock(block.id, { title: event.target.value })} /></label>
+          {block.type === 'LINK' && <><label className="bio-editor-field"><span>Dùng link đã lưu</span><select value={block.content?.shortLinkId || ''} onChange={(event) => selectLibraryLink(block, event.target.value)}><option value="">Chọn từ Link Library</option>{savedLinks.map((link) => <option key={link.id} value={link.id}>{link.title || 'Liên kết chưa đặt tên'} · {link.shortUrl}</option>)}</select></label><label className="bio-editor-field"><span>URL đích</span><input type="url" value={block.content?.url || ''} placeholder="https://…" onChange={(event) => updateBlock(block.id, { url: event.target.value, shortLinkId: undefined, clickUrl: undefined })} /><small>Nhập URL mới để tạo short link tự động lúc Publish.</small></label></>}
+          {block.type === 'TEXT' && <label className="bio-editor-field"><span>Nội dung</span><textarea value={block.content?.text || ''} placeholder="Viết nội dung của bạn…" onChange={(event) => updateBlock(block.id, { text: event.target.value })} /></label>}
+          {block.type === 'IMAGE' && <label className="bio-editor-field"><span>Ảnh</span><input type="url" value={block.content?.imageUrl || ''} placeholder="https://…" onChange={(event) => updateBlock(block.id, { imageUrl: event.target.value })} /></label>}
+          <button type="button" className="bio-delete-block" onClick={() => handleDeleteBlock(block.id)}>Xóa block này</button>
+        </div>}
+      </article>)}
+    </div>
+    <div className="bio-add-block-wrap"><button type="button" className="bio-add-block" onClick={() => setShowAddMenu((current) => !current)} aria-expanded={showAddMenu}>Thêm block</button>{showAddMenu && <div className="bio-add-block-menu"><button type="button" onClick={() => { handleAddBlock('LINK'); setShowAddMenu(false); }}>Liên kết</button><button type="button" onClick={() => { handleAddBlock('TEXT'); setShowAddMenu(false); }}>Văn bản</button><button type="button" onClick={() => { handleAddBlock('IMAGE'); setShowAddMenu(false); }}>Hình ảnh</button></div>}</div>
+  </>;
 }

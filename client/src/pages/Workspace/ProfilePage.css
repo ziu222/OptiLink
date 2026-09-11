@@ -17,6 +17,8 @@
 .profile-page .profile-input { border-radius: 9px; min-width: 0; min-height: 46px; width: 100%; box-sizing: border-box; }
 .profile-page .profile-input:focus-visible { outline: 2px solid #7a9c88; outline-offset: 2px; }
 .profile-page .profile-input[aria-invalid="true"] { border-color: #bc5050; }
+.profile-avatar-upload { display: grid; gap: 4px; width: 100%; margin-top: 2px; padding: 12px 14px; border: 1px dashed #91ab99; border-radius: 12px; background: #f3f8f3; color: #365944; cursor: pointer; text-align: center; transition: .2s ease; }
+.profile-avatar-upload:hover { border-style: solid; background: #eaf4eb; transform: translateY(-1px); }.profile-avatar-upload.is-uploading { opacity: .72; cursor: wait; }.profile-avatar-upload span { font-size: 13px; font-weight: 700; }.profile-avatar-upload small { color: #708278; font-size: 11px; }.profile-avatar-upload input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .profile-hint,.profile-security-note { color: var(--text); font-size: 12px; line-height: 1.7; }
 .profile-security-note { border-left: 2px solid #9ab4a4; padding: 8px 14px; margin: 0; background: var(--code-bg); }
 .profile-page .profile-actions { justify-content: space-between; padding: 20px 24px 8px; flex-wrap: wrap; }

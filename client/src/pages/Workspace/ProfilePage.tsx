@@ -7,6 +7,7 @@ import { applyServerError } from '../../lib/formError';
 import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
 import { ContentPanel } from '../../components/workspace/panels/ContentPanel/ContentPanel';
 import { Button } from '../../components/workspace/Button/Button';
+import { uploadBioMedia } from '../../api/bio';
 import { profileSchema } from './profileSchema';
 import type { ProfileValues } from './profileSchema';
 import './workspace.css';
@@ -16,6 +17,9 @@ export function ProfilePage() {
   const { user, updateProfile } = useAuth();
   const [saved, setSaved] = useState(false);
   const [failedAvatar, setFailedAvatar] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl ?? '');
+  const [avatarDirty, setAvatarDirty] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const {
     register,
     handleSubmit,
@@ -28,11 +32,10 @@ export function ProfilePage() {
     defaultValues: {
       username: user?.username ?? '',
       fullName: user?.fullName ?? '',
-      avatarUrl: user?.avatarUrl ?? '',
     },
   });
 
-  const [avatarUrl, fullName, username] = useWatch({ control, name: ['avatarUrl', 'fullName', 'username'] });
+  const [fullName, username] = useWatch({ control, name: ['fullName', 'username'] });
   const displayName = fullName || username || 'Your profile';
 
   const onSubmit = handleSubmit(async (values) => {
@@ -41,14 +44,32 @@ export function ProfilePage() {
       await updateProfile({
         username: values.username.trim().toLowerCase(),
         fullName: values.fullName.trim(),
-        avatarUrl: values.avatarUrl?.trim() || undefined,
+        avatarUrl: avatarUrl || undefined,
       });
       reset({ ...values, username: values.username.trim().toLowerCase(), fullName: values.fullName.trim() });
+      setAvatarDirty(false);
       setSaved(true);
     } catch (err) {
       applyServerError<ProfileValues>(err, setError);
     }
   });
+
+  const handleAvatarUpload = async (file: File | undefined) => {
+    if (!file) return;
+    setSaved(false);
+    setUploadingAvatar(true);
+    setAvatarUrl(URL.createObjectURL(file));
+    try {
+      const permanentUrl = await uploadBioMedia(file);
+      setAvatarUrl(permanentUrl);
+      setAvatarDirty(true);
+      setFailedAvatar('');
+    } catch {
+      setError('root', { message: 'Không thể tải ảnh lên. Hãy thử lại.' });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   return (
     <>
@@ -74,18 +95,10 @@ export function ProfilePage() {
                 </div>
                 <div className="profile-identity"><strong>{displayName}</strong><span>@{username || 'username'}</span></div>
 
-                <label className="profile-field">
-                  <span className="profile-label">Avatar URL</span>
-                  <input
-                    type="text"
-                    placeholder="https://…"
-                    className="profile-input"
-                    aria-invalid={!!errors.avatarUrl}
-                    aria-describedby="avatar-help"
-                    {...register('avatarUrl')}
-                  />
-                  <small id="avatar-help" className="profile-hint">Dùng đường dẫn ảnh công khai. Ảnh vuông sẽ hiển thị đẹp nhất.</small>
-                  {errors.avatarUrl && <em className="profile-field-error">{errors.avatarUrl.message}</em>}
+                <label className={`profile-avatar-upload${uploadingAvatar ? ' is-uploading' : ''}`}>
+                  <span>{uploadingAvatar ? 'Đang tải ảnh…' : 'Tải ảnh avatar'}</span>
+                  <small>PNG, JPG hoặc WebP · ảnh vuông hiển thị đẹp nhất</small>
+                  <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void handleAvatarUpload(event.target.files?.[0])} />
                 </label>
               </div>
 
@@ -114,8 +127,8 @@ export function ProfilePage() {
             </div>
 
             <div className="profile-actions">
-              <span className={saved ? 'profile-saved' : 'profile-hint'} role="status">{saved ? 'Đã lưu thay đổi.' : isDirty ? 'Bạn có thay đổi chưa lưu.' : 'Thông tin tài khoản của bạn.'}</span>
-              <Button type="submit" disabled={isSubmitting || !isDirty}>
+              <span className={saved ? 'profile-saved' : 'profile-hint'} role="status">{saved ? 'Đã lưu thay đổi.' : isDirty || avatarDirty ? 'Bạn có thay đổi chưa lưu.' : 'Thông tin tài khoản của bạn.'}</span>
+              <Button type="submit" disabled={isSubmitting || uploadingAvatar || (!isDirty && !avatarDirty)}>
                 {isSubmitting ? 'Saving…' : 'Save changes'}
               </Button>
             </div>
