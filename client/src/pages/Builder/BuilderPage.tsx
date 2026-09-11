@@ -67,9 +67,9 @@ export function BuilderPage() {
   const handleAddBlock = (type: string = 'LINK') => {
     if (bioData) {
       let initialContent = {};
-      if (type === 'LINK') initialContent = { title: '🔗 Liên kết mới', url: '' };
-      if (type === 'TEXT') initialContent = { title: '📝 Khối văn bản', text: '' };
-      if (type === 'IMAGE') initialContent = { title: '🖼️ Hình ảnh', imageUrl: '' };
+      if (type === 'LINK') initialContent = { title: 'Liên kết mới', url: '' };
+      if (type === 'TEXT') initialContent = { title: 'Khối văn bản', text: '' };
+      if (type === 'IMAGE') initialContent = { title: 'Hình ảnh', imageUrl: '' };
       
       setBioData({
         ...bioData,

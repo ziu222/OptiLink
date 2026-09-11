@@ -157,7 +157,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
 
   return (
     <>
-      <Section id="templates" title="Templates (Giao diện cài sẵn)" openId={openId} setOpenId={setOpenId}>
+      <Section id="templates" title="Giao diện cài sẵn" openId={openId} setOpenId={setOpenId}>
         <p className="season-intro">Một mùa, một không gian riêng. Màu sắc và chuyển động được phối sẵn.</p>
         <div className="season-theme-grid">
           {SEASONAL_THEMES.map(item => (
@@ -171,18 +171,18 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
         </div>
         <select aria-label="Giao diện cài sẵn" className="preset-select" value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
           {SEASONAL_THEMES.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
-          <option value="commerce">Mặc định: Storefront (Thương mại)</option>
-          <option value="anime">Anime Pastel (Thẻ kính)</option>
+          <option value="commerce">Storefront</option>
+          <option value="anime">Anime Pastel</option>
           <option value="discord">Discord Gamer</option>
-          <option value="minimal">Minimal (Tối giản)</option>
+          <option value="minimal">Minimal</option>
           <option value="cyberpunk">Cyberpunk</option>
           <option value="y2k">Y2K</option>
         </select>
       </Section>
 
-      <Section id="layout" title="Bố cục & Nền (Layout & BG)" openId={openId} setOpenId={setOpenId}>
+      <Section id="layout" title="Bố cục và nền" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
-          <label>Kiểu nền toàn trang (Background Type)</label>
+          <label>Kiểu nền toàn trang</label>
           <select
             value={themeConfig.background.type}
             onChange={(e) => {
@@ -303,7 +303,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
 
       <Section id="card" title="Thẻ Bio & Viền (Card Styling)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
-          <label>Nền Thẻ Bio (Card Background)</label>
+          <label>Nền thẻ Bio</label>
           <select value={themeConfig.cardStyling?.background} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, background: e.target.value } })}>
             <option value="#16181d">Màu Tối (Solid Dark)</option>
             <option value="#f8fafc">Màu Sáng (Solid Light)</option>
@@ -312,7 +312,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
           </select>
         </div>
         <div className="input-group">
-          <label>Kiểu viền Thẻ (Border Style)</label>
+          <label>Kiểu viền thẻ</label>
           <select value={themeConfig.cardStyling?.borderStyle} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderStyle: e.target.value } })}>
             <option value="none">Không viền</option>
             <option value="solid">Viền Liền (Solid)</option>
@@ -353,9 +353,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
         </div>
       </Section>
 
-      <Section id="typography" title="Phông chữ & Văn bản (Typography)" openId={openId} setOpenId={setOpenId}>
+      <Section id="typography" title="Phông chữ và văn bản" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
-          <label>Google Font Family</label>
+          <label>Phông chữ</label>
           <select value={themeConfig.fontFamily} onChange={(e) => handleUpdate({ fontFamily: e.target.value })}>
             <option value="'Inter', sans-serif">Inter (Hiện đại, Mặc định)</option>
             <option value="'Outfit', sans-serif">Outfit (Cứng cáp, Tròn)</option>
@@ -370,9 +370,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
         </div>
       </Section>
 
-      <Section id="avatar" title="Avatar Styling" openId={openId} setOpenId={setOpenId}>
+      <Section id="avatar" title="Khung avatar" openId={openId} setOpenId={setOpenId}>
         <div className="input-group" style={{ marginBottom: '0' }}>
-          <label>Khung viền Avatar (Frames)</label>
+          <label>Kiểu khung avatar</label>
           <select value={themeConfig.profile.avatarFrame} onChange={(e) => handleUpdate({ profile: { ...themeConfig.profile, avatarFrame: e.target.value as any } })}>
             <option value="neon">Viền Neon Tai Dơi (CSS)</option>
             <option value="none">Trơn (Không có)</option>
@@ -382,9 +382,9 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
         </div>
       </Section>
 
-      <Section id="buttons" title="Kiểu dáng Nút bấm (Link Buttons)" openId={openId} setOpenId={setOpenId}>
+      <Section id="buttons" title="Nút liên kết" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
-          <label>Độ bo góc (Shape)</label>
+          <label>Độ bo góc</label>
           <div className="options-grid">
             <div className={`option-box ${themeConfig.buttonStyle.borderRadius === '0px' ? 'active' : ''}`} onClick={() => handleUpdate({ buttonStyle: { ...themeConfig.buttonStyle, borderRadius: '0px' } })}>Vuông</div>
             <div className={`option-box ${themeConfig.buttonStyle.borderRadius === '12px' ? 'active' : ''}`} onClick={() => handleUpdate({ buttonStyle: { ...themeConfig.buttonStyle, borderRadius: '12px' } })}>Bo nhẹ</div>
@@ -392,7 +392,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
           </div>
         </div>
         <div className="input-group" style={{ marginBottom: '0' }}>
-          <label>Hiệu ứng Hover (Nhẹ nhàng)</label>
+          <label>Hiệu ứng khi rê chuột</label>
           <select value={themeConfig.buttonStyle.hoverEffect} onChange={(e) => handleUpdate({ buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: e.target.value as any } })}>
             <option value="hover-color">Đổi màu (Đảo ngược)</option>
             <option value="hover-scale">Phóng to nhẹ (Soft Scale)</option>
@@ -404,20 +404,20 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
         </div>
       </Section>
 
-      <Section id="effects" title="Hiệu ứng rơi (Falling Effects)" openId={openId} setOpenId={setOpenId}>
+      <Section id="effects" title="Hiệu ứng rơi" openId={openId} setOpenId={setOpenId}>
         <div className="input-group" style={{ marginBottom: '0' }}>
           <select aria-label="Hiệu ứng rơi" value={themeConfig.effect} onChange={(e) => handleUpdate({ effect: e.target.value as IThemeConfig['effect'] })}>
             <option value="none">Không có</option>
-            <option value="sakura">🌸 Hoa anh đào (Sakura)</option>
-            <option value="snow">❄️ Tuyết rơi (Snow)</option>
-            <option value="star">✨ Ánh sao bay (Stars)</option>
-            <option value="rain">🌧️ Mưa (Rain)</option>
-            <option value="leaf">🍂 Lá mùa thu (Autumn Leaves)</option>
-            <option value="bubble">🫧 Bong bóng nổi (Bubbles)</option>
-            <option value="confetti">🎊 Confetti</option>
-            <option value="hearts">❤️ Trái tim (Hearts)</option>
-            <option value="firefly">🌟 Đom đóm (Firefly)</option>
-            <option value="glitter">✨ Lấp lánh (Glitter)</option>
+            <option value="sakura">Hoa anh đào</option>
+            <option value="snow">Tuyết rơi</option>
+            <option value="star">Ánh sao</option>
+            <option value="rain">Mưa</option>
+            <option value="leaf">Lá mùa thu</option>
+            <option value="bubble">Bong bóng</option>
+            <option value="confetti">Confetti</option>
+            <option value="hearts">Trái tim</option>
+            <option value="firefly">Đom đóm</option>
+            <option value="glitter">Lấp lánh</option>
           </select>
         </div>
       </Section>
