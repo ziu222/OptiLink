@@ -1,3 +1,4 @@
+import { LoadingCircle } from '../../components/workspace/LoadingCircle/LoadingCircle';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './builder.css';
@@ -133,7 +134,7 @@ export function BuilderPage() {
             <div className="header">
               <h2>{activeTab === 'tab-links' ? 'Links & Blocks' : activeTab === 'tab-design' ? 'Appearance (Design)' : 'Analytics'}</h2>
               <button className="btn-save" onClick={handlePublish} disabled={publishState === 'saving'}>
-                {publishState === 'saving' ? 'Đang lưu...' : publishState === 'saved' ? 'Đã lưu ✓' : publishState === 'error' ? 'Lỗi, thử lại' : 'Publish'}
+                {publishState === 'saving' ? <LoadingCircle inline label="Đang lưu…" /> : publishState === 'saved' ? 'Đã lưu ✓' : publishState === 'error' ? 'Lỗi, thử lại' : 'Publish'}
               </button>
             </div>
 

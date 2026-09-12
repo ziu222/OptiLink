@@ -12,6 +12,7 @@ import { profileSchema } from './profileSchema';
 import type { ProfileValues } from './profileSchema';
 import './workspace.css';
 import './ProfilePage.css';
+import { LoadingCircle } from '../../components/workspace/LoadingCircle/LoadingCircle';
 
 export function ProfilePage() {
   const { user, updateProfile } = useAuth();
@@ -25,6 +26,7 @@ export function ProfilePage() {
     handleSubmit,
     control,
     setError,
+    clearErrors,
     reset,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileValues>({
@@ -58,15 +60,20 @@ export function ProfilePage() {
     if (!file) return;
     setSaved(false);
     setUploadingAvatar(true);
-    setAvatarUrl(URL.createObjectURL(file));
+    clearErrors('root');
+    const previousUrl = avatarUrl;
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarUrl(previewUrl);
     try {
       const permanentUrl = await uploadBioMedia(file);
       setAvatarUrl(permanentUrl);
       setAvatarDirty(true);
       setFailedAvatar('');
     } catch {
+      setAvatarUrl(previousUrl);
       setError('root', { message: 'Không thể tải ảnh lên. Hãy thử lại.' });
     } finally {
+      URL.revokeObjectURL(previewUrl);
       setUploadingAvatar(false);
     }
   };
@@ -96,9 +103,9 @@ export function ProfilePage() {
                 <div className="profile-identity"><strong>{displayName}</strong><span>@{username || 'username'}</span></div>
 
                 <label className={`profile-avatar-upload${uploadingAvatar ? ' is-uploading' : ''}`}>
-                  <span>{uploadingAvatar ? 'Đang tải ảnh…' : 'Tải ảnh avatar'}</span>
+                  <span>{uploadingAvatar ? <LoadingCircle inline label="Đang tải ảnh…" /> : 'Tải ảnh avatar'}</span>
                   <small>PNG, JPG hoặc WebP · ảnh vuông hiển thị đẹp nhất</small>
-                  <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void handleAvatarUpload(event.target.files?.[0])} />
+                  <input type="file" disabled={uploadingAvatar || isSubmitting} accept="image/png,image/jpeg,image/webp" onChange={(event) => void handleAvatarUpload(event.target.files?.[0])} />
                 </label>
               </div>
 
@@ -129,7 +136,7 @@ export function ProfilePage() {
             <div className="profile-actions">
               <span className={saved ? 'profile-saved' : 'profile-hint'} role="status">{saved ? 'Đã lưu thay đổi.' : isDirty || avatarDirty ? 'Bạn có thay đổi chưa lưu.' : 'Thông tin tài khoản của bạn.'}</span>
               <Button type="submit" disabled={isSubmitting || uploadingAvatar || (!isDirty && !avatarDirty)}>
-                {isSubmitting ? 'Saving…' : 'Save changes'}
+                {isSubmitting ? <LoadingCircle inline label="Đang lưu…" /> : 'Save changes'}
               </Button>
             </div>
           </form>

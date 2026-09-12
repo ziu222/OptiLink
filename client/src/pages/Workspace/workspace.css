@@ -36,6 +36,23 @@
   gap: 2rem;
 }
 
+@media (max-width: 760px) {
+  .workspace-shell { flex-direction: column; }
+  .workspace-shell > .sidebar { width: 100%; height: auto; display: grid; grid-template-columns: minmax(0,1fr) auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .workspace-shell .sidebar-brand { height: auto; min-height: 52px; padding: 8px 16px; border-bottom: 0; }
+  .workspace-shell .sidebar-brand a { font-size: 20px; }
+  .workspace-shell .sidebar-nav { grid-column: 1 / -1; grid-row: 2; flex-direction: row; overflow-x: auto; padding: 6px 12px; border-top: 1px solid var(--border); }
+  .workspace-shell .sidebar-link { flex-shrink: 0; min-height: 44px; padding: 8px 10px; gap: 7px; white-space: nowrap; font-size: 13px; }
+  .workspace-shell .sidebar-footer { display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-top: 0; }
+  .workspace-shell .sidebar-profile { margin: 0; gap: 6px; }
+  .workspace-shell .sidebar-profile-name { max-width: 65px; font-size: 12px; }
+  .workspace-shell .sidebar-profile-email { display: none; }
+  .workspace-shell .sidebar-logout { width: auto; min-height: 44px; padding: 8px; font-size: 12px; gap: 5px; }
+  .workspace-shell .sidebar-icon { width: 16px; height: 16px; }
+  .workspace-shell .workspace-main { padding: 20px; }
+  .workspace-shell .page-header { height: auto; min-height: 52px; margin: -20px -20px 24px; padding: 12px 20px; }
+}
+
 .workspace-placeholder {
   max-width: 40rem;
 }

@@ -1,3 +1,4 @@
+import { FormSelect } from '../workspace/FormSelect/FormSelect';
 import React, { useState } from 'react';
 import type { IThemeConfig } from '../../types/bio';
 import { uploadBioMedia } from '../../api/bio';
@@ -169,7 +170,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             </button>
           ))}
         </div>
-        <select aria-label="Giao diện cài sẵn" className="preset-select" value={themeConfig.preset} onChange={(e) => handlePresetChange(e.target.value)}>
+        <FormSelect aria-label="Giao diện cài sẵn" value={themeConfig.preset} onValueChange={(value) => handlePresetChange(value)}>
           {SEASONAL_THEMES.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
           <option value="commerce">Storefront</option>
           <option value="anime">Anime Pastel</option>
@@ -177,16 +178,16 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
           <option value="minimal">Minimal</option>
           <option value="cyberpunk">Cyberpunk</option>
           <option value="y2k">Y2K</option>
-        </select>
+        </FormSelect>
       </Section>
 
       <Section id="layout" title="Bố cục và nền" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
           <label>Kiểu nền toàn trang</label>
-          <select
+          <FormSelect aria-label="Kiểu nền toàn trang"
             value={themeConfig.background.type}
-            onChange={(e) => {
-              const type = e.target.value as IThemeConfig['background']['type'];
+            onValueChange={(value) => {
+              const type = value as IThemeConfig['background']['type'];
               if (type === 'gradient' || type === 'animated_gradient' || type === 'mesh') {
                 handleUpdate({ background: { type, value: themeConfig.background.value || 'linear-gradient(135deg, #0f1115, #16181d)' } });
               } else if (type === 'color') {
@@ -196,14 +197,14 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
               }
             }}
           >
-            <option value="gradient">Gradient (2 màu)</option>
+            <option value="gradient">Gradient</option>
             <option value="animated_gradient">Gradient chuyển động</option>
             <option value="mesh">Mesh / Aurora Glow</option>
-            <option value="color">Màu đơn (Solid)</option>
+            <option value="color">Màu đơn</option>
             <option value="image">Ảnh nền</option>
             <option value="video">Video nền</option>
             <option value="avatar_blur">Mờ nền từ Avatar</option>
-          </select>
+          </FormSelect>
         </div>
 
         {(themeConfig.background.type === 'gradient' || themeConfig.background.type === 'animated_gradient' || themeConfig.background.type === 'mesh') && (
@@ -304,22 +305,22 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       <Section id="card" title="Thẻ Bio & Viền (Card Styling)" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
           <label>Nền thẻ Bio</label>
-          <select value={themeConfig.cardStyling?.background} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, background: e.target.value } })}>
-            <option value="#16181d">Màu Tối (Solid Dark)</option>
-            <option value="#f8fafc">Màu Sáng (Solid Light)</option>
-            <option value="glass">Kính mờ (Glassmorphism)</option>
+          <FormSelect aria-label="Nền thẻ Bio" value={themeConfig.cardStyling?.background} onValueChange={(value) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, background: value } })}>
+            <option value="#16181d">Màu Tối</option>
+            <option value="#f8fafc">Màu Sáng</option>
+            <option value="glass">Kính mờ</option>
             <option value="transparent">Trong suốt</option>
-          </select>
+          </FormSelect>
         </div>
         <div className="input-group">
           <label>Kiểu viền thẻ</label>
-          <select value={themeConfig.cardStyling?.borderStyle} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderStyle: e.target.value } })}>
+          <FormSelect aria-label="Kiểu viền thẻ" value={themeConfig.cardStyling?.borderStyle} onValueChange={(value) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderStyle: value } })}>
             <option value="none">Không viền</option>
-            <option value="solid">Viền Liền (Solid)</option>
-            <option value="dashed">Viền Đứt (Dashed)</option>
-            <option value="glow">Phát sáng (Neon Glow)</option>
-            <option value="led">Viền LED chạy (2 màu)</option>
-          </select>
+            <option value="solid">Viền Liền</option>
+            <option value="dashed">Viền Đứt</option>
+            <option value="glow">Phát sáng</option>
+            <option value="led">Viền LED chạy</option>
+          </FormSelect>
         </div>
         {themeConfig.cardStyling?.borderStyle !== 'none' && (
           <>
@@ -338,31 +339,31 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
               </div>
             )}
             <div className="input-group">
-              <label>Độ dày viền (Border Thickness): <span style={{ color: '#3b82f6' }}>{themeConfig.cardStyling?.borderThickness}px</span></label>
+              <label>Độ dày viền (Border Thickness): <span style={{ color: 'var(--text-h)' }}>{themeConfig.cardStyling?.borderThickness}px</span></label>
               <input type="range" min="1" max="10" value={parseInt(themeConfig.cardStyling?.borderThickness || '2')} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderThickness: e.target.value + 'px' } })} />
             </div>
           </>
         )}
         <div className="input-group" style={{ marginBottom: '0' }}>
           <label>Độ bo góc (Border Radius)</label>
-          <select value={themeConfig.cardStyling?.borderRadius} onChange={(e) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderRadius: e.target.value } })}>
-            <option value="0px">Vuông góc (0px)</option>
-            <option value="16px">Bo nhẹ (16px)</option>
-            <option value="40px">Tròn (40px)</option>
-          </select>
+          <FormSelect aria-label="Độ bo góc thẻ" value={themeConfig.cardStyling?.borderRadius} onValueChange={(value) => handleUpdate({ cardStyling: { ...themeConfig.cardStyling, borderRadius: value } })}>
+            <option value="0px">Vuông góc</option>
+            <option value="16px">Bo nhẹ</option>
+            <option value="40px">Tròn</option>
+          </FormSelect>
         </div>
       </Section>
 
       <Section id="typography" title="Phông chữ và văn bản" openId={openId} setOpenId={setOpenId}>
         <div className="input-group">
           <label>Phông chữ</label>
-          <select value={themeConfig.fontFamily} onChange={(e) => handleUpdate({ fontFamily: e.target.value })}>
-            <option value="'Inter', sans-serif">Inter (Hiện đại, Mặc định)</option>
-            <option value="'Outfit', sans-serif">Outfit (Cứng cáp, Tròn)</option>
-            <option value="'Playfair Display', serif">Playfair (Cổ điển, Sang trọng)</option>
-            <option value="'Comic Neue', cursive">Comic Neue (Vui nhộn)</option>
-            <option value="'Space Mono', monospace">Space Mono (Tech, Code)</option>
-          </select>
+          <FormSelect aria-label="Phông chữ" value={themeConfig.fontFamily} onValueChange={(value) => handleUpdate({ fontFamily: value })}>
+            <option value="'Inter', sans-serif">Inter</option>
+            <option value="'Outfit', sans-serif">Outfit</option>
+            <option value="'Playfair Display', serif">Playfair</option>
+            <option value="'Comic Neue', cursive">Comic Neue</option>
+            <option value="'Space Mono', monospace">Space Mono</option>
+          </FormSelect>
         </div>
         <div className="input-group" style={{ marginBottom: '0' }}>
           <label>Màu chữ (Text Color)</label>
@@ -373,12 +374,12 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
       <Section id="avatar" title="Khung avatar" openId={openId} setOpenId={setOpenId}>
         <div className="input-group" style={{ marginBottom: '0' }}>
           <label>Kiểu khung avatar</label>
-          <select value={themeConfig.profile.avatarFrame} onChange={(e) => handleUpdate({ profile: { ...themeConfig.profile, avatarFrame: e.target.value as any } })}>
-            <option value="neon">Viền Neon Tai Dơi (CSS)</option>
-            <option value="none">Trơn (Không có)</option>
-            <option value="discord">Vòng sáng xoay (CSS)</option>
-            <option value="image">Khung ảnh Custom (Game/Tai thỏ)</option>
-          </select>
+          <FormSelect aria-label="Kiểu khung avatar" value={themeConfig.profile.avatarFrame} onValueChange={(value) => handleUpdate({ profile: { ...themeConfig.profile, avatarFrame: value as any } })}>
+            <option value="neon">Viền Neon Tai Dơi</option>
+            <option value="none">Trơn</option>
+            <option value="discord">Vòng sáng xoay</option>
+            <option value="image">Khung ảnh Custom</option>
+          </FormSelect>
         </div>
       </Section>
 
@@ -393,20 +394,20 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
         </div>
         <div className="input-group" style={{ marginBottom: '0' }}>
           <label>Hiệu ứng khi rê chuột</label>
-          <select value={themeConfig.buttonStyle.hoverEffect} onChange={(e) => handleUpdate({ buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: e.target.value as any } })}>
-            <option value="hover-color">Đổi màu (Đảo ngược)</option>
-            <option value="hover-scale">Phóng to nhẹ (Soft Scale)</option>
-            <option value="hover-lift">Nổi lên (Float Up)</option>
-            <option value="hover-glow">Phát sáng (Neon Glow)</option>
-            <option value="hover-tilt">Nghiêng nhẹ (Tilt 3D)</option>
-            <option value="hover-shine">Ánh sáng lướt (Shine)</option>
-          </select>
+          <FormSelect aria-label="Hiệu ứng khi rê chuột" value={themeConfig.buttonStyle.hoverEffect} onValueChange={(value) => handleUpdate({ buttonStyle: { ...themeConfig.buttonStyle, hoverEffect: value as any } })}>
+            <option value="hover-color">Đổi màu</option>
+            <option value="hover-scale">Phóng to nhẹ</option>
+            <option value="hover-lift">Nổi lên</option>
+            <option value="hover-glow">Phát sáng</option>
+            <option value="hover-tilt">Nghiêng nhẹ</option>
+            <option value="hover-shine">Ánh sáng lướt</option>
+          </FormSelect>
         </div>
       </Section>
 
       <Section id="effects" title="Hiệu ứng rơi" openId={openId} setOpenId={setOpenId}>
         <div className="input-group" style={{ marginBottom: '0' }}>
-          <select aria-label="Hiệu ứng rơi" value={themeConfig.effect} onChange={(e) => handleUpdate({ effect: e.target.value as IThemeConfig['effect'] })}>
+          <FormSelect aria-label="Hiệu ứng rơi" value={themeConfig.effect} onValueChange={(value) => handleUpdate({ effect: value as IThemeConfig['effect'] })}>
             <option value="none">Không có</option>
             <option value="sakura">Hoa anh đào</option>
             <option value="snow">Tuyết rơi</option>
@@ -418,7 +419,7 @@ export function TabDesign({ themeConfig, setThemeConfig }: TabDesignProps) {
             <option value="hearts">Trái tim</option>
             <option value="firefly">Đom đóm</option>
             <option value="glitter">Lấp lánh</option>
-          </select>
+          </FormSelect>
         </div>
       </Section>
     </>
