@@ -1,3 +1,4 @@
+import { LoadingCircle } from './components/workspace/LoadingCircle/LoadingCircle';
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -49,7 +50,7 @@ function App() {
                 path="magic-tree-webgpu"
                 element={
                   <RouteErrorBoundary>
-                    <Suspense fallback={<p className="route-status">Loading…</p>}>
+                    <Suspense fallback={<LoadingCircle label="Đang tải trang…" />}>
                       <MagicTreeWebGPUPage />
                     </Suspense>
                   </RouteErrorBoundary>
@@ -65,7 +66,7 @@ function App() {
               path="/builder"
               element={
                 <RouteErrorBoundary>
-                  <Suspense fallback={<p className="route-status">Loading builder…</p>}>
+                  <Suspense fallback={<LoadingCircle label="Đang tải Bio Page…" />}>
                     <BuilderRoute />
                   </Suspense>
                 </RouteErrorBoundary>

@@ -42,8 +42,8 @@
    instead of a long scroll of identical gray cards. */
 .design-section { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: var(--code-bg); }
 .design-section-header { width: 100%; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: transparent; border: none; cursor: pointer; text-align: left; font: inherit; color: var(--text-h); }
-.design-section-header:hover { background: rgba(59, 130, 246, 0.06); }
-.design-section-icon { display: flex; color: #3b82f6; flex-shrink: 0; }
+.design-section-header:hover { background: var(--code-bg); }
+.design-section-icon { display: flex; color: var(--text-h); flex-shrink: 0; }
 .design-section-title { flex: 1; font-weight: 600; font-size: 14px; }
 .design-section-chevron { display: flex; color: var(--text); transition: transform 0.2s; }
 .design-section.open .design-section-chevron { transform: rotate(180deg); }
@@ -62,18 +62,18 @@
 .input-group input[type="color"] { padding: 4px; height: 40px; cursor: pointer; }
 .input-group input:focus, .input-group select:focus, .input-group textarea:focus,
 .profile-inputs input[type="text"]:focus, .bio-textarea:focus {
-  border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  border-color: var(--text-h); box-shadow: 0 0 0 4px var(--code-bg);
 }
-.card select:hover { border-color: #3b82f6; cursor: pointer; }
+.card select:hover { border-color: var(--text-h); cursor: pointer; }
 .preset-select { width: 100%; padding: 12px; border-radius: 8px; background: var(--bg); color: var(--text-h); border: 1px solid var(--border); transition: border-color 0.2s; }
-.preset-select:hover { border-color: #3b82f6; cursor: pointer; }
+.preset-select:hover { border-color: var(--text-h); cursor: pointer; }
 
 /* Range Slider Styling */
 .input-group input[type="range"] {
   -webkit-appearance: none; width: 100%; height: 6px; background: var(--border); border-radius: 4px; outline: none; margin-top: 10px; margin-bottom: 8px;
 }
 .input-group input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #3b82f6; cursor: pointer; transition: 0.2s;
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--text-h); cursor: pointer; transition: 0.2s;
 }
 .input-group input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
@@ -84,8 +84,8 @@
 
 .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .option-box { background: var(--bg); border: 1px solid var(--border); padding: 12px 0; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s; color: var(--text); font-size: 13px; font-weight: 600; }
-.option-box:hover { border-color: #3b82f6; }
-.option-box.active { border-color: #3b82f6; color: #3b82f6; background: rgba(59, 130, 246, 0.15); box-shadow: inset 0 0 0 1px #3b82f6;}
+.option-box:hover { border-color: var(--text-h); }
+.option-box.active { border-color: var(--text-h); color: var(--text-h); background: var(--code-bg); box-shadow: inset 0 0 0 1px var(--text-h);}
 .rich-text-toolbar { display: flex; gap: 4px; background: var(--bg); padding: 6px; border-radius: 8px 8px 0 0; border: 1px solid var(--border); border-bottom: none; }
 .toolbar-btn { background: transparent; border: none; color: var(--text); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
 .toolbar-btn:hover { background: var(--border); color: var(--text-h); }
@@ -103,15 +103,15 @@
 .block-header { padding: 16px; display: flex; align-items: center; gap: 16px; cursor: grab; }
 .drag-icon { color: var(--text); font-size: 18px; cursor: grab; padding: 4px; }
 .block-info { flex: 1; }
-.block-type { font-size: 10px; font-weight: 700; color: #3b82f6; background: rgba(59, 130, 246, 0.15); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+.block-type { font-size: 10px; font-weight: 700; color: var(--text-h); background: var(--code-bg); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
 .block-name-input { width: 100%; font-weight: 600; font-size: 14px; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 4px 6px; margin: -4px -6px; color: inherit; outline: none; transition: all 0.2s; }
 .block-name-input:hover { border-color: var(--border); }
-.block-name-input:focus { border-color: #3b82f6; background: var(--bg); }
+.block-name-input:focus { border-color: var(--text-h); background: var(--bg); }
 .block-actions { display: flex; align-items: center; gap: 8px; }
 .block-actions button { background: none; border: none; color: var(--text); cursor: pointer; font-size: 14px; padding: 4px 8px; }
 .block-actions button:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 4px; }
 .btn-add { margin-top: 8px; padding: 12px; width: 100%; border-radius: 12px; border: 1px dashed var(--border); background: transparent; color: var(--text); font-weight: 600; cursor: pointer; transition: 0.2s; }
-.btn-add:hover { border-color: #3b82f6; color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
+.btn-add:hover { border-color: var(--text-h); color: var(--text-h); background: var(--code-bg); }
 
 /* 5. Vùng Preview - CSS Variables cho sự linh hoạt cao nhất */
 .preview-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; transition: background 0.5s; position: relative; overflow: hidden; }
