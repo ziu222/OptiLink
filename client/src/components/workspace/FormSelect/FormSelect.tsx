@@ -41,13 +41,16 @@ export function FormSelect({ value, onValueChange, children, 'aria-label': label
       const target = event.target as Node;
       if (!trigger.current?.contains(target) && !popup.current?.contains(target)) setOpen(false);
     };
+    const reposition = (event: Event) => {
+      if (!popup.current?.contains(event.target as Node)) place();
+    };
     place();
     window.addEventListener('resize', place);
-    document.addEventListener('scroll', dismiss, true);
+    document.addEventListener('scroll', reposition, true);
     document.addEventListener('pointerdown', dismiss);
     return () => {
       window.removeEventListener('resize', place);
-      document.removeEventListener('scroll', dismiss, true);
+      document.removeEventListener('scroll', reposition, true);
       document.removeEventListener('pointerdown', dismiss);
     };
   }, [open, options.length]);
