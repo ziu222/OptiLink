@@ -13,7 +13,7 @@ import heroIllustration from '../../assets/hero-shorten-illustration.png';
 import './authForm.css';
 
 export function LoginPage() {
-  const { status, login } = useAuth();
+  const { status, user, login } = useAuth();
   const navigate = useNavigate();
   const {
     register,
@@ -23,13 +23,13 @@ export function LoginPage() {
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
 
   if (status === 'authenticated') {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={user?.role === 'admin' ? '/admin' : '/dashboard'} replace />;
   }
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await login(values.identifier, values.password);
-      navigate('/dashboard', { replace: true });
+      const loggedInUser = await login(values.identifier, values.password);
+      navigate(loggedInUser.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
     } catch (err) {
       applyServerError<LoginValues>(err, setError);
     }

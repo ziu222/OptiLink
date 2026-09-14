@@ -9,7 +9,7 @@ type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 interface AuthContextValue {
   user: User | null;
   status: AuthStatus;
-  login: (identifier: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<User>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAccessToken(accessToken);
     setUser(current);
     setStatus('authenticated');
+    return current;
   }, []);
 
   const register = useCallback(async (payload: RegisterPayload) => {
