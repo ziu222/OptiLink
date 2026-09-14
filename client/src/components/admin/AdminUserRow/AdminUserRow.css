@@ -1,0 +1,31 @@
+.admin-user-row .main-cell { grid-area: main; }
+.admin-user-row .tier-cell { grid-area: tier; }
+.admin-user-row .verify-cell { grid-area: verify; }
+.admin-user-row .actions-cell { grid-area: actions; }
+
+/* Desktop: named areas must be defined here too, not just in the mobile
+   override below — a `grid-area` with no matching `grid-template-areas` at
+   all doesn't fall back to auto-placement the way it might seem it should;
+   it left every cell stacked on top of each other. Columns stay InfoRow's
+   default equal 4-column [data-columns='4'] track sizing; this only names
+   them so `.actions-cell` etc. resolve to something. */
+.info-row.admin-user-row[data-columns='4'] {
+  grid-template-areas: 'main tier verify actions';
+}
+
+/* Mobile: main + tier + actions share the top row; verify drops to its own
+   full-width row below. */
+@media (max-width: 1023.98px) {
+  .info-row.admin-user-row[data-columns='4'] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      'main tier actions'
+      'verify verify verify';
+  }
+}
+
+.admin-user-banned {
+  font-weight: 600;
+  color: #dc2626;
+}

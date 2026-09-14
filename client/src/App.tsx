@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './routes/ProtectedRoute';
+import { RequireAdmin } from './routes/RequireAdmin';
 import { RouteErrorBoundary } from './routes/RouteErrorBoundary';
 import { HomePage } from './pages/Home/HomePage';
 import { LoginPage } from './pages/auth/LoginPage';
@@ -16,6 +17,11 @@ import { LinkAnalyticsPage } from './pages/Workspace/LinkAnalyticsPage';
 import { SettingsPage } from './pages/Workspace/SettingsPage';
 import { ProfilePage } from './pages/Workspace/ProfilePage';
 import { QRCodePage } from './pages/Workspace/QRCodePage';
+import { AdminLayout } from './pages/Admin/AdminLayout';
+import { AdminOverviewPage } from './pages/Admin/AdminOverviewPage';
+import { AdminUsersPage } from './pages/Admin/AdminUsersPage';
+import { AdminLinksPage } from './pages/Admin/AdminLinksPage';
+import { AdminLinkDetailPage } from './pages/Admin/AdminLinkDetailPage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
 const MagicTreeExperience = lazy(() => import('./components/MagicTreeWebGPU/MagicTreeWebGPUContainer').then(m => ({ default: m.MagicTreeWebGPUContainer })));
@@ -72,6 +78,15 @@ function App() {
                 </RouteErrorBoundary>
               }
             />
+
+            <Route element={<RequireAdmin />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminOverviewPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="links" element={<AdminLinksPage />} />
+                <Route path="links/:id" element={<AdminLinkDetailPage />} />
+              </Route>
+            </Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -11,6 +11,11 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
+  /* A gap, not space-between: the brand cell is flexibly wide (especially in
+     the mobile topbar's minmax(0,1fr) column), and space-between would push
+     the switch button to its far right edge — right up against the footer
+     column — instead of staying next to the logo. */
+  gap: 0.5rem;
   height: 3rem;
   padding: 0.5rem 1.5rem;
   border-bottom: 1px solid var(--border);
@@ -22,6 +27,36 @@
   letter-spacing: -0.02em;
   color: var(--text-h);
   text-decoration: none;
+}
+
+/* Higher specificity than `.sidebar-brand a` above so this wins despite
+   sharing the element — the brand text's display-size styling shouldn't
+   leak onto an icon-only button next to it. */
+.sidebar-brand .sidebar-switch-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  /* Pushes it to the far right of the brand row regardless of how wide that
+     row is (the mobile topbar's brand cell is a flexible minmax(0,1fr)). */
+  margin-left: auto;
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.sidebar-brand .sidebar-switch-btn:hover {
+  border-color: var(--text-h);
+  color: var(--text-h);
+}
+
+.sidebar-switch-btn .sidebar-icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .sidebar-nav {

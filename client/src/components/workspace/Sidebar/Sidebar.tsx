@@ -119,6 +119,22 @@ export function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-brand">
         <Link to="/">OptiLink</Link>
+        {user?.role === 'admin' && (
+          <Link
+            to="/admin"
+            className="sidebar-switch-btn"
+            title="Chuyển sang không gian quản trị"
+            aria-label="Chuyển sang không gian quản trị"
+          >
+            <svg {...iconProps}>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+              />
+            </svg>
+          </Link>
+        )}
       </div>
 
       <nav className="sidebar-nav">

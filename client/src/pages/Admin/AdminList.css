@@ -1,0 +1,29 @@
+/* Shared by AdminUsersPage and AdminLinksPage: fixed to 10 rows tall
+   regardless of how many of the current page's rows are loaded (both use
+   PAGE_SIZE=10), with the rest reachable by scrolling inside the panel —
+   same convention as ShortenedLinksPanel.css's `.link-list--paged`. The two
+   row types aren't the same height though, so the height itself is a
+   modifier per page rather than living on the shared class. */
+.admin-row-list {
+  overflow-y: auto;
+}
+
+/* InfoRow drops the border on its true last child; a scrollable list still
+   wants one there so the panel's own bottom edge doesn't read as the end of
+   the list. */
+.admin-row-list .info-row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+/* AdminUserRow: one grid row, three stacked lines (Main+Sub+Extra) in its
+   tallest cell — measured ~6.5rem (104px at the 16px root). */
+.admin-row-list--users {
+  height: 65rem;
+}
+
+/* AdminLinkRow: two grid rows (name-cell row + status-cell row) with a row
+   -gap between them, same shape as ShortenedLinkRow — measured ~7.04rem
+   (112.6px at the 16px root), taller than AdminUserRow's single-row layout. */
+.admin-row-list--links {
+  height: 70.4rem;
+}
