@@ -47,10 +47,10 @@ export function QRCodePage() {
 
   return (
     <>
-      <PageHeader title="QR Studio" />
+      <PageHeader title="Xưởng QR" />
       <div className="qr-studio page-content">
         <section className="qr-studio-hero">
-          <span className="qr-studio-kicker"><Sparkles size={15} /> Link library · QR library</span>
+          <span className="qr-studio-kicker"><Sparkles size={15} /> Thư viện liên kết · Thư viện QR</span>
           <h2>Một link, mọi điểm chạm.</h2>
           <p>Chọn bất kỳ link ngắn nào — kể cả link được tạo từ Bio Page — để tạo QR, tải xuống và theo dõi trong cùng một workspace.</p>
         </section>

@@ -16,7 +16,7 @@ export function WorkspaceTopbar({ onMenuClick }: { onMenuClick: () => void }) {
         type="button"
         className="workspace-topbar-menu"
         onClick={onMenuClick}
-        aria-label="Open navigation"
+        aria-label="Mở điều hướng"
       >
         <Menu size={22} aria-hidden="true" />
       </button>
@@ -26,7 +26,7 @@ export function WorkspaceTopbar({ onMenuClick }: { onMenuClick: () => void }) {
       <Link
         to="/dashboard/profile"
         className="workspace-topbar-avatar"
-        aria-label="My profile"
+        aria-label="Hồ sơ của tôi"
       >
         {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
       </Link>

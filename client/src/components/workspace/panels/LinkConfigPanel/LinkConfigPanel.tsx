@@ -84,72 +84,72 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
   });
 
   return (
-    <ContentPanel title="Shortened Link Configuration">
+    <ContentPanel title="Cấu hình liên kết rút gọn">
       <form onSubmit={onSubmit}>
         {errors.root && <p className="profile-error">{errors.root.message}</p>}
 
         <div className="link-config">
           <Field
-            label="Title"
-            hint="A label for this link in your dashboard. Not shown to visitors."
+            label="Tiêu đề"
+            hint="Tên gợi nhớ cho liên kết này trong bảng điều khiển. Không hiển thị với khách truy cập."
             full
             error={errors.title?.message}
           >
             <input
               type="text"
               className="field-input"
-              placeholder="Untitle"
+              placeholder="Chưa có tiêu đề"
               {...register('title')}
             />
           </Field>
 
           <Field
-            label="Original URL"
-            hint="The destination this short link redirects to. Set when the link was created."
+            label="URL gốc"
+            hint="Địa chỉ đích mà liên kết rút gọn này chuyển hướng đến. Được đặt khi tạo liên kết."
           >
             <input className="field-input" disabled value={link.originalUrl} />
           </Field>
 
           <Field
-            label="Short URL"
-            hint="The shareable link. Built from the slug and can't be changed here."
+            label="URL rút gọn"
+            hint="Liên kết có thể chia sẻ. Được tạo từ slug và không thể thay đổi ở đây."
           >
             <input className="field-input" disabled value={link.shortUrl} />
           </Field>
 
           <Field
-            label="Status"
-            hint="Active links redirect normally; inactive links stop redirecting."
+            label="Trạng thái"
+            hint="Liên kết đang hoạt động sẽ chuyển hướng bình thường; liên kết ngừng hoạt động sẽ không chuyển hướng nữa."
           >
             <InputSelect
-              ariaLabel="Status"
+              ariaLabel="Trạng thái"
               value={watch('status')}
               onChange={(value) => setValue('status', value)}
               options={[
-                { value: 'active', label: 'Active' },
-                { value: 'inactive', label: 'Inactive' },
+                { value: 'active', label: 'Đang hoạt động' },
+                { value: 'inactive', label: 'Ngừng hoạt động' },
               ]}
             />
           </Field>
 
           <Field
-            label="Redirect Mode"
-            hint="Standard sends visitors straight to the destination. Splash shows a brief interstitial first."
+            label="Chế độ chuyển hướng"
+            hint="Chuẩn chuyển thẳng người truy cập đến đích. Trang chờ hiển thị một trang trung gian ngắn trước khi chuyển hướng."
           >
             <InputSelect
-              ariaLabel="Redirect mode"
+              ariaLabel="Chế độ chuyển hướng"
               value={watch('redirectMode')}
               onChange={(value) => setValue('redirectMode', value)}
               options={[
-                { value: 'standard', label: 'Standard' },
-                { value: 'splash', label: 'Splash' },
+                { value: 'standard', label: 'Chuẩn' },
+                { value: 'splash', label: 'Trang chờ' },
               ]}
             />
           </Field>
 
           <Field
-            label="Password"
-            hint="Require visitors to enter a password before the link redirects."
+            label="Mật khẩu"
+            hint="Yêu cầu khách truy cập nhập mật khẩu trước khi liên kết chuyển hướng."
             error={errors.password?.message}
           >
             <div className="link-password-frame">
@@ -160,30 +160,30 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
                 disabled={clearPassword}
                 placeholder={
                   clearPassword
-                    ? 'Password will be removed'
+                    ? 'Mật khẩu sẽ được xóa'
                     : link.hasPassword
-                      ? 'Leave blank to keep current'
-                      : 'Leave blank for no password'
+                      ? 'Để trống để giữ mật khẩu hiện tại'
+                      : 'Để trống nếu không cần mật khẩu'
                 }
                 {...register('password')}
               />
               <div className="link-password-sep" aria-hidden="true" />
               <MenuButton
-                label={clearPassword ? 'Removing' : link.hasPassword ? 'Protected' : 'None'}
-                ariaLabel="Password options"
+                label={clearPassword ? 'Đang xóa' : link.hasPassword ? 'Đã bảo vệ' : 'Không có'}
+                ariaLabel="Tùy chọn mật khẩu"
                 items={
                   clearPassword
                     ? [
                         {
                           key: 'keep',
-                          label: 'Keep current password',
+                          label: 'Giữ mật khẩu hiện tại',
                           onSelect: () => setClearPassword(false),
                         },
                       ]
                     : [
                         {
                           key: 'remove',
-                          label: 'Remove password',
+                          label: 'Xóa mật khẩu',
                           disabled: !link.hasPassword,
                           onSelect: () => setClearPassword(true),
                         },
@@ -194,13 +194,12 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
           </Field>
 
           <Field
-            label="Expiry"
-            hint="Date and time after which the link stops working. Leave blank for no expiry."
+            label="Hết hạn"
+            hint="Ngày giờ mà sau đó liên kết ngừng hoạt động. Để trống nếu không giới hạn thời gian."
             error={errors.expiresAt?.message}
           >
             <input
               type="datetime-local"
-              lang="en-GB"
               className="field-input"
               {...register('expiresAt')}
             />
@@ -208,9 +207,9 @@ export function LinkConfigPanel({ link, onSaved }: LinkConfigPanelProps) {
         </div>
 
         <div className="profile-actions">
-          {saved && <span className="profile-saved">Saved.</span>}
+          {saved && <span className="profile-saved">Đã lưu.</span>}
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Updating…' : 'Update'}
+            {isSubmitting ? 'Đang cập nhật…' : 'Cập nhật'}
           </Button>
         </div>
       </form>

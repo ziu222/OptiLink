@@ -11,38 +11,38 @@ import devicesScreenshot from '../../../assets/how-it-works-devices.png';
 import './HowItWorks.css';
 
 const shortenSlides = [
-  { src: shortenBasicScreenshot, alt: 'Shortening a long URL with title, slug, redirect mode, and status options' },
-  { src: shortenAccessScreenshot, alt: 'Access Control tab with password and expiry options' },
-  { src: shortenedLinksScreenshot, alt: 'List of shortened links with click counts' },
+  { src: shortenBasicScreenshot, alt: 'Rút gọn một URL dài với tiêu đề, bí danh, chế độ chuyển hướng và tùy chọn trạng thái' },
+  { src: shortenAccessScreenshot, alt: 'Thẻ Kiểm soát truy cập với tùy chọn mật khẩu và thời hạn' },
+  { src: shortenedLinksScreenshot, alt: 'Danh sách các liên kết rút gọn cùng số lượt nhấp' },
 ];
 
 const bioSlides = [
-  { src: bioDesignScreenshot, alt: 'Bio page Design tab with the Minimal template selected' },
-  { src: bioBlocksScreenshot, alt: 'Bio page profile and block editor' },
-  { src: bioPreviewScreenshot, alt: 'Live preview of a bio page using the Minimal template' },
+  { src: bioDesignScreenshot, alt: 'Thẻ Thiết kế trang bio với mẫu Minimal đang được chọn' },
+  { src: bioBlocksScreenshot, alt: 'Trình chỉnh sửa hồ sơ và khối nội dung của trang bio' },
+  { src: bioPreviewScreenshot, alt: 'Xem trước trực tiếp một trang bio dùng mẫu Minimal' },
 ];
 
 const analyticsSlides = [
-  { src: statsScreenshot, alt: 'Dashboard stat tiles: total links, total clicks, and clicks today' },
-  { src: countriesScreenshot, alt: 'Clicks by country on a world map' },
-  { src: devicesScreenshot, alt: 'Clicks by device in a pie chart' },
+  { src: statsScreenshot, alt: 'Các ô thống kê trên bảng điều khiển: tổng liên kết, tổng lượt nhấp, và lượt nhấp hôm nay' },
+  { src: countriesScreenshot, alt: 'Lượt nhấp theo quốc gia trên bản đồ thế giới' },
+  { src: devicesScreenshot, alt: 'Lượt nhấp theo thiết bị trong biểu đồ tròn' },
 ];
 
 const steps = [
   {
     number: '01',
-    title: 'Shorten your link',
-    description: 'Drop in any long URL and get a short, brandable OptiLink in return.',
+    title: 'Rút gọn liên kết của bạn',
+    description: 'Dán vào bất kỳ URL dài nào và nhận về một OptiLink ngắn gọn, mang thương hiệu riêng.',
   },
   {
     number: '02',
-    title: 'Build your bio page',
-    description: 'Pick a layout, drag and drop blocks, and add products, tabs, and categories with a live preview.',
+    title: 'Xây dựng trang bio của bạn',
+    description: 'Chọn một bố cục, kéo thả các khối nội dung, và thêm sản phẩm, thẻ và danh mục với xem trước trực tiếp.',
   },
   {
     number: '03',
-    title: 'Track every click',
-    description: 'See link clicks and QR scans by country, device, and browser, all from your dashboard.',
+    title: 'Theo dõi mọi lượt nhấp',
+    description: 'Xem lượt nhấp liên kết và lượt quét QR theo quốc gia, thiết bị và trình duyệt, tất cả từ bảng điều khiển của bạn.',
   },
 ];
 
@@ -52,7 +52,7 @@ export function HowItWorks() {
   return (
     <section id="how-it-works" className="home-section">
       <div className="home-container">
-        <h2 className="home-heading home-heading--center">How it works</h2>
+        <h2 className="home-heading home-heading--center">Cách hoạt động</h2>
 
         <div className="steps">
           {steps.map(({ number, title, description }, index) => (

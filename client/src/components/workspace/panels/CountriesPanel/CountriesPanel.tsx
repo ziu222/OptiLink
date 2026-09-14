@@ -7,7 +7,7 @@ import './CountriesPanel.css';
 
 const regionNames = (() => {
   try {
-    return new Intl.DisplayNames(['en'], { type: 'region' });
+    return new Intl.DisplayNames(['vi'], { type: 'region' });
   } catch {
     return null;
   }
@@ -32,7 +32,7 @@ interface CountriesPanelProps {
 export function CountriesPanel({ data }: CountriesPanelProps) {
   const totals = new Map<string, number>();
   for (const row of data) {
-    const code = row.country || 'Unknown';
+    const code = row.country || 'Không xác định';
     totals.set(code, (totals.get(code) ?? 0) + row.clicks);
   }
 
@@ -44,9 +44,9 @@ export function CountriesPanel({ data }: CountriesPanelProps) {
   const namedPoints = points.map((p) => ({ ...p, label: countryName(p.label) }));
 
   return (
-    <ContentPanel title="Countries" className="countries-panel">
+    <ContentPanel title="Quốc gia" className="countries-panel">
       {!hasData ? (
-        <p className="link-list-empty">No clicks yet.</p>
+        <p className="link-list-empty">Chưa có lượt nhấp nào.</p>
       ) : (
         <div className="countries-panel-grid">
           <CountryMap data={points} max={max} />

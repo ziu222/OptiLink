@@ -12,7 +12,7 @@ import './workspace.css';
 
 type FetchState = 'idle' | 'loading' | 'ready' | 'error';
 
-const BREADCRUMB = [{ label: 'Analytics', to: '/dashboard/analytics' }];
+const BREADCRUMB = [{ label: 'Thống kê', to: '/dashboard/analytics' }];
 
 export function LinkAnalyticsPage() {
   const { id } = useParams<{ id: string }>();
@@ -55,10 +55,10 @@ export function LinkAnalyticsPage() {
       <>
         <PageHeader
           breadcrumb={BREADCRUMB}
-          title={linkState === 'error' ? 'Link not found' : 'Loading…'}
+          title={linkState === 'error' ? 'Không tìm thấy liên kết' : 'Đang tải…'}
         />
         {linkState === 'error' && (
-          <p className="link-list-empty">This link doesn’t exist or isn’t yours.</p>
+          <p className="link-list-empty">Liên kết này không tồn tại hoặc không thuộc về bạn.</p>
         )}
       </>
     );
@@ -66,28 +66,28 @@ export function LinkAnalyticsPage() {
 
   return (
     <>
-      <PageHeader breadcrumb={BREADCRUMB} title={link.title || 'Untitle'} />
+      <PageHeader breadcrumb={BREADCRUMB} title={link.title || 'Chưa có tiêu đề'} />
 
       <div className="page-content">
-        {linkAnalyticsState === 'loading' && <p className="link-list-empty">Loading…</p>}
+        {linkAnalyticsState === 'loading' && <p className="link-list-empty">Đang tải…</p>}
         {linkAnalyticsState === 'error' && (
-          <p className="link-list-empty">Couldn’t load analytics for this link.</p>
+          <p className="link-list-empty">Không thể tải thống kê cho liên kết này.</p>
         )}
         {linkAnalyticsState === 'ready' && linkAnalytics && (
           <>
             <div className="analytics-stats analytics-stats--pair">
-              <StatTile title="Total Clicks" value={linkAnalytics.totalClicks} />
-              <StatTile title="Clicks Today" value={linkAnalytics.clicksToday} />
+              <StatTile title="Tổng lượt nhấp" value={linkAnalytics.totalClicks} />
+              <StatTile title="Lượt nhấp hôm nay" value={linkAnalytics.clicksToday} />
             </div>
 
             <div className="analytics-breakdown">
               <CountriesPanel data={linkAnalytics.locations} />
               <BreakdownPanel
-                title="Devices"
+                title="Thiết bị"
                 data={linkAnalytics.devices.map((d) => ({ label: d.device, value: d.clicks }))}
               />
               <BreakdownPanel
-                title="Traffic source"
+                title="Nguồn truy cập"
                 data={linkAnalytics.sources.map((s) => ({ label: s.source, value: s.clicks }))}
               />
             </div>

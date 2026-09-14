@@ -46,11 +46,11 @@ export function QrPanel({ link }: QrPanelProps) {
   };
 
   return (
-    <ContentPanel title="QR Code" className="qr-panel">
+    <ContentPanel title="Mã QR" className="qr-panel">
       <div className="qr-panel-preview">
-        {state === 'loading' && <p className="qr-panel-status">Generating…</p>}
-        {state === 'error' && <p className="qr-panel-status">Couldn’t load QR.</p>}
-        {state === 'ready' && <img src={previewUrl} alt={`QR code for ${link.shortUrl}`} />}
+        {state === 'loading' && <p className="qr-panel-status">Đang tạo…</p>}
+        {state === 'error' && <p className="qr-panel-status">Không thể tải mã QR.</p>}
+        {state === 'ready' && <img src={previewUrl} alt={`Mã QR cho ${link.shortUrl}`} />}
       </div>
 
       <div className="profile-actions">
@@ -60,10 +60,10 @@ export function QrPanel({ link }: QrPanelProps) {
           target="_blank"
           rel="noreferrer"
         >
-          Customize
+          Tùy chỉnh
         </a>
         <Button onClick={handleDownload} disabled={state !== 'ready' || downloading}>
-          {downloading ? 'Downloading…' : 'Download'}
+          {downloading ? 'Đang tải xuống…' : 'Tải xuống'}
         </Button>
       </div>
     </ContentPanel>

@@ -5,9 +5,9 @@ import { KebabNav } from './KebabNav/KebabNav';
 import './header.css';
 
 const navLinks = [
-  { label: 'Features', to: '/#features' },
-  { label: 'Pricing', to: '/#pricing' },
-  { label: 'FAQ', to: '/#faq' },
+  { label: 'Tính năng', to: '/#features' },
+  { label: 'Bảng giá', to: '/#pricing' },
+  { label: 'Hỏi đáp', to: '/#faq' },
 ];
 
 interface HeaderProps {
@@ -24,7 +24,7 @@ export function Header({ forceGuest = false }: HeaderProps) {
   // Tài khoản mới chưa có fullName — dùng tạm username để lấy chữ cái đầu cho avatar.
   const displayName = user?.fullName || user?.username || '';
 
-  const navItems = authed ? [...navLinks, { label: 'Dashboard', to: '/dashboard' }] : navLinks;
+  const navItems = authed ? [...navLinks, { label: 'Bảng điều khiển', to: '/dashboard' }] : navLinks;
 
   const handleLogout = async () => {
     await logout();
@@ -50,9 +50,9 @@ export function Header({ forceGuest = false }: HeaderProps) {
           <div className="site-header-actions">
             <DarkModeSwitch compact />
             <button type="button" onClick={handleLogout} className="site-header-logout">
-              Log out
+              Đăng xuất
             </button>
-            <Link to="/dashboard" title="Go to dashboard" className="site-header-avatar">
+            <Link to="/dashboard" title="Đến bảng điều khiển" className="site-header-avatar">
               {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
             </Link>
             <KebabNav
@@ -66,10 +66,10 @@ export function Header({ forceGuest = false }: HeaderProps) {
           <div className="site-header-actions">
             <DarkModeSwitch compact />
             <Link to="/login" className="site-header-login">
-              Login
+              Đăng nhập
             </Link>
             <Link to="/register" className="site-header-register">
-              Register
+              Đăng ký
             </Link>
             <KebabNav authed={false} navItems={navItems} onLogout={handleLogout} />
           </div>

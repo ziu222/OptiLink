@@ -39,7 +39,7 @@ export function KebabNav({ authed, navItems, initial, onLogout }: KebabNavProps)
       <button
         type="button"
         className={`kebab-nav-trigger${authed ? ' kebab-nav-trigger--avatar' : ''}`}
-        aria-label="Menu"
+        aria-label="Menu điều hướng"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
@@ -68,10 +68,10 @@ export function KebabNav({ authed, navItems, initial, onLogout }: KebabNavProps)
             type="button"
             role="menuitem"
             className="kebab-nav-item"
-            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={dark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
             onClick={toggleTheme}
           >
-            {dark ? 'Light mode' : 'Dark mode'}
+            {dark ? 'Chế độ sáng' : 'Chế độ tối'}
           </button>
 
           <div className="kebab-nav-divider" />
@@ -86,15 +86,15 @@ export function KebabNav({ authed, navItems, initial, onLogout }: KebabNavProps)
                 onLogout();
               }}
             >
-              Log out
+              Đăng xuất
             </button>
           ) : (
             <>
               <Link to="/login" role="menuitem" className="kebab-nav-item" onClick={close}>
-                Login
+                Đăng nhập
               </Link>
               <Link to="/register" role="menuitem" className="kebab-nav-item" onClick={close}>
-                Register
+                Đăng ký
               </Link>
             </>
           )}

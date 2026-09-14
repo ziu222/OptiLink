@@ -44,16 +44,16 @@ export function LoginPage() {
           <PictureFrame
             className="authform-frame"
             src={heroIllustration}
-            alt="Shorten a long link into a branded opti.link URL"
+            alt="Rút gọn một liên kết dài thành URL opti.link mang thương hiệu riêng"
           />
 
           <form className="authform-panel" onSubmit={onSubmit} noValidate>
-            <h1 className="authform-title">Welcome Back</h1>
+            <h1 className="authform-title">Chào mừng trở lại</h1>
 
             {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
             <label className="authform-field">
-              <span className="authform-label">Email or username</span>
+              <span className="authform-label">Email hoặc tên đăng nhập</span>
               <input
                 type="text"
                 autoComplete="username"
@@ -67,9 +67,9 @@ export function LoginPage() {
 
             <label className="authform-field">
               <div className="authform-row">
-                <span className="authform-label">Password</span>
+                <span className="authform-label">Mật khẩu</span>
                 <a href="#" className="authform-hint-link">
-                  Forgot password?
+                  Quên mật khẩu?
                 </a>
               </div>
               <input
@@ -82,14 +82,14 @@ export function LoginPage() {
             </label>
 
             <button type="submit" disabled={isSubmitting} className="authform-submit">
-              {isSubmitting ? 'Logging in…' : 'Log in'}
+              {isSubmitting ? 'Đang đăng nhập…' : 'Đăng nhập'}
               {!isSubmitting && <span>→</span>}
             </button>
 
             <OAuthButtons />
 
             <p className="authform-footer">
-              No account? <Link to="/register">Sign up for free</Link>
+              Chưa có tài khoản? <Link to="/register">Đăng ký miễn phí</Link>
             </p>
           </form>
         </div>

@@ -20,21 +20,21 @@ export function DarkModeSwitch({ compact = false }: DarkModeSwitchProps) {
       <button
         type="button"
         onClick={() => setMode(!dark)}
-        aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-        title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-label={dark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
+        title={dark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
         className="darkmode-compact"
       >
-        {dark ? 'Light' : 'Dark'}
+        {dark ? 'Sáng' : 'Tối'}
       </button>
     );
   }
 
   return (
     <SegmentedToggle
-      ariaLabel="Theme"
+      ariaLabel="Giao diện"
       options={[
-        { value: true, label: 'Dark' },
-        { value: false, label: 'Light' },
+        { value: true, label: 'Tối' },
+        { value: false, label: 'Sáng' },
       ]}
       value={dark}
       onChange={setMode}

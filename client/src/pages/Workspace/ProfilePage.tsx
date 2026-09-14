@@ -38,7 +38,7 @@ export function ProfilePage() {
   });
 
   const [fullName, username] = useWatch({ control, name: ['fullName', 'username'] });
-  const displayName = fullName || username || 'Your profile';
+  const displayName = fullName || username || 'Hồ sơ của bạn';
 
   const onSubmit = handleSubmit(async (values) => {
     setSaved(false);
@@ -80,10 +80,10 @@ export function ProfilePage() {
 
   return (
     <>
-      <PageHeader title="Your profile" />
+      <PageHeader title="Hồ sơ của bạn" />
       <section className="profile-page">
-        <div className="profile-intro"><div><p className="profile-eyebrow">MAKE IT YOURS</p><h2>A familiar face. A personal space.</h2><p>Quản lý thông tin tài khoản của bạn tại một nơi.</p></div><Link to="/builder" className="profile-bio-link">Thiết kế biopage ↗</Link></div>
-        <ContentPanel title="Personal details" className="profile-panel">
+        <div className="profile-intro"><div><p className="profile-eyebrow">DẤU ẤN RIÊNG CỦA BẠN</p><h2>Một gương mặt quen thuộc. Một không gian của riêng bạn.</h2><p>Quản lý thông tin tài khoản của bạn tại một nơi.</p></div><Link to="/builder" className="profile-bio-link">Thiết kế biopage ↗</Link></div>
+        <ContentPanel title="Thông tin cá nhân" className="profile-panel">
           <form onSubmit={onSubmit} className="profile-form" onChange={() => setSaved(false)}>
             {errors.root && <p role="alert" className="profile-error">{errors.root.message}</p>}
 
@@ -111,13 +111,13 @@ export function ProfilePage() {
 
               <div className="profile-fields-column">
                 <label className="profile-field">
-                  <span className="profile-label">Full name</span>
+                  <span className="profile-label">Họ và tên</span>
                   <input type="text" autoComplete="name" aria-invalid={!!errors.fullName} className="profile-input" {...register('fullName')} />
                   {errors.fullName && <em className="profile-field-error">{errors.fullName.message}</em>}
                 </label>
 
                 <label className="profile-field">
-                  <span className="profile-label">User name</span>
+                  <span className="profile-label">Tên người dùng</span>
                   <input type="text" autoComplete="username" spellCheck={false} aria-invalid={!!errors.username} className="profile-input" {...register('username')} />
                   {errors.username && (
                     <em className="profile-field-error">{errors.username.message}</em>
@@ -136,7 +136,7 @@ export function ProfilePage() {
             <div className="profile-actions">
               <span className={saved ? 'profile-saved' : 'profile-hint'} role="status">{saved ? 'Đã lưu thay đổi.' : isDirty || avatarDirty ? 'Bạn có thay đổi chưa lưu.' : 'Thông tin tài khoản của bạn.'}</span>
               <Button type="submit" disabled={isSubmitting || uploadingAvatar || (!isDirty && !avatarDirty)}>
-                {isSubmitting ? <LoadingCircle inline label="Đang lưu…" /> : 'Save changes'}
+                {isSubmitting ? <LoadingCircle inline label="Đang lưu…" /> : 'Lưu thay đổi'}
               </Button>
             </div>
           </form>

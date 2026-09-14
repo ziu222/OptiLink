@@ -10,7 +10,7 @@ import { verifyLinkPassword } from '../api/links';
 import './auth/authForm.css';
 
 const gateSchema = z.object({
-  password: z.string().min(1, 'Enter the password'),
+  password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
 });
 
 type GateValues = z.infer<typeof gateSchema>;
@@ -41,12 +41,12 @@ export function LinkGatePage() {
 
       <main className="authform-main">
         <div className="gate-center">
-          <ContentPanel title="Link Password" className="gate-panel">
+          <ContentPanel title="Mật khẩu liên kết" className="gate-panel">
             <form className="gate-form" onSubmit={onSubmit} noValidate>
               {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
               <label className="authform-field">
-                <span className="authform-label">Password</span>
+                <span className="authform-label">Mật khẩu</span>
                 <input
                   type="password"
                   autoComplete="off"
@@ -60,11 +60,11 @@ export function LinkGatePage() {
               </label>
 
               <p className="gate-hint">
-                This link is protected. Enter the password the link owner set to continue.
+                Liên kết này được bảo vệ. Nhập mật khẩu do chủ liên kết đặt để tiếp tục.
               </p>
 
               <button type="submit" disabled={isSubmitting} className="authform-submit">
-                {isSubmitting ? 'Checking…' : 'Continue'}
+                {isSubmitting ? 'Đang kiểm tra…' : 'Tiếp tục'}
                 {!isSubmitting && <span>→</span>}
               </button>
             </form>

@@ -23,7 +23,7 @@ interface ShortenedLinksPanelProps {
 // List-layout container for shortened links, rendered as a workspace ContentPanel.
 export function ShortenedLinksPanel({
   links,
-  title = 'Shortened Links',
+  title = 'Danh sách liên kết rút gọn',
   showViewDetail = true,
   onDeleted,
   toolbar,
@@ -37,9 +37,9 @@ export function ShortenedLinksPanel({
     <ContentPanel title={title} footer={pagination}>
       {toolbar}
       {isLoading && links.length === 0 ? (
-        <p className="link-list-empty">Loading…</p>
+        <p className="link-list-empty">Đang tải…</p>
       ) : links.length === 0 ? (
-        <p className="link-list-empty">{emptyLabel ?? 'No shortened links yet.'}</p>
+        <p className="link-list-empty">{emptyLabel ?? 'Chưa có liên kết rút gọn nào.'}</p>
       ) : (
         <div className={pagination ? 'link-list link-list--paged' : 'link-list'}>
           {links.map((link) => (
