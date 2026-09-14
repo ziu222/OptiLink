@@ -122,7 +122,10 @@
 
 .hero-button {
   flex-shrink: 0;
-  width: 6rem;
+  /* Fixed (not min-width) so both buttons always match, sized to fit
+     "Sao chép" (the wider of the two default labels). */
+  width: 7rem;
+  white-space: nowrap;
   padding: 0.5rem 1rem;
   border: 1px solid var(--text-h);
   background: var(--text-h);
