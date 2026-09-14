@@ -185,6 +185,34 @@ export class AdminService {
     return { ...serializeUser(user), linkCount };
   }
 
+  /**
+   * Loads the target of a moderation action, guarding against self-targeting
+   * and against other admin accounts — admins aren't manageable from this
+   * panel (matching listUsers' `role: { $ne: 'admin' }` filter), only by
+   * their own account settings.
+   */
+  private async resolveModerationTarget(
+    adminId: string,
+    targetId: string,
+    selfMessage: string,
+    selfCode: string,
+  ): Promise<IUser> {
+    if (!mongoose.isValidObjectId(targetId)) {
+      throw AppError.notFound('User not found');
+    }
+    if (targetId === adminId) {
+      throw AppError.badRequest(selfMessage, selfCode);
+    }
+    const user = await User.findById(targetId);
+    if (!user) {
+      throw AppError.notFound('User not found');
+    }
+    if (user.role === 'admin') {
+      throw AppError.badRequest('Không thể thao tác trên tài khoản quản trị viên khác', 'ADMIN_TARGET');
+    }
+    return user;
+  }
+
   async updateUser(
     adminId: string,
     targetId: string,
@@ -193,13 +221,20 @@ export class AdminService {
     if (!mongoose.isValidObjectId(targetId)) {
       throw AppError.notFound('User not found');
     }
-    if (patch.role !== undefined && targetId === adminId) {
+
+    const isSelf = targetId === adminId;
+    if (patch.role !== undefined && isSelf) {
       throw AppError.badRequest('Không thể tự thay đổi vai trò của chính mình', 'SELF_ROLE_CHANGE');
     }
 
     const user = await User.findById(targetId);
     if (!user) {
       throw AppError.notFound('User not found');
+    }
+    // Self is allowed through here only for a tier-only change (blocked
+    // above for role changes); any other admin is never a valid target.
+    if (!isSelf && user.role === 'admin') {
+      throw AppError.badRequest('Không thể thao tác trên tài khoản quản trị viên khác', 'ADMIN_TARGET');
     }
     if (patch.role !== undefined) user.role = patch.role;
     if (patch.tier !== undefined) user.tier = patch.tier;
@@ -209,32 +244,25 @@ export class AdminService {
   }
 
   async banUser(adminId: string, targetId: string, isBanned: boolean): Promise<AdminUserDTO> {
-    if (!mongoose.isValidObjectId(targetId)) {
-      throw AppError.notFound('User not found');
-    }
-    if (targetId === adminId) {
-      throw AppError.badRequest('Không thể tự khóa chính mình', 'SELF_BAN');
-    }
-
-    const user = await User.findByIdAndUpdate(targetId, { isBanned }, { new: true });
-    if (!user) {
-      throw AppError.notFound('User not found');
-    }
+    const user = await this.resolveModerationTarget(
+      adminId,
+      targetId,
+      'Không thể tự khóa chính mình',
+      'SELF_BAN',
+    );
+    user.isBanned = isBanned;
+    await user.save();
     return serializeUser(user);
   }
 
   async deleteUser(adminId: string, targetId: string): Promise<void> {
-    if (!mongoose.isValidObjectId(targetId)) {
-      throw AppError.notFound('User not found');
-    }
-    if (targetId === adminId) {
-      throw AppError.badRequest('Không thể tự xóa chính mình', 'SELF_DELETE');
-    }
-
-    const result = await User.findByIdAndDelete(targetId);
-    if (!result) {
-      throw AppError.notFound('User not found');
-    }
+    const user = await this.resolveModerationTarget(
+      adminId,
+      targetId,
+      'Không thể tự xóa chính mình',
+      'SELF_DELETE',
+    );
+    await user.deleteOne();
   }
 
   async listLinks(
