@@ -7,7 +7,6 @@ const cx = (...p: Array<string | false | null | undefined>) => p.filter(Boolean)
 export function InfoRow({
   children,
   columns = 3,
-  mobileLayout,
   selected = false,
   onSelect,
   className,
@@ -15,7 +14,6 @@ export function InfoRow({
 }: {
   children: ReactNode;
   columns?: number | string; // number → equal columns; string → grid-template-columns
-  mobileLayout?: 'stack'; // opt into the <=640px reflow (see InfoRow.css)
   selected?: boolean;
   onSelect?: () => void; // presence also makes the row selectable
   className?: string;
@@ -29,7 +27,6 @@ export function InfoRow({
     <div
       className={cx('info-row', onSelect && 'is-selectable', selected && 'is-selected', className)}
       data-columns={typeof columns === 'number' ? columns : undefined}
-      data-mobile={mobileLayout}
       style={typeof columns === 'string' ? { gridTemplateColumns: columns } : undefined}
       onClick={onSelect ? selectOnBackground : undefined}
       aria-selected={onSelect ? selected : undefined}
@@ -44,23 +41,14 @@ export function InfoRow({
 export function Cell({
   children,
   align,
-  mobileSpan,
   className,
 }: {
   children: ReactNode;
   align?: 'start' | 'end';
-  mobileSpan?: boolean; // full width at <=640px (pairs with mobileLayout="stack")
   className?: string;
 }) {
   return (
-    <div
-      className={cx(
-        'info-cell',
-        align === 'end' && 'info-cell--end',
-        mobileSpan && 'info-cell--mobile-span',
-        className,
-      )}
-    >
+    <div className={cx('info-cell', align === 'end' && 'info-cell--end', className)}>
       {children}
     </div>
   );

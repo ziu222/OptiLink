@@ -1,15 +1,50 @@
+/* Đặt vị trí từng ô bằng grid-area thay vì auto-placement, để name/status có
+   thể xếp chồng trong cùng một cột trong khi url/chart/actions trải dài qua cả
+   hai hàng đó — và để có thể sắp xếp lại hoàn toàn ở layout mobile bên dưới. */
+.shortened-link-row .name-cell { grid-area: name; }
+.shortened-link-row .status-cell { grid-area: status; }
+.shortened-link-row .url-cell { grid-area: url; }
+.shortened-link-row .clicks-cell { grid-area: chart; }
+.shortened-link-row .actions-cell { grid-area: actions; }
+
 /* Ô hành động cố định ở mức 1/8; name + URL mỗi cái giữ một phần tư; ô sparkline
    chiếm phần còn lại. Chỉ giới hạn trong hàng này để giữ nguyên giao ước "các
    cột bằng nhau" của InfoRow cho prop `columns` dạng số. */
 .info-row.shortened-link-row[data-columns='4'] {
   grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 3fr) 12.5%;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'name url chart actions'
+    'status url chart actions';
 }
 
-/* Khẳng định lại kiểu xếp chồng trên mobile: quy tắc có phạm vi ở trên
-   (specificity 0,3,0) thắng quy tắc @media chung của InfoRow.css (0,2,0). */
-@media (max-width: 640px) {
+.info-row.shortened-link-row[data-columns='3'] {
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'name url actions'
+    'status url actions';
+}
+
+/* Layout xếp chồng trên mobile: name kề actions ở hàng đầu, url/status/chart
+   mỗi cái chiếm trọn một hàng riêng bên dưới, theo đúng thứ tự đó. */
+@media (max-width: 1023.98px) {
   .info-row.shortened-link-row[data-columns='4'] {
     grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      'name actions'
+      'url url'
+      'status status'
+      'chart chart';
+  }
+
+  .info-row.shortened-link-row[data-columns='3'] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      'name actions'
+      'url url'
+      'status status';
   }
 }
 
