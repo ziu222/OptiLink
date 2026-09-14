@@ -19,7 +19,7 @@ export function Hero() {
     setResult(null);
 
     if (!url.trim()) {
-      setError('Please enter a URL to shorten.');
+      setError('Vui lòng nhập một URL để rút gọn.');
       return;
     }
 
@@ -29,7 +29,7 @@ export function Hero() {
       setResult({ shortUrl: link.shortUrl, slug: link.slug });
       setUrl('');
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError('Đã có lỗi xảy ra. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -54,15 +54,15 @@ export function Hero() {
         <img
           className="hero-image"
           src={shortenIllustration}
-          alt="A long URL shortened to a short opti.link URL"
+          alt="Một URL dài được rút gọn thành URL opti.link ngắn gọn"
         />
 
         <div className="hero-copy">
           <div>
-            <h1 className="hero-title">One Link. Every Way to Connect.</h1>
+            <h1 className="hero-title">Một liên kết. Mọi cách kết nối.</h1>
             <p className="hero-lede">
-              OptiLink brings URL shortening, bio pages, and QR codes together in one workspace. Shorten a
-              link, build your page, and see exactly who&apos;s clicking.
+              OptiLink gom rút gọn liên kết, trang bio và mã QR vào chung một không gian làm việc. Rút gọn
+              liên kết, xây dựng trang của bạn, và xem chính xác ai đang nhấp vào.
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export function Hero() {
             <form onSubmit={handleShorten}>
               <div className="hero-panel">
                 <div>
-                  <label className="hero-field-label">Paste your long URL</label>
+                  <label className="hero-field-label">Dán URL dài của bạn vào đây</label>
                   <div className="hero-field-frame">
                     <input
                       type="url"
@@ -81,13 +81,13 @@ export function Hero() {
                       className="hero-input"
                     />
                     <button type="submit" disabled={loading} className="hero-button">
-                      {loading ? 'Shortening…' : 'Shorten'}
+                      {loading ? 'Đang rút gọn…' : 'Rút gọn'}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <label className="hero-field-label">Your shortened link</label>
+                  <label className="hero-field-label">Liên kết rút gọn của bạn</label>
                   <div className="hero-field-frame">
                     {result ? (
                       <a
@@ -99,7 +99,7 @@ export function Hero() {
                         {result.shortUrl}
                       </a>
                     ) : (
-                      <span className="hero-result">Your shortened link will appear here</span>
+                      <span className="hero-result">Liên kết rút gọn của bạn sẽ hiện ở đây</span>
                     )}
                     <button
                       type="button"
@@ -107,7 +107,7 @@ export function Hero() {
                       disabled={!result}
                       className="hero-button"
                     >
-                      {copied ? '✓ Copied' : 'Copy'}
+                      {copied ? '✓ Đã sao chép' : 'Sao chép'}
                     </button>
                   </div>
                 </div>
@@ -118,8 +118,8 @@ export function Hero() {
 
             {result && !user && (
               <p className="hero-upsell">
-                Want analytics, custom aliases &amp; link management?{' '}
-                <Link to="/register">Create a free account</Link>
+                Muốn có thống kê, bí danh tùy chỉnh &amp; quản lý liên kết?{' '}
+                <Link to="/register">Tạo tài khoản miễn phí</Link>
               </p>
             )}
           </div>

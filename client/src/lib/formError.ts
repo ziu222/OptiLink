@@ -24,10 +24,10 @@ export function applyServerError<T extends FieldValues>(
 
     setError('root', {
       type: 'server',
-      message: body?.error?.message ?? err.message ?? 'Request failed',
+      message: body?.error?.message ?? err.message ?? 'Yêu cầu không thành công',
     });
     return;
   }
 
-  setError('root', { type: 'server', message: 'Unexpected error, please try again' });
+  setError('root', { type: 'server', message: 'Đã xảy ra lỗi, vui lòng thử lại' });
 }

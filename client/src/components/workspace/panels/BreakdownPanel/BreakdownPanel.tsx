@@ -31,7 +31,7 @@ interface BreakdownPanelProps {
 // Pie chart + legend (left half) plus the same data as a labeled,
 // percent-ranked list with share-of-total bars (right half). Generic over any
 // single-field group-by (device, platform, browser).
-export function BreakdownPanel({ title, data, emptyMessage = 'No clicks yet.' }: BreakdownPanelProps) {
+export function BreakdownPanel({ title, data, emptyMessage = 'Chưa có lượt nhấp nào.' }: BreakdownPanelProps) {
   const hasData = data.some((point) => point.value > 0);
 
   return (
@@ -50,7 +50,7 @@ export function BreakdownPanel({ title, data, emptyMessage = 'No clicks yet.' }:
                 </Pie>
                 <Tooltip
                   formatter={(value, _name, item) => [
-                    `${value} clicks`,
+                    `${value} lượt nhấp`,
                     (item.payload as BreakdownPoint).label,
                   ]}
                 />

@@ -42,9 +42,9 @@ export function ClicksSparkline({
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
       role="img"
-      aria-label={`Clicks per hour, last 24 hours — ${total} total`}
+      aria-label={`Lượt nhấp theo giờ, 24 giờ qua — tổng ${total}`}
     >
-      <title>{`Clicks per hour, last 24h (${total} total)`}</title>
+      <title>{`Lượt nhấp theo giờ, 24 giờ qua — tổng ${total}`}</title>
       {points && (
         <polyline
           points={points}

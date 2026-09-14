@@ -39,7 +39,7 @@ export function CountryMap({ data, max }: CountryMapProps) {
                   strokeWidth={0.5}
                 >
                   <title>
-                    {geo.properties?.name ?? 'Unknown'}: {count} click{count === 1 ? '' : 's'}
+                    {geo.properties?.name ?? 'Không xác định'}: {count} lượt nhấp
                   </title>
                 </Geography>
               );

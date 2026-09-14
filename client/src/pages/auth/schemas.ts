@@ -1,23 +1,23 @@
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-  identifier: z.string().min(1, 'Enter your email or username'),
-  password: z.string().min(1, 'Password is required'),
+  identifier: z.string().min(1, 'Vui lòng nhập email hoặc tên đăng nhập'),
+  password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
 });
 
 export const registerSchema = z
   .object({
     username: z
       .string()
-      .min(3, 'Username must be at least 3 characters')
-      .max(30, 'Username must be at most 30 characters')
-      .regex(/^[a-zA-Z0-9_.-]+$/, 'Letters, numbers, dots, dashes and underscores only'),
-    email: z.email('Enter a valid email'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
+      .min(3, 'Tên đăng nhập phải có ít nhất 3 ký tự')
+      .max(30, 'Tên đăng nhập không được quá 30 ký tự')
+      .regex(/^[a-zA-Z0-9_.-]+$/, 'Chỉ được dùng chữ cái, số, dấu chấm, gạch ngang và gạch dưới'),
+    email: z.email('Vui lòng nhập một email hợp lệ'),
+    password: z.string().min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
+    confirmPassword: z.string().min(1, 'Vui lòng xác nhận mật khẩu'),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'Mật khẩu xác nhận không khớp',
     path: ['confirmPassword'],
   });
 

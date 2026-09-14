@@ -18,15 +18,15 @@ type LinkSort = 'newest' | 'oldest' | 'clicks';
 type FetchState = 'idle' | 'loading' | 'ready' | 'error';
 
 const SORT_OPTIONS: { value: LinkSort; label: string }[] = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'oldest', label: 'Oldest' },
-  { value: 'clicks', label: 'Most clicks' },
+  { value: 'newest', label: 'Mới nhất' },
+  { value: 'oldest', label: 'Cũ nhất' },
+  { value: 'clicks', label: 'Nhiều lượt nhấp nhất' },
 ];
 
 const STATUS_OPTIONS: { value: LinkStatus; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'active', label: 'Active' },
-  { value: 'inactive', label: 'Inactive' },
+  { value: 'all', label: 'Tất cả' },
+  { value: 'active', label: 'Đang hoạt động' },
+  { value: 'inactive', label: 'Ngừng hoạt động' },
 ];
 
 const PAGE_SIZE = 5;
@@ -146,7 +146,7 @@ export function AnalyticsPage() {
   const deleteSelected = useCallback(async () => {
     if (selectedIds.size === 0) return;
     const count = selectedIds.size;
-    if (!window.confirm(`Delete ${count} link${count > 1 ? 's' : ''}? This can’t be undone.`)) {
+    if (!window.confirm(`Xóa ${count} liên kết đã chọn? Không thể hoàn tác.`)) {
       return;
     }
     await Promise.allSettled([...selectedIds].map((id) => deleteLink(id)));
@@ -159,14 +159,14 @@ export function AnalyticsPage() {
     ? [
         {
           key: 'delete-selected',
-          label: `Delete selected${selectedIds.size ? ` (${selectedIds.size})` : ''}`,
+          label: `Xóa mục đã chọn${selectedIds.size ? ` (${selectedIds.size})` : ''}`,
           disabled: selectedIds.size === 0,
           danger: true,
           onSelect: deleteSelected,
         },
         {
           key: 'exit',
-          label: 'Exit multi-select',
+          label: 'Thoát chế độ chọn nhiều',
           onSelect: () => {
             setMultiSelect(false);
             setSelectedIds(new Set());
@@ -176,12 +176,12 @@ export function AnalyticsPage() {
     : [
         {
           key: 'multi',
-          label: 'Multi-select',
+          label: 'Chọn nhiều',
           onSelect: () => setMultiSelect(true),
         },
         {
           key: 'select-all',
-          label: 'Select all',
+          label: 'Chọn tất cả',
           disabled: links.length === 0,
           onSelect: () => {
             setMultiSelect(true);
@@ -192,32 +192,32 @@ export function AnalyticsPage() {
 
   return (
     <>
-      <PageHeader title="Analytics" />
+      <PageHeader title="Thống kê" />
 
       <div className="page-content">
         {overview && (
           <div className="analytics-stats">
-            <StatTile title="Total Links" value={overview.totalLinks} />
-            <StatTile title="Total Clicks" value={overview.totalClicks} />
-            <StatTile title="Clicks Today" value={overview.clicksToday} />
+            <StatTile title="Tổng số liên kết" value={overview.totalLinks} />
+            <StatTile title="Tổng lượt nhấp" value={overview.totalClicks} />
+            <StatTile title="Lượt nhấp hôm nay" value={overview.clicksToday} />
           </div>
         )}
 
         {links.length > 0 && (
           <div className="analytics-breakdown">
-            {linkAnalyticsState === 'loading' && <p className="link-list-empty">Loading…</p>}
+            {linkAnalyticsState === 'loading' && <p className="link-list-empty">Đang tải…</p>}
             {linkAnalyticsState === 'error' && (
-              <p className="link-list-empty">Couldn’t load analytics for this link.</p>
+              <p className="link-list-empty">Không thể tải thống kê cho liên kết này.</p>
             )}
             {linkAnalyticsState === 'ready' && linkAnalytics && (
               <>
                 <CountriesPanel data={linkAnalytics.locations} />
                 <BreakdownPanel
-                  title="Devices"
+                  title="Thiết bị"
                   data={linkAnalytics.devices.map((d) => ({ label: d.device, value: d.clicks }))}
                 />
                 <BreakdownPanel
-                  title="Traffic source"
+                  title="Nguồn truy cập"
                   data={linkAnalytics.sources.map((s) => ({ label: s.source, value: s.clicks }))}
                 />
               </>
@@ -226,10 +226,10 @@ export function AnalyticsPage() {
         )}
 
         <ShortenedLinksPanel
-          title="Links"
+          title="Liên kết"
           links={links}
           isLoading={loadingLinks}
-          emptyLabel={search || status !== 'all' ? 'No links match your filters.' : undefined}
+          emptyLabel={search || status !== 'all' ? 'Không có liên kết nào khớp với bộ lọc.' : undefined}
           onDeleted={() => fetchLinks()}
           selectedIds={selectedIds}
           onToggleSelect={toggleSelect}
@@ -238,13 +238,13 @@ export function AnalyticsPage() {
               search={search}
               onSearchChange={setSearch}
               onSearchSubmit={submitSearch}
-              searchPlaceholder="Search links"
+              searchPlaceholder="Tìm kiếm liên kết"
               actionsLabel={
-                multiSelect && selectedIds.size ? `Actions (${selectedIds.size})` : 'Actions'
+                multiSelect && selectedIds.size ? `Hành động (${selectedIds.size})` : 'Hành động'
               }
               menus={[
                 {
-                  ariaLabel: 'Filter by status',
+                  ariaLabel: 'Lọc theo trạng thái',
                   value: status,
                   onChange: (value) => {
                     setStatus(value as LinkStatus);
@@ -253,7 +253,7 @@ export function AnalyticsPage() {
                   options: STATUS_OPTIONS,
                 },
                 {
-                  ariaLabel: 'Sort links',
+                  ariaLabel: 'Sắp xếp liên kết',
                   value: sort,
                   onChange: (value) => {
                     setSort(value as LinkSort);

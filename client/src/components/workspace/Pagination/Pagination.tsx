@@ -52,7 +52,7 @@ export function Pagination({ page, pageCount, onChange }: PaginationProps) {
         disabled={page <= 1}
         onClick={() => onChange(page - 1)}
       >
-        Prev
+        Trước
       </button>
 
       <div className="pagination-sep" aria-hidden="true" />
@@ -67,7 +67,7 @@ export function Pagination({ page, pageCount, onChange }: PaginationProps) {
                 type="text"
                 inputMode="numeric"
                 className="pagination-input"
-                aria-label={`Go to page (1–${pageCount})`}
+                aria-label={`Đi đến trang (1–${pageCount})`}
                 placeholder="…"
                 value={draft}
                 onChange={(event) => setDraft(event.target.value.replace(/\D/g, ''))}
@@ -82,7 +82,7 @@ export function Pagination({ page, pageCount, onChange }: PaginationProps) {
                 key="gap"
                 type="button"
                 className="pagination-btn pagination-gap"
-                aria-label="Jump to a specific page"
+                aria-label="Nhảy đến một trang cụ thể"
                 onClick={openEditor}
               >
                 …
@@ -111,7 +111,7 @@ export function Pagination({ page, pageCount, onChange }: PaginationProps) {
         disabled={page >= pageCount}
         onClick={() => onChange(page + 1)}
       >
-        Next
+        Sau
       </button>
     </div>
   );

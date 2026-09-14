@@ -36,7 +36,7 @@
   gap: 2rem;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1023.98px) {
   .workspace-shell { flex-direction: column; }
   .workspace-shell > .sidebar { width: 100%; height: auto; display: grid; grid-template-columns: minmax(0,1fr) auto; border-right: 0; border-bottom: 1px solid var(--border); }
   .workspace-shell .sidebar-brand { height: auto; min-height: 52px; padding: 8px 16px; border-bottom: 0; }

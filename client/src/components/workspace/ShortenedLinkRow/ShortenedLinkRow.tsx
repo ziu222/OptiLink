@@ -56,8 +56,9 @@ interface ShortenedLinkRowProps {
   onSelect?: (id: string) => void;
 }
 
-// One row of the Shortened Links list, composed over the generic InfoRow frame:
-// a 3-column grid of name+URL / short link / actions.
+// One row of the Shortened Links list, composed over the generic InfoRow frame.
+// Placement (name/status/url/chart/actions) is explicit via grid-area — see
+// ShortenedLinkRow.css — so it can differ between the desktop and stacked layouts.
 export function ShortenedLinkRow({
   link,
   showViewDetail = true,
@@ -67,7 +68,7 @@ export function ShortenedLinkRow({
 }: ShortenedLinkRowProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const name = link.title || 'Untitle';
+  const name = link.title || 'Chưa có tiêu đề';
   const isActive = link.isActive ?? true;
   const hourly = link.hourlyClicks;
   const lastHour = hourly?.at(-1) ?? 0;
@@ -81,22 +82,22 @@ export function ShortenedLinkRow({
   };
 
   const handleDelete = async () => {
-    if (!window.confirm(`Delete “${name}”? This can’t be undone.`)) return;
+    if (!window.confirm(`Xóa “${name}”? Không thể hoàn tác.`)) return;
     try {
       await deleteLink(link.id);
       onDeleted?.(link.id);
     } catch {
-      window.alert('Could not delete this link. Please try again.');
+      window.alert('Không thể xóa liên kết này. Vui lòng thử lại.');
     }
   };
 
   const menuItems: MenuItem[] = [
-    { key: 'access', label: 'Access link', icon: menuIcons.access, onSelect: handleAccess },
+    { key: 'access', label: 'Truy cập liên kết', icon: menuIcons.access, onSelect: handleAccess },
     ...(showViewDetail
       ? [
           {
             key: 'detail',
-            label: 'View detail',
+            label: 'Xem chi tiết',
             icon: menuIcons.detail,
             onSelect: () => navigate(`/dashboard/links/${link.id}`),
           },
@@ -104,14 +105,14 @@ export function ShortenedLinkRow({
       : []),
     {
       key: 'analytics',
-      label: 'View analytics',
+      label: 'Xem phân tích',
       icon: menuIcons.analytics,
       onSelect: () => navigate(`/dashboard/analytics/${link.id}`),
     },
-    { key: 'copy', label: 'Copy link', icon: menuIcons.copy, onSelect: handleCopy },
+    { key: 'copy', label: 'Sao chép liên kết', icon: menuIcons.copy, onSelect: handleCopy },
     {
       key: 'delete',
-      label: 'Delete link',
+      label: 'Xóa liên kết',
       icon: menuIcons.delete,
       onSelect: handleDelete,
       danger: true,
@@ -122,40 +123,42 @@ export function ShortenedLinkRow({
     <InfoRow
       className="shortened-link-row"
       columns={hourly ? 4 : 3}
-      mobileLayout="stack"
       selected={selected}
       onSelect={onSelect ? () => onSelect(link.id) : undefined}
-      ariaLabel={`Link ${name}`}
+      ariaLabel={`Liên kết ${name}`}
     >
-      <Cell>
+      <Cell className="name-cell">
         <Main>{name}</Main>
-        <Sub>Created by {user?.fullName || user?.username || 'Unknown'}</Sub>
+        <Sub>Tạo bởi {user?.fullName || user?.username || 'Không xác định'}</Sub>
+      </Cell>
+
+      <Cell className="status-cell">
         <Extra>
-          <Status active={isActive}>{isActive ? 'Active' : 'Inactive'}</Status>
+          <Status active={isActive}>{isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}</Status>
           <Separator />
-          <span>{link.clicks.toLocaleString()} clicks</span>
+          <span>{link.clicks.toLocaleString()} lượt nhấp</span>
         </Extra>
       </Cell>
 
-      <Cell mobileSpan>
+      <Cell className="url-cell">
         <Main href={link.shortUrl}>{link.shortUrl}</Main>
         <Sub href={link.originalUrl}>{link.originalUrl}</Sub>
       </Cell>
 
       {hourly && (
-        <Cell mobileSpan className="clicks-cell">
+        <Cell className="clicks-cell">
           <div className="clicks-cell-row">
             <ClicksSparkline data={hourly} />
             <span className="clicks-cell-total">
-              +{lastHour} click{lastHour === 1 ? '' : 's'}
+              +{lastHour} lượt nhấp
             </span>
           </div>
         </Cell>
       )}
 
-      <Cell align="end">
+      <Cell align="end" className="actions-cell">
         <Actions>
-          <KebabMenu items={menuItems} ariaLabel={`Options for ${name}`} />
+          <KebabMenu items={menuItems} ariaLabel={`Tùy chọn cho ${name}`} />
         </Actions>
       </Cell>
     </InfoRow>

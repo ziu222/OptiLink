@@ -3,39 +3,39 @@ import './FAQ.css';
 
 const faqs: { question: string; answer: ReactNode }[] = [
   {
-    question: 'What is OptiLink?',
+    question: 'OptiLink là gì?',
     answer:
-      'One platform for managing your links: shorten URLs, build a bio page, and generate QR codes, all from one workspace.',
+      'Một nền tảng duy nhất để quản lý liên kết của bạn: rút gọn URL, xây dựng trang bio, và tạo mã QR, tất cả từ một không gian làm việc.',
   },
   {
-    question: 'How much does it cost?',
+    question: 'Chi phí là bao nhiêu?',
     answer: (
       <>
-        Free to get started. The Premium plan unlocks custom aliases, password protection, and advanced
-        analytics. See <a href="/#pricing">Pricing</a> above.
+        Miễn phí để bắt đầu. Gói Premium mở khóa bí danh tùy chỉnh, bảo vệ bằng mật khẩu, và thống kê nâng
+        cao. Xem <a href="/#pricing">Bảng giá</a> ở trên.
       </>
     ),
   },
   {
-    question: 'Do I need an account to shorten a link?',
-    answer: 'Yes. Creating an account lets you manage, protect, and track every link, bio page, and QR code you make.',
+    question: 'Tôi có cần tài khoản để rút gọn liên kết không?',
+    answer: 'Có. Tạo tài khoản cho phép bạn quản lý, bảo vệ và theo dõi mọi liên kết, trang bio và mã QR bạn tạo ra.',
   },
   {
-    question: 'Can I customize my bio page?',
+    question: 'Tôi có thể tùy chỉnh trang bio của mình không?',
     answer:
-      'Yes. Pick from 5 layout themes, then drag and drop blocks such as product cards, tabs, search, and category filters, with a live preview as you edit.',
+      'Có. Chọn từ 5 giao diện bố cục, sau đó kéo thả các khối như thẻ sản phẩm, thẻ tab, tìm kiếm, và bộ lọc danh mục, với xem trước trực tiếp khi bạn chỉnh sửa.',
   },
   {
-    question: 'Do QR codes work for any link?',
-    answer: 'Yes. Every short link and bio page gets a downloadable QR code, with scans tracked separately from clicks.',
+    question: 'Mã QR có hoạt động với mọi liên kết không?',
+    answer: 'Có. Mỗi liên kết rút gọn và trang bio đều có một mã QR có thể tải xuống, với lượt quét được theo dõi riêng biệt với lượt nhấp.',
   },
   {
-    question: 'Can I put a password on a link or make it expire?',
-    answer: 'Yes. Access Control lets you require a password before redirect, set an expiration date, or cap the number of clicks a link accepts.',
+    question: 'Tôi có thể đặt mật khẩu cho liên kết hoặc cho nó hết hạn không?',
+    answer: 'Có. Kiểm soát truy cập cho phép bạn yêu cầu mật khẩu trước khi chuyển hướng, đặt ngày hết hạn, hoặc giới hạn số lượt nhấp mà liên kết chấp nhận.',
   },
   {
-    question: 'What happens after someone clicks my link or scans my QR code?',
-    answer: 'They land on your destination, and the visit is recorded in your analytics, broken down by country, device, and browser.',
+    question: 'Điều gì xảy ra sau khi ai đó nhấp vào liên kết hoặc quét mã QR của tôi?',
+    answer: 'Họ sẽ đến đích của bạn, và lượt truy cập được ghi lại trong thống kê của bạn, phân tích theo quốc gia, thiết bị và trình duyệt.',
   },
 ];
 
@@ -43,7 +43,7 @@ export function FAQ() {
   return (
     <section id="faq" className="home-section">
       <div className="home-container">
-        <h2 className="home-heading home-heading--center">Frequently asked questions</h2>
+        <h2 className="home-heading home-heading--center">Câu hỏi thường gặp</h2>
 
         <div className="faq-list">
           {faqs.map(({ question, answer }) => (

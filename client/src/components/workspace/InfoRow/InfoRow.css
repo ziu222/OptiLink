@@ -110,16 +110,3 @@ a.info-cell-main:hover {
   align-items: center;
   gap: 0.5rem;
 }
-
-/* Responsive: mobileLayout="stack" thu hàng lại thành một cột chính co giãn +
-   một cột đuôi tự động, các ô mobileSpan rớt xuống chiếm trọn chiều ngang phía
-   dưới. Đặt sau các quy tắc [data-columns] để thắng khi specificity bằng nhau. */
-@media (max-width: 640px) {
-  .info-row[data-mobile='stack'] {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .info-row[data-mobile='stack'] .info-cell--mobile-span {
-    grid-column: 1 / -1;
-  }
-}

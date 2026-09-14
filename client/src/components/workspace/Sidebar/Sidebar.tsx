@@ -12,7 +12,7 @@ const iconProps = {
 
 const navItems = [
   {
-    label: 'Shorten Link',
+    label: 'Rút gọn liên kết',
     to: '/dashboard',
     end: true,
     icon: (
@@ -26,7 +26,7 @@ const navItems = [
     ),
   },
   {
-    label: 'QR Code',
+    label: 'Mã QR',
     to: '/dashboard/qr',
     end: false,
     icon: (
@@ -59,7 +59,7 @@ const navItems = [
     ),
   },
   {
-    label: 'Bio Page',
+    label: 'Trang Bio',
     to: '/builder',
     end: false,
     icon: (
@@ -73,7 +73,7 @@ const navItems = [
     ),
   },
   {
-    label: 'Analytics',
+    label: 'Phân tích',
     to: '/dashboard/analytics',
     end: false,
     icon: (
@@ -87,7 +87,7 @@ const navItems = [
     ),
   },
   {
-    label: 'Setting',
+    label: 'Cài đặt',
     to: '/dashboard/settings',
     end: false,
     icon: (
@@ -136,12 +136,12 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <Link to="/dashboard/profile" className="sidebar-profile" title="My Profile">
+        <Link to="/dashboard/profile" className="sidebar-profile" title="Hồ sơ của tôi">
           <span className="sidebar-avatar">
             {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
           </span>
           <div className="sidebar-profile-text">
-            <p className="sidebar-profile-name">{displayName || 'User'}</p>
+            <p className="sidebar-profile-name">{displayName || 'Người dùng'}</p>
             <p className="sidebar-profile-email">{user?.email}</p>
           </div>
         </Link>
@@ -153,7 +153,7 @@ export function Sidebar() {
               d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25"
             />
           </svg>
-          Log out
+          Đăng xuất
         </button>
       </div>
     </aside>

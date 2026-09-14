@@ -23,7 +23,7 @@ export function PricingCard({ tier, ctaTo, ctaLabel }: PricingCardProps) {
         <h3 className="tier-name">{tier.name}</h3>
         <p className="tier-price">
           {tier.price}
-          <span>/month</span>
+          <span>/tháng</span>
         </p>
       </div>
 

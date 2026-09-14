@@ -8,7 +8,7 @@ import { getLink } from '../../api/links';
 import type { ShortenedLink } from '../../api/links';
 import './workspace.css';
 
-const BREADCRUMB = [{ label: 'Shorten Link', to: '/dashboard' }];
+const BREADCRUMB = [{ label: 'Rút gọn liên kết', to: '/dashboard' }];
 
 export function LinkDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -31,10 +31,10 @@ export function LinkDetailPage() {
       <>
         <PageHeader
           breadcrumb={BREADCRUMB}
-          title={state === 'error' ? 'Link not found' : 'Loading…'}
+          title={state === 'error' ? 'Không tìm thấy liên kết' : 'Đang tải…'}
         />
         {state === 'error' && (
-          <p className="link-list-empty">This link doesn’t exist or isn’t yours.</p>
+          <p className="link-list-empty">Liên kết này không tồn tại hoặc không thuộc về bạn.</p>
         )}
       </>
     );
@@ -42,10 +42,10 @@ export function LinkDetailPage() {
 
   return (
     <>
-      <PageHeader breadcrumb={BREADCRUMB} title={link.title || 'Untitle'} />
+      <PageHeader breadcrumb={BREADCRUMB} title={link.title || 'Chưa có tiêu đề'} />
       <div className="page-content">
         <ShortenedLinksPanel
-          title="Shortened Link"
+          title="Liên kết đã rút gọn"
           links={[link]}
           showViewDetail={false}
           onDeleted={() => navigate('/dashboard')}

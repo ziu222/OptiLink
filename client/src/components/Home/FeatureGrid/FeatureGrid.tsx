@@ -16,8 +16,8 @@ interface Feature {
 
 const features: Feature[] = [
   {
-    title: 'Custom short links',
-    description: 'Brand every link with a memorable alias instead of a random slug.',
+    title: 'Liên kết rút gọn tùy chỉnh',
+    description: 'Gắn thương hiệu cho mỗi liên kết bằng một bí danh dễ nhớ thay vì một chuỗi ngẫu nhiên.',
     icon: (
       <svg {...iconProps}>
         <path
@@ -29,8 +29,8 @@ const features: Feature[] = [
     ),
   },
   {
-    title: 'Bio Page builder',
-    description: 'Drag and drop blocks, pick from 5 layout themes, and preview changes in real time.',
+    title: 'Trình xây dựng trang Bio',
+    description: 'Kéo thả các khối nội dung, chọn từ 5 giao diện bố cục, và xem trước thay đổi theo thời gian thực.',
     icon: (
       <svg {...iconProps}>
         <path
@@ -42,8 +42,8 @@ const features: Feature[] = [
     ),
   },
   {
-    title: 'QR codes',
-    description: 'Every link gets a downloadable QR code, with scans tracked separately from clicks.',
+    title: 'Mã QR',
+    description: 'Mỗi liên kết đều có một mã QR có thể tải xuống, với lượt quét được theo dõi riêng biệt với lượt nhấp.',
     icon: (
       <svg {...iconProps}>
         <path
@@ -60,8 +60,8 @@ const features: Feature[] = [
     ),
   },
   {
-    title: 'Access Control',
-    description: 'Require a password, set an expiry, or cap clicks on any link, no separate tool required.',
+    title: 'Kiểm soát truy cập',
+    description: 'Yêu cầu mật khẩu, đặt thời hạn, hoặc giới hạn số lượt nhấp cho bất kỳ liên kết nào, không cần công cụ riêng.',
     icon: (
       <svg {...iconProps}>
         <path
@@ -73,8 +73,8 @@ const features: Feature[] = [
     ),
   },
   {
-    title: 'Analytics',
-    description: 'Clicks over time, plus country, device, and browser breakdowns for every link.',
+    title: 'Thống kê',
+    description: 'Lượt nhấp theo thời gian, cùng phân tích theo quốc gia, thiết bị và trình duyệt cho mỗi liên kết.',
     icon: (
       <svg {...iconProps}>
         <path
@@ -86,8 +86,8 @@ const features: Feature[] = [
     ),
   },
   {
-    title: 'One workspace',
-    description: 'Manage every link, bio page, and QR code you own from a single dashboard.',
+    title: 'Một không gian làm việc',
+    description: 'Quản lý mọi liên kết, trang bio và mã QR bạn sở hữu từ một bảng điều khiển duy nhất.',
     icon: (
       <svg {...iconProps}>
         <path
@@ -104,10 +104,10 @@ export function FeatureGrid() {
   return (
     <section id="features" className="home-section home-section--muted">
       <div className="home-container">
-        <h2 className="home-heading home-heading--center">Everything you need, built in.</h2>
+        <h2 className="home-heading home-heading--center">Mọi thứ bạn cần, có sẵn ngay.</h2>
         <p className="home-subheading home-subheading--center">
-          No extras to install and no separate tools. Shortening, bio pages, and QR codes share the same
-          workspace.
+          Không cần cài thêm, không cần công cụ riêng biệt. Rút gọn liên kết, trang bio và mã QR cùng chung
+          một không gian làm việc.
         </p>
 
         <div className="feature-grid">

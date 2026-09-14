@@ -100,10 +100,10 @@ export function Toolbar({
   search,
   onSearchChange,
   onSearchSubmit,
-  searchPlaceholder = 'Search',
+  searchPlaceholder = 'Tìm kiếm',
   menus = [],
   actions,
-  actionsLabel = 'Actions',
+  actionsLabel = 'Hành động',
 }: ToolbarProps) {
   return (
     <div className="toolbar">

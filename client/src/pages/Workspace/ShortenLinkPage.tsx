@@ -24,21 +24,21 @@ type LinkStatus = 'all' | 'active' | 'inactive';
 type LinkSort = 'newest' | 'oldest' | 'clicks';
 
 const SORT_OPTIONS: { value: LinkSort; label: string }[] = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'oldest', label: 'Oldest' },
-  { value: 'clicks', label: 'Most clicks' },
+  { value: 'newest', label: 'Mới nhất' },
+  { value: 'oldest', label: 'Cũ nhất' },
+  { value: 'clicks', label: 'Nhiều lượt nhấp nhất' },
 ];
 
 const STATUS_OPTIONS: { value: LinkStatus; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'active', label: 'Active' },
-  { value: 'inactive', label: 'Inactive' },
+  { value: 'all', label: 'Tất cả' },
+  { value: 'active', label: 'Đang hoạt động' },
+  { value: 'inactive', label: 'Ngừng hoạt động' },
 ];
 
 const TAB_ITEMS: { id: OptionTab; label: string }[] = [
-  { id: 'none', label: 'None' },
-  { id: 'basic', label: 'Basic' },
-  { id: 'access', label: 'Access Control' },
+  { id: 'none', label: 'Không' },
+  { id: 'basic', label: 'Cơ bản' },
+  { id: 'access', label: 'Kiểm soát truy cập' },
 ];
 
 const PAGE_SIZE = 5;
@@ -138,7 +138,7 @@ export function ShortenLinkPage() {
   const deleteSelected = useCallback(async () => {
     if (selectedIds.size === 0) return;
     const count = selectedIds.size;
-    if (!window.confirm(`Delete ${count} link${count > 1 ? 's' : ''}? This can’t be undone.`)) {
+    if (!window.confirm(`Xóa ${count} liên kết đã chọn? Không thể hoàn tác.`)) {
       return;
     }
     await Promise.allSettled([...selectedIds].map((id) => deleteLink(id)));
@@ -151,14 +151,14 @@ export function ShortenLinkPage() {
     ? [
         {
           key: 'delete-selected',
-          label: `Delete selected${selectedIds.size ? ` (${selectedIds.size})` : ''}`,
+          label: `Xóa mục đã chọn${selectedIds.size ? ` (${selectedIds.size})` : ''}`,
           disabled: selectedIds.size === 0,
           danger: true,
           onSelect: deleteSelected,
         },
         {
           key: 'exit',
-          label: 'Exit multi-select',
+          label: 'Thoát chế độ chọn nhiều',
           onSelect: () => {
             setMultiSelect(false);
             setSelectedIds(new Set());
@@ -168,12 +168,12 @@ export function ShortenLinkPage() {
     : [
         {
           key: 'multi',
-          label: 'Multi-select',
+          label: 'Chọn nhiều',
           onSelect: () => setMultiSelect(true),
         },
         {
           key: 'select-all',
-          label: 'Select all',
+          label: 'Chọn tất cả',
           disabled: links.length === 0,
           onSelect: () => {
             setMultiSelect(true);
@@ -201,9 +201,9 @@ export function ShortenLinkPage() {
 
   return (
     <>
-      <PageHeader title="Shorten Link" />
+      <PageHeader title="Rút gọn liên kết" />
       <div className="page-content">
-        <ContentPanel title="Shorten a Link">
+        <ContentPanel title="Tạo liên kết rút gọn">
           <form onSubmit={onSubmit} className="shorten-form">
             {errors.root && <p className="profile-error">{errors.root.message}</p>}
 
@@ -216,7 +216,7 @@ export function ShortenLinkPage() {
                   {...register('url')}
                 />
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Shortening…' : 'Shorten'}
+                  {isSubmitting ? 'Đang rút gọn…' : 'Rút gọn'}
                 </Button>
               </div>
               {errors.url && <em className="profile-field-error">{errors.url.message}</em>}
@@ -225,7 +225,7 @@ export function ShortenLinkPage() {
             <OptionTabs
               items={TAB_ITEMS}
               value={activeTab}
-              ariaLabel="Optional link settings"
+              ariaLabel="Cài đặt liên kết (tùy chọn)"
               onChange={(id) =>
                 setActiveTab((current) => (id !== 'none' && current === id ? 'none' : id))
               }
@@ -235,13 +235,13 @@ export function ShortenLinkPage() {
               <>
                 <div className="shorten-tab-content">
                   <Field
-                    label="Title"
-                    hint="A label for this link in your dashboard. Not shown to visitors."
+                    label="Tiêu đề"
+                    hint="Nhãn hiển thị cho liên kết này trong bảng điều khiển của bạn. Không hiển thị với người truy cập."
                     error={errors.title?.message}
                   >
                     <input
                       type="text"
-                      placeholder="Spring campaign landing page"
+                      placeholder="Trang đích chiến dịch mùa xuân"
                       className="field-input"
                       {...register('title')}
                     />
@@ -249,14 +249,14 @@ export function ShortenLinkPage() {
 
                   <Field
                     label="Slug"
-                    hint="The custom ending of your short URL (opti.link/your-slug). Leave blank for a random one."
+                    hint="Phần đuôi tùy chỉnh của URL rút gọn (opti.link/slug-cua-ban). Để trống nếu muốn tạo ngẫu nhiên."
                     error={errors.slug?.message}
                   >
                     <div className="shorten-slug-frame">
                       <span className="shorten-slug-prefix">opti.link/</span>
                       <input
                         type="text"
-                        placeholder="my-promo"
+                        placeholder="khuyen-mai"
                         className="shorten-slug-input"
                         {...register('slug')}
                       />
@@ -266,31 +266,31 @@ export function ShortenLinkPage() {
 
                 <div className="shorten-tab-content">
                   <Field
-                    label="Redirect Mode"
-                    hint="Standard sends visitors straight to the destination. Splash shows a brief interstitial first."
+                    label="Chế độ chuyển hướng"
+                    hint="Chuẩn chuyển thẳng người truy cập đến đích. Trang chờ hiển thị một trang trung gian ngắn trước khi chuyển hướng."
                   >
                     <InputSelect
-                      ariaLabel="Redirect mode"
+                      ariaLabel="Chế độ chuyển hướng"
                       value={watch('redirectMode')}
                       onChange={(value) => setValue('redirectMode', value)}
                       options={[
-                        { value: 'standard', label: 'Standard' },
-                        { value: 'splash', label: 'Splash' },
+                        { value: 'standard', label: 'Chuẩn' },
+                        { value: 'splash', label: 'Trang chờ' },
                       ]}
                     />
                   </Field>
 
                   <Field
-                    label="Status"
-                    hint="Active links redirect; inactive links are created but won't redirect yet."
+                    label="Trạng thái"
+                    hint="Liên kết đang hoạt động sẽ chuyển hướng; liên kết ngừng hoạt động vẫn được tạo nhưng chưa chuyển hướng."
                   >
                     <InputSelect
-                      ariaLabel="Status"
+                      ariaLabel="Trạng thái"
                       value={watch('status')}
                       onChange={(value) => setValue('status', value)}
                       options={[
-                        { value: 'active', label: 'Active' },
-                        { value: 'inactive', label: 'Inactive' },
+                        { value: 'active', label: 'Đang hoạt động' },
+                        { value: 'inactive', label: 'Ngừng hoạt động' },
                       ]}
                     />
                   </Field>
@@ -301,26 +301,25 @@ export function ShortenLinkPage() {
             {activeTab === 'access' && (
               <div className="shorten-tab-content">
                 <Field
-                  label="Password"
-                  hint="Require visitors to enter a password before the link redirects."
+                  label="Mật khẩu"
+                  hint="Yêu cầu người truy cập nhập mật khẩu trước khi liên kết chuyển hướng."
                   error={errors.password?.message}
                 >
                   <input
                     type="password"
-                    placeholder="Leave blank for no password"
+                    placeholder="Để trống nếu không cần mật khẩu"
                     className="field-input"
                     {...register('password')}
                   />
                 </Field>
 
                 <Field
-                  label="Expiry"
-                  hint="Date and time after which the link stops working. Leave blank for no expiry."
+                  label="Thời hạn"
+                  hint="Ngày giờ mà sau đó liên kết ngừng hoạt động. Để trống nếu không giới hạn thời hạn."
                   error={errors.expiresAt?.message}
                 >
                   <input
                     type="datetime-local"
-                    lang="en-GB"
                     className="field-input"
                     {...register('expiresAt')}
                   />
@@ -335,7 +334,7 @@ export function ShortenLinkPage() {
           links={links}
           isLoading={loadingLinks}
           emptyLabel={
-            search || status !== 'all' ? 'No links match your filters.' : undefined
+            search || status !== 'all' ? 'Không có liên kết nào khớp với bộ lọc.' : undefined
           }
           onDeleted={() => fetchLinks()}
           selectedIds={selectedIds}
@@ -345,13 +344,13 @@ export function ShortenLinkPage() {
               search={search}
               onSearchChange={setSearch}
               onSearchSubmit={submitSearch}
-              searchPlaceholder="Search links"
+              searchPlaceholder="Tìm kiếm liên kết"
               actionsLabel={
-                multiSelect && selectedIds.size ? `Actions (${selectedIds.size})` : 'Actions'
+                multiSelect && selectedIds.size ? `Hành động (${selectedIds.size})` : 'Hành động'
               }
               menus={[
                 {
-                  ariaLabel: 'Filter by status',
+                  ariaLabel: 'Lọc theo trạng thái',
                   value: status,
                   onChange: (value) => {
                     setStatus(value as LinkStatus);
@@ -360,7 +359,7 @@ export function ShortenLinkPage() {
                   options: STATUS_OPTIONS,
                 },
                 {
-                  ariaLabel: 'Sort links',
+                  ariaLabel: 'Sắp xếp liên kết',
                   value: sort,
                   onChange: (value) => {
                     setSort(value as LinkSort);

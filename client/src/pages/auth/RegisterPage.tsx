@@ -44,16 +44,16 @@ export function RegisterPage() {
           <PictureFrame
             className="authform-frame"
             src={heroIllustration}
-            alt="Shorten a long link into a branded opti.link URL"
+            alt="Rút gọn một liên kết dài thành URL opti.link mang thương hiệu riêng"
           />
 
           <form className="authform-panel" onSubmit={onSubmit} noValidate>
-            <h1 className="authform-title">Create an Account</h1>
+            <h1 className="authform-title">Tạo tài khoản</h1>
 
             {errors.root && <p className="authform-error">{errors.root.message}</p>}
 
             <label className="authform-field">
-              <span className="authform-label">Username</span>
+              <span className="authform-label">Tên đăng nhập</span>
               <input
                 type="text"
                 autoComplete="username"
@@ -70,7 +70,7 @@ export function RegisterPage() {
             </label>
 
             <label className="authform-field">
-              <span className="authform-label">Password</span>
+              <span className="authform-label">Mật khẩu</span>
               <input
                 type="password"
                 autoComplete="new-password"
@@ -81,7 +81,7 @@ export function RegisterPage() {
             </label>
 
             <label className="authform-field">
-              <span className="authform-label">Confirm password</span>
+              <span className="authform-label">Xác nhận mật khẩu</span>
               <input
                 type="password"
                 autoComplete="new-password"
@@ -94,14 +94,14 @@ export function RegisterPage() {
             </label>
 
             <button type="submit" disabled={isSubmitting} className="authform-submit">
-              {isSubmitting ? 'Creating account…' : 'Create account'}
+              {isSubmitting ? 'Đang tạo tài khoản…' : 'Tạo tài khoản'}
               {!isSubmitting && <span>→</span>}
             </button>
 
             <OAuthButtons />
 
             <p className="authform-footer">
-              Already have an account? <Link to="/login">Log in</Link>
+              Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
             </p>
           </form>
         </div>

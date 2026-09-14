@@ -2,19 +2,19 @@ import { Link } from 'react-router-dom';
 import './footer.css';
 
 const footerLinks: Record<string, { label: string; to: string }[]> = {
-  Product: [
-    { label: 'Features', to: '/#features' },
-    { label: 'Pricing', to: '/#pricing' },
-    { label: 'Changelog', to: '#' },
+  'Sản phẩm': [
+    { label: 'Tính năng', to: '/#features' },
+    { label: 'Bảng giá', to: '/#pricing' },
+    { label: 'Nhật ký thay đổi', to: '#' },
   ],
-  Company: [
-    { label: 'FAQ', to: '/#faq' },
+  'Công ty': [
+    { label: 'Hỏi đáp', to: '/#faq' },
     { label: 'Blog', to: '#' },
-    { label: 'Careers', to: '#' },
+    { label: 'Tuyển dụng', to: '#' },
   ],
-  Legal: [
-    { label: 'Privacy Policy', to: '#' },
-    { label: 'Terms of Service', to: '#' },
+  'Pháp lý': [
+    { label: 'Chính sách bảo mật', to: '#' },
+    { label: 'Điều khoản dịch vụ', to: '#' },
   ],
 };
 
@@ -27,7 +27,7 @@ export function Footer() {
             OptiLink
           </Link>
           <p className="site-footer-tagline">
-            Shorten, share, and track every link — all in one place.
+            Rút gọn, chia sẻ và theo dõi mọi liên kết — tất cả trong một nơi.
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="site-footer-bottom">© {new Date().getFullYear()} OptiLink. All rights reserved.</div>
+      <div className="site-footer-bottom">© {new Date().getFullYear()} OptiLink. Đã đăng ký bản quyền.</div>
     </footer>
   );
 }

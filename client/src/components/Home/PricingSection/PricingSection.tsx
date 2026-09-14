@@ -6,25 +6,25 @@ import './PricingSection.css';
 const tiers: PricingTier[] = [
   {
     id: 'FREE',
-    name: 'Free',
+    name: 'Miễn phí',
     price: '$0',
     perks: [
-      'Shorten and manage your links',
-      'One bio page with unlimited blocks',
-      'Downloadable QR codes',
-      'Basic click analytics',
+      'Rút gọn và quản lý liên kết của bạn',
+      'Một trang bio với số khối nội dung không giới hạn',
+      'Mã QR có thể tải xuống',
+      'Thống kê lượt nhấp cơ bản',
     ],
   },
   {
     id: 'PREMIUM',
-    name: 'Premium',
+    name: 'Cao cấp',
     price: '$9',
     featured: true,
     perks: [
-      'Everything in Free',
-      'Custom aliases and links you can lock with a password',
-      'Advanced analytics by country, device, and browser',
-      'Priority support',
+      'Mọi thứ trong gói Miễn phí',
+      'Bí danh tùy chỉnh và liên kết có thể khóa bằng mật khẩu',
+      'Thống kê nâng cao theo quốc gia, thiết bị và trình duyệt',
+      'Hỗ trợ ưu tiên',
     ],
   },
 ];
@@ -33,14 +33,14 @@ export function PricingSection() {
   const { status } = useAuth();
   const authed = status === 'authenticated';
   const ctaTo = authed ? '/dashboard' : '/register';
-  const ctaLabel = authed ? 'Go to dashboard' : 'Get started';
+  const ctaLabel = authed ? 'Đến bảng điều khiển' : 'Bắt đầu ngay';
 
   return (
     <section id="pricing" className="home-section">
       <div className="home-container">
-        <h2 className="home-heading home-heading--center">Simple, transparent pricing.</h2>
+        <h2 className="home-heading home-heading--center">Giá cả đơn giản, minh bạch.</h2>
         <p className="home-subheading home-subheading--center">
-          Start for free. Upgrade to Premium whenever you need more from your links.
+          Bắt đầu miễn phí. Nâng cấp lên gói Cao cấp bất cứ khi nào bạn cần nhiều hơn từ liên kết của mình.
         </p>
 
         <div className="tier-grid">

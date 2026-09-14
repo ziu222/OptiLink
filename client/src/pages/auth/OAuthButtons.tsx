@@ -38,14 +38,14 @@ export function OAuthButtons() {
   const [notice, setNotice] = useState('');
 
   const handleClick = (provider: 'Google' | 'GitHub') => {
-    setNotice(`${provider} sign-in is coming soon.`);
+    setNotice(`Đăng nhập bằng ${provider} sẽ sớm ra mắt.`);
   };
 
   return (
     <>
       <div className="authform-divider">
         <span className="authform-divider-line" />
-        <span className="authform-divider-text">or continue with</span>
+        <span className="authform-divider-text">hoặc tiếp tục với</span>
         <span className="authform-divider-line" />
       </div>
 
