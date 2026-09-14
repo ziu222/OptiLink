@@ -1,6 +1,7 @@
 import { KebabMenu } from '../../workspace/menu/KebabMenu/KebabMenu';
 import type { MenuItem } from '../../workspace/menu/MenuPopup/MenuPopup';
 import { InfoRow, Cell, Main, Sub, Extra, Status, Actions } from '../../workspace/InfoRow/InfoRow';
+import { getErrorMessage } from '../../../lib/formError';
 import * as adminApi from '../../../api/admin';
 import type { AdminUser } from '../../../api/admin';
 import './AdminUserRow.css';
@@ -58,8 +59,8 @@ export function AdminUserRow({
     try {
       const updated = await adminApi.banUser(user.id, !user.isBanned);
       onChanged(updated);
-    } catch {
-      window.alert('Không thể khóa/mở khóa người dùng này.');
+    } catch (err) {
+      window.alert(getErrorMessage(err, 'Không thể khóa/mở khóa người dùng này.'));
     }
   };
 
@@ -68,8 +69,8 @@ export function AdminUserRow({
     try {
       await adminApi.deleteUser(user.id);
       onDeleted(user.id);
-    } catch {
-      window.alert('Không thể xóa người dùng này. Vui lòng thử lại.');
+    } catch (err) {
+      window.alert(getErrorMessage(err, 'Không thể xóa người dùng này. Vui lòng thử lại.'));
     }
   };
 
