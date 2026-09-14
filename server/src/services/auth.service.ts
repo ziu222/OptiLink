@@ -66,6 +66,9 @@ export class AuthService {
     if (!user || !(await user.comparePassword(input.password))) {
       throw AppError.unauthorized('Invalid email/username or password');
     }
+    if (user.isBanned) {
+      throw AppError.forbidden('Tài khoản này đã bị khóa', 'ACCOUNT_BANNED');
+    }
 
     const tokens = this.issueTokens(user);
     await this.persistRefreshToken(user, tokens.refreshToken);
@@ -83,6 +86,9 @@ export class AuthService {
     const user = await User.findById(payload.sub).select('+refreshTokenHash');
     if (!user || !user.refreshTokenHash || user.refreshTokenHash !== hashToken(refreshToken)) {
       throw AppError.unauthorized('Invalid refresh token', 'INVALID_TOKEN');
+    }
+    if (user.isBanned) {
+      throw AppError.forbidden('Tài khoản này đã bị khóa', 'ACCOUNT_BANNED');
     }
 
     const tokens = this.issueTokens(user);

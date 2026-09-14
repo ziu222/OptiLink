@@ -1,7 +1,22 @@
 import { Router } from 'express';
 import { adminController } from '../controllers/admin.controller.js';
+import { authenticate, requireAdmin } from '../middleware/auth.middleware.js';
+import { validate } from '../middleware/validate.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import {
+  banUserSchema,
+  listAdminLinksQuerySchema,
+  listUsersQuerySchema,
+  updateAdminLinkSchema,
+  updateUserSchema,
+} from '../validators/admin.validators.js';
 
 const router = Router();
+
+// Every admin route requires a valid, authenticated admin — applied per-route
+// below (matching the rest of the codebase's routing convention) rather than
+// once at the router mount in app.ts.
+const admin = [authenticate, requireAdmin];
 
 /**
  * @swagger
@@ -24,7 +39,7 @@ const router = Router();
  *       200:
  *         description: Thành công
  */
-router.get('/stats', adminController.getGlobalStats);
+router.get('/stats', ...admin, asyncHandler(adminController.getGlobalStats));
 
 /**
  * @swagger
@@ -38,7 +53,7 @@ router.get('/stats', adminController.getGlobalStats);
  *       200:
  *         description: Thành công
  */
-router.get('/stats/growth', adminController.getGrowthStats);
+router.get('/stats/growth', ...admin, asyncHandler(adminController.getGrowthStats));
 
 // ── Users ────────────────────────────────────────────────────────────
 
@@ -54,7 +69,12 @@ router.get('/stats/growth', adminController.getGrowthStats);
  *       200:
  *         description: Thành công
  */
-router.get('/users', adminController.getUsers);
+router.get(
+  '/users',
+  ...admin,
+  validate(listUsersQuerySchema, 'query'),
+  asyncHandler(adminController.getUsers),
+);
 
 /**
  * @swagger
@@ -74,7 +94,7 @@ router.get('/users', adminController.getUsers);
  *       200:
  *         description: Thành công
  */
-router.get('/users/:id', adminController.getUserById);
+router.get('/users/:id', ...admin, asyncHandler(adminController.getUserById));
 
 /**
  * @swagger
@@ -94,7 +114,12 @@ router.get('/users/:id', adminController.getUserById);
  *       200:
  *         description: Thành công
  */
-router.put('/users/:id', adminController.updateUser);
+router.put(
+  '/users/:id',
+  ...admin,
+  validate(updateUserSchema),
+  asyncHandler(adminController.updateUser),
+);
 
 /**
  * @swagger
@@ -114,7 +139,12 @@ router.put('/users/:id', adminController.updateUser);
  *       200:
  *         description: Thành công
  */
-router.put('/users/:id/ban', adminController.banUser);
+router.put(
+  '/users/:id/ban',
+  ...admin,
+  validate(banUserSchema),
+  asyncHandler(adminController.banUser),
+);
 
 /**
  * @swagger
@@ -134,7 +164,93 @@ router.put('/users/:id/ban', adminController.banUser);
  *       200:
  *         description: Thành công
  */
-router.delete('/users/:id', adminController.deleteUser);
+router.delete('/users/:id', ...admin, asyncHandler(adminController.deleteUser));
+
+// ── Links ────────────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /api/admin/links:
+ *   get:
+ *     summary: Lấy danh sách liên kết trên toàn hệ thống
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.get(
+  '/links',
+  ...admin,
+  validate(listAdminLinksQuerySchema, 'query'),
+  asyncHandler(adminController.getLinks),
+);
+
+/**
+ * @swagger
+ * /api/admin/links/{id}:
+ *   get:
+ *     summary: Xem chi tiết một liên kết
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.get('/links/:id', ...admin, asyncHandler(adminController.getLinkById));
+
+/**
+ * @swagger
+ * /api/admin/links/{id}:
+ *   put:
+ *     summary: Cập nhật thông tin liên kết (tiêu đề, trạng thái, chuyển hướng, mật khẩu, hết hạn)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.put(
+  '/links/:id',
+  ...admin,
+  validate(updateAdminLinkSchema),
+  asyncHandler(adminController.updateLink),
+);
+
+/**
+ * @swagger
+ * /api/admin/links/{id}:
+ *   delete:
+ *     summary: Xóa vĩnh viễn một liên kết
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.delete('/links/:id', ...admin, asyncHandler(adminController.deleteLink));
 
 // ── Content ──────────────────────────────────────────────────────────
 
@@ -150,7 +266,7 @@ router.delete('/users/:id', adminController.deleteUser);
  *       200:
  *         description: Thành công
  */
-router.get('/content', adminController.getContentList);
+router.get('/content', ...admin, asyncHandler(adminController.getContentList));
 
 /**
  * @swagger
@@ -175,7 +291,7 @@ router.get('/content', adminController.getContentList);
  *       200:
  *         description: Thành công
  */
-router.delete('/content/:type/:id', adminController.deleteContent);
+router.delete('/content/:type/:id', ...admin, asyncHandler(adminController.deleteContent));
 
 // ── AI ───────────────────────────────────────────────────────────────
 
@@ -191,7 +307,7 @@ router.delete('/content/:type/:id', adminController.deleteContent);
  *       200:
  *         description: Thành công
  */
-router.get('/ai/stats', adminController.getAiStats);
+router.get('/ai/stats', ...admin, asyncHandler(adminController.getAiStats));
 
 /**
  * @swagger
@@ -205,6 +321,6 @@ router.get('/ai/stats', adminController.getAiStats);
  *       200:
  *         description: Thành công
  */
-router.delete('/ai/cache', adminController.clearAiCache);
+router.delete('/ai/cache', ...admin, asyncHandler(adminController.clearAiCache));
 
 export const adminRoutes = router;
