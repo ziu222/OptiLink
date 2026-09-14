@@ -2,6 +2,15 @@ import axios from 'axios';
 import type { FieldValues, Path, UseFormSetError } from 'react-hook-form';
 import type { ApiErrorBody } from '../types/auth';
 
+/** Extracts the backend's `error.message` from a failed request, for call sites without a form. */
+export function getErrorMessage(err: unknown, fallback: string): string {
+  if (axios.isAxiosError(err)) {
+    const body = err.response?.data as ApiErrorBody | undefined;
+    return body?.error?.message ?? err.message ?? fallback;
+  }
+  return fallback;
+}
+
 /**
  * Maps a failed request onto react-hook-form errors:
  * - a 422 with `error.details` → per-field errors
