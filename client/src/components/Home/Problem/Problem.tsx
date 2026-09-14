@@ -1,18 +1,19 @@
 import { PictureFrame } from '../../PictureFrame/PictureFrame';
+import scatteredTools from '../../../assets/problem-scattered-tools.svg';
 import './Problem.css';
 
 const paragraphs = [
   {
-    label: 'The problem',
-    text: 'Shortening a link, building a bio page, and generating a QR code usually means three different tools, three logins, and no shared view of what actually happened after you shared it.',
+    label: 'Vấn đề',
+    text: 'Rút gọn một liên kết, xây dựng một trang bio, và tạo mã QR thường có nghĩa là ba công cụ khác nhau, ba lần đăng nhập, và không có cái nhìn chung về những gì thực sự xảy ra sau khi bạn chia sẻ nó.',
   },
   {
-    label: 'For example',
-    text: "A seller posts a shortened product link on social media, keeps a separate link in bio page for their profile, and prints a QR code they generated in a third app for packaging, with no single place to see clicks, scans, or update any of it once it's out.",
+    label: 'Ví dụ',
+    text: 'Một người bán đăng một liên kết sản phẩm đã rút gọn lên mạng xã hội, giữ một liên kết riêng trong trang bio cho hồ sơ của họ, và in một mã QR được tạo từ một ứng dụng thứ ba để đóng gói, không có nơi nào để xem lượt nhấp, lượt quét, hay cập nhật bất cứ thứ gì một khi đã phát hành.',
   },
   {
-    label: 'The fix',
-    text: 'OptiLink brings link shortening, bio pages, and QR codes into one workspace. Every link carries its own access control, and every click, whether from a short link, a bio page, or a scanned QR code, shows up in the same analytics.',
+    label: 'Giải pháp',
+    text: 'OptiLink gom rút gọn liên kết, trang bio và mã QR vào chung một không gian làm việc. Mỗi liên kết mang theo quyền kiểm soát truy cập riêng, và mọi lượt nhấp, dù từ liên kết rút gọn, trang bio, hay mã QR được quét, đều hiển thị trong cùng một hệ thống thống kê.',
   },
 ];
 
@@ -23,7 +24,7 @@ export function Problem() {
         <div className="problem-grid">
           <div className="problem-text">
             <h2 className="home-heading">
-              Your links, bio page, and QR codes shouldn&apos;t live in three different tools.
+              Liên kết, trang bio và mã QR của bạn không nên nằm rải rác ở ba công cụ khác nhau.
             </h2>
 
             <div className="problem-copy">
@@ -36,7 +37,10 @@ export function Problem() {
             </div>
           </div>
 
-          <PictureFrame />
+          <PictureFrame
+            src={scatteredTools}
+            alt="Một liên kết rút gọn, một trang bio và một mã QR trên ba thẻ rời rạc, không liên kết với nhau"
+          />
         </div>
       </div>
     </section>
