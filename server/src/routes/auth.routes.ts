@@ -3,7 +3,7 @@ import { authController } from '../controllers/auth.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { authLimiter } from '../middleware/rateLimiter.js';
+import { authLimiter, refreshLimiter } from '../middleware/rateLimiter.js';
 import {
   registerSchema,
   loginSchema,
@@ -121,7 +121,7 @@ router.post('/login', authLimiter, validate(loginSchema), asyncHandler(authContr
  *       401:
  *         description: Refresh token thiếu hoặc không hợp lệ
  */
-router.post('/refresh', asyncHandler(authController.refresh));
+router.post('/refresh', refreshLimiter, asyncHandler(authController.refresh));
 
 /**
  * @swagger

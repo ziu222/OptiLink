@@ -19,12 +19,37 @@ export const authLimiter = rateLimit({
 });
 
 /**
+ * Token refreshes are expected during normal dashboard usage, but still need
+ * an abuse ceiling independent from the general API request budget.
+ */
+export const refreshLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: 'RATE_LIMIT',
+      message: 'Too many token refresh attempts, please try again later',
+    },
+  },
+});
+
+/**
  * General API routes: 100 requests per 15 minutes per IP.
  * Applies to: all /api/* routes.
  */
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
+  // These endpoints have dedicated limits, so unrelated dashboard traffic
+  // cannot prevent a user from logging in or refreshing an access token.
+  skip: (req) => [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/refresh',
+  ].includes(req.originalUrl.split('?')[0]),
   standardHeaders: true,
   legacyHeaders: false,
   message: {
