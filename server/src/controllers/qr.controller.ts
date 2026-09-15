@@ -150,6 +150,13 @@ export class QrController {
       next(error);
     }
   }
+
+  async attachToCampaign(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const qr = await qrService.attachToCampaign(req.params.id as string, req.user!.id, req.body.campaignId ?? null);
+      res.status(200).json({ success: true, data: { qr } });
+    } catch (error) { next(error); }
+  }
 }
 
 export const qrController = new QrController();
