@@ -18,6 +18,7 @@ import { ProfilePage } from './pages/Workspace/ProfilePage';
 import { QRCodePage } from './pages/Workspace/QRCodePage';
 import { CampaignsPage } from './pages/Workspace/CampaignsPage';
 import { CampaignOperationsPage } from './pages/Workspace/CampaignOperationsPage';
+import { PublicBioPage } from './pages/PublicBioPage';
 
 const BuilderRoute = lazy(() => import('./pages/Builder/BuilderRoute'));
 const MagicTreeExperience = lazy(() => import('./components/MagicTreeWebGPU/MagicTreeWebGPUContainer').then(m => ({ default: m.MagicTreeWebGPUContainer })));
@@ -77,6 +78,10 @@ function App() {
               }
             />
           </Route>
+
+          {/* Public bio page, e.g. opti.link/optlink_demo — must stay last among
+              static-looking paths so it never shadows a real route above. */}
+          <Route path="/:username" element={<PublicBioPage />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

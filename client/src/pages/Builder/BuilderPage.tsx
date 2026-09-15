@@ -1,5 +1,5 @@
 import { LoadingCircle } from '../../components/workspace/LoadingCircle/LoadingCircle';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './builder.css';
 import './builder-polish.css';
@@ -7,10 +7,9 @@ import { Sidebar } from '../../components/workspace/Sidebar/Sidebar';
 import { BuilderSidebar } from '../../components/builder/BuilderSidebar';
 import { TabLinksAndBlocks } from '../../components/builder/TabLinksAndBlocks';
 import { TabDesign } from '../../components/builder/TabDesign';
-import { FallingEffect } from '../../components/effects/FallingEffect';
+import { BioCardPreview } from '../../components/bio/BioCardPreview';
 import { useTheme } from '../../contexts/ThemeContext';
 import { saveBio } from '../../api/bio';
-import { extractGradientColors } from '../../utils/color';
 
 export function BuilderPage() {
   const { themeConfig, setThemeConfig, bioData, setBioData } = useTheme();
@@ -41,26 +40,6 @@ export function BuilderPage() {
       setPublishState('error');
     }
   };
-
-  const { c1, c2 } = extractGradientColors(themeConfig.background.value || '');
-  const bgType = themeConfig.background.type;
-
-  // Derived states for preview
-  const showBanner = themeConfig.heroBanner?.enabled ?? true;
-  const cardBg = themeConfig.cardStyling?.background || '#16181d';
-  const borderStyle = themeConfig.cardStyling?.borderStyle || 'none';
-  const borderColor = themeConfig.cardStyling?.borderColor || '#ff007f';
-  const borderColor2 = themeConfig.cardStyling?.borderColor2 || '#00fff0';
-  const borderThickness = themeConfig.cardStyling?.borderThickness || '2px';
-  const borderRadius = themeConfig.cardStyling?.borderRadius || '40px';
-  const fontFamily = themeConfig.fontFamily || "'Inter', sans-serif";
-  const textColor = themeConfig.textColor || '#ffffff';
-  const avatarFrame = themeConfig.profile?.avatarFrame || 'neon';
-  const btnShape = themeConfig.buttonStyle?.borderRadius || '12px';
-  const btnHover = themeConfig.buttonStyle?.hoverEffect || 'hover-color';
-  const btnBg = themeConfig.buttonStyle?.backgroundColor;
-  const btnTextColor = themeConfig.buttonStyle?.textColor;
-  const effect = themeConfig.effect || 'none';
 
   // Temporary local state for blocks (until we connect drag and drop to bioData)
   const blocks = bioData?.blocks || [];
@@ -93,32 +72,6 @@ export function BuilderPage() {
       });
     }
   };
-
-  const wrapperStyle = {
-    '--card-bg': cardBg === 'glass' ? 'rgba(255,255,255,0.3)' : cardBg,
-    '--card-backdrop': cardBg === 'glass' ? 'blur(25px)' : 'none',
-    '--card-border-style': borderStyle === 'glow' || borderStyle === 'led' ? 'solid' : borderStyle,
-    '--card-border-color': borderColor,
-    '--card-border-thickness': borderThickness,
-    '--card-border-radius': borderRadius,
-    '--led-c1': borderColor,
-    '--led-c2': borderColor2,
-  } as React.CSSProperties;
-
-  const innerStyle = {
-    '--text-main': textColor,
-    '--btn-radius': btnShape,
-    '--btn-bg': btnBg,
-    '--btn-text': btnTextColor,
-    fontFamily: fontFamily,
-  } as React.CSSProperties;
-
-  const bgStyle = {
-    '--bg-c1': c1,
-    '--bg-c2': c2,
-    '--bg-image': bgType === 'image' ? `url('${themeConfig.background.url || ''}')` : 'none',
-    '--bg-avatar': `url('${themeConfig.background.url || bioData?.avatarUrl || ''}')`,
-  } as React.CSSProperties;
 
   return (
     <div className={`builder-layout${fullPreview ? ' is-full-preview' : ''}`} data-motion-paused={motionPaused}>
@@ -168,17 +121,7 @@ export function BuilderPage() {
       )}
 
       {/* 3. PREVIEW AREA */}
-      <div className={`preview-area bg-${bgType}`} style={bgStyle}>
-        {bgType === 'video' && themeConfig.background.url && (
-          <video
-            className="preview-bg-video"
-            src={themeConfig.background.url}
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-        )}
+      <BioCardPreview bioData={bioData} themeConfig={themeConfig} motionPaused={motionStopped} allowMotion={allowMotion}>
         <button
           type="button"
           className="preview-toggle-btn"
@@ -195,58 +138,7 @@ export function BuilderPage() {
         <button type="button" className="bio-motion-toggle" aria-pressed={!motionStopped} onClick={() => { setMotionPaused(!motionStopped); if (motionStopped) setAllowMotion(true); }}>
           {motionStopped ? 'Bật chuyển động' : 'Tạm dừng chuyển động'}
         </button>
-        <FallingEffect effect={effect} paused={motionStopped} allowMotion={allowMotion} />
-
-        <div className={`card-wrapper ${borderStyle === 'glow' ? 'border-glow' : ''} ${borderStyle === 'led' ? 'border-led' : ''}`} style={wrapperStyle}>
-          <div className={`mock-bio-inner ${showBanner ? 'layout-banner-on' : 'layout-banner-off'}`} style={innerStyle}>
-            
-            {showBanner && (
-              <div 
-                className="mock-hero-banner" 
-                style={{backgroundImage: `url('${themeConfig.heroBanner?.url || 'https://images.unsplash.com/photo-1616150143891-b3b320d36780?auto=format&fit=crop&w=500&q=80'}')`}}
-              ></div>
-            )}
-
-            <div className="mock-avatar-wrapper">
-              <div className={`mock-avatar-frame ${avatarFrame !== 'none' ? `frame-${avatarFrame}` : 'frame-none'}`}></div>
-              <img src={bioData?.avatarUrl || "https://i.pravatar.cc/150"} className="mock-avatar" alt="Avatar" />
-            </div>
-            
-            {(bioData?.badges?.early || bioData?.badges?.pro) && (
-              <div className="mock-badges">
-                {bioData?.badges?.early && <div className="mock-badge">Early</div>}
-                {bioData?.badges?.pro && <div className="mock-badge">PRO</div>}
-              </div>
-            )}
-
-            <h1 className="mock-title">{bioData?.title || 'Tên hiển thị'}</h1>
-            {bioData?.username && <p className="mock-username">@{bioData.username}</p>}
-            <p className="mock-bio-text">{bioData?.bio || 'Mô tả ngắn của bạn...'}</p>
-            
-            {blocks.filter(block => !block.isHidden).slice().sort((a, b) => a.order - b.order).map(block => {
-              if (block.type === 'TEXT') return <p className="mock-text-block" key={block.id}>{block.content?.text || block.content?.title}</p>;
-              if (block.type === 'IMAGE') return block.content?.imageUrl ? <img className="mock-image-block" key={block.id} src={block.content.imageUrl} alt={block.content?.title || ''} /> : null;
-              if (block.type === 'LINK') {
-                return (
-                  <div key={block.id} className={`mock-link ${btnHover}`}>{block.content?.title || 'Chưa có tiêu đề'}</div>
-                );
-              }
-              if (block.type === 'PRODUCT_CARD') {
-                return (
-                  <div key={block.id} className="mock-product">
-                    <img src={block.content?.imageUrl || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=150&q=80'} alt={block.content?.title} />
-                    <div>
-                      <div className="mock-product-title">{block.content?.title || 'Chưa có tiêu đề'}</div>
-                      <div className="mock-product-price">{block.content?.price || '0đ'}</div>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        </div>
-      </div>
+      </BioCardPreview>
     </div>
   );
 }
