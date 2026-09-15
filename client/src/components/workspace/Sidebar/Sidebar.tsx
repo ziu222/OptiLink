@@ -1,4 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { BarChart3, LayoutPanelTop, Link2, Megaphone, QrCode, Settings, SlidersHorizontal, TreePine } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import './Sidebar.css';
 
@@ -12,24 +13,45 @@ const iconProps = {
 
 const navItems = [
   {
-    label: 'Rút gọn liên kết',
+    label: 'Shorten Link',
     to: '/dashboard',
     end: true,
-    icon: (
-      <svg {...iconProps}>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
-        />
-      </svg>
-    ),
+    icon: <Link2 className="sidebar-icon" />,
   },
+  { label: 'Campaigns', to: '/dashboard/campaigns', end: false, icon: <Megaphone className="sidebar-icon" /> },
+  { label: 'Campaign Operations', to: '/dashboard/campaign-operations', end: false, icon: <SlidersHorizontal className="sidebar-icon" /> },
   {
-    label: 'Mã QR',
+    label: 'QR Code',
     to: '/dashboard/qr',
     end: false,
-    icon: (
+    icon: <QrCode className="sidebar-icon" />,
+  },
+  {
+    label: 'Magic Tree WebGPU',
+    to: '/dashboard/magic-tree-webgpu',
+    end: false,
+    icon: <TreePine className="sidebar-icon" />,
+  },
+  {
+    label: 'Bio Page',
+    to: '/builder',
+    end: false,
+    icon: <LayoutPanelTop className="sidebar-icon" />,
+  },
+  {
+    label: 'Analytics',
+    to: '/dashboard/analytics',
+    end: false,
+    icon: <BarChart3 className="sidebar-icon" />,
+  },
+  {
+    label: 'Setting',
+    to: '/dashboard/settings',
+    end: false,
+    icon: <Settings className="sidebar-icon" />,
+  },
+];
+/*
       <svg {...iconProps}>
         <path
           strokeLinecap="round"
@@ -59,7 +81,7 @@ const navItems = [
     ),
   },
   {
-    label: 'Trang Bio',
+    label: 'Bio Page',
     to: '/builder',
     end: false,
     icon: (
@@ -73,7 +95,7 @@ const navItems = [
     ),
   },
   {
-    label: 'Phân tích',
+    label: 'Analytics',
     to: '/dashboard/analytics',
     end: false,
     icon: (
@@ -87,7 +109,7 @@ const navItems = [
     ),
   },
   {
-    label: 'Cài đặt',
+    label: 'Setting',
     to: '/dashboard/settings',
     end: false,
     icon: (
@@ -102,6 +124,7 @@ const navItems = [
     ),
   },
 ];
+*/
 
 export function Sidebar() {
   const { user, logout } = useAuth();
@@ -119,22 +142,6 @@ export function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-brand">
         <Link to="/">OptiLink</Link>
-        {user?.role === 'admin' && (
-          <Link
-            to="/admin"
-            className="sidebar-switch-btn"
-            title="Chuyển sang không gian quản trị"
-            aria-label="Chuyển sang không gian quản trị"
-          >
-            <svg {...iconProps}>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
-              />
-            </svg>
-          </Link>
-        )}
       </div>
 
       <nav className="sidebar-nav">
@@ -152,12 +159,12 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <Link to="/dashboard/profile" className="sidebar-profile" title="Hồ sơ của tôi">
+        <Link to="/dashboard/profile" className="sidebar-profile" title="My Profile">
           <span className="sidebar-avatar">
             {displayName ? displayName.charAt(0).toUpperCase() : 'U'}
           </span>
           <div className="sidebar-profile-text">
-            <p className="sidebar-profile-name">{displayName || 'Người dùng'}</p>
+            <p className="sidebar-profile-name">{displayName || 'User'}</p>
             <p className="sidebar-profile-email">{user?.email}</p>
           </div>
         </Link>
@@ -169,7 +176,7 @@ export function Sidebar() {
               d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25"
             />
           </svg>
-          Đăng xuất
+          Log out
         </button>
       </div>
     </aside>

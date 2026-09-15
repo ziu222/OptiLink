@@ -1,0 +1,31 @@
+import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { Activity, ArrowUpRight, ChevronRight, CircleAlert, Link2, Plus, Route, SlidersHorizontal } from 'lucide-react';
+import { PageHeader } from '../../components/workspace/PageHeader/PageHeader';
+import { createCampaign, getCampaign, listCampaigns, type Campaign, type CampaignDetail } from '../../api/campaigns';
+import { listLinks, type ShortenedLink } from '../../api/links';
+import './CampaignsPage.css';
+
+gsap.registerPlugin(useGSAP);
+const statusLabel: Record<Campaign['status'], string> = { active: 'Live', draft: 'Draft', paused: 'Paused', expired: 'Expired' };
+
+export function CampaignsPage() {
+  const root = useRef<HTMLDivElement>(null);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]); const [links, setLinks] = useState<ShortenedLink[]>([]);
+  const [selected, setSelected] = useState<CampaignDetail | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
+  const [showCreate, setShowCreate] = useState(false); const [saving, setSaving] = useState(false); const [name, setName] = useState(''); const [linkId, setLinkId] = useState('');
+  const reload = async () => { setLoading(true); setError(''); try { const [items, availableLinks] = await Promise.all([listCampaigns(), listLinks({ limit: 100, status: 'active' })]); setCampaigns(items); setLinks(availableLinks.links); if (!linkId && availableLinks.links[0]) setLinkId(availableLinks.links[0].id); } catch { setError('Không thể tải campaigns. Hãy kiểm tra kết nối API và thử lại.'); } finally { setLoading(false); } };
+  useEffect(() => { void reload(); }, []);
+  useGSAP(() => { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; gsap.from('[data-campaign-enter]', { opacity: 0, y: 10, filter: 'blur(4px)', duration: .24, ease: 'power2.out', stagger: .045 }); }, { scope: root, dependencies: [loading], revertOnUpdate: true });
+  const selectCampaign = async (id: string) => { try { setSelected(await getCampaign(id)); } catch { setError('Không thể tải chi tiết campaign.'); } };
+  const submit = async (event: React.FormEvent) => { event.preventDefault(); if (!name.trim() || !linkId) return; setSaving(true); try { const campaign = await createCampaign({ name, status: 'draft', linkIds: [linkId], entryLinkId: linkId, defaultLinkId: linkId }); setCampaigns((items) => [campaign, ...items]); setName(''); setShowCreate(false); await selectCampaign(campaign.id); } catch { setError('Không thể tạo campaign.'); } finally { setSaving(false); } };
+  return <div ref={root} className="campaign-page"><PageHeader title="Campaigns" /><div className="campaign-layout">
+    <section className="campaign-list-panel" data-campaign-enter><div className="campaign-list-head"><div><span className="campaign-eyebrow">CAMPAIGN LIBRARY</span><h2>Điều phối traffic</h2></div><button className="campaign-icon-button" title="Tạo campaign" onClick={() => setShowCreate((v) => !v)}><Plus size={18} /></button></div>
+      {showCreate && <form className="campaign-create" onSubmit={submit}><label>Tên campaign<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Summer launch" autoFocus /></label><label>Entry link<select value={linkId} onChange={(e) => setLinkId(e.target.value)}>{links.map((link) => <option key={link.id} value={link.id}>{link.title || link.shortUrl}</option>)}</select></label><button className="campaign-primary" disabled={saving || !linkId}>{saving ? 'Đang tạo...' : 'Tạo draft'}</button></form>}
+      {loading ? <p className="campaign-state">Đang tải campaign...</p> : error ? <p className="campaign-error"><CircleAlert size={16} />{error}</p> : campaigns.length === 0 ? <div className="campaign-empty"><Route size={24} /><strong>Chưa có campaign</strong><span>Tạo campaign đầu tiên từ một link đang hoạt động.</span></div> : <div className="campaign-rail">{campaigns.map((campaign) => <button key={campaign.id} className={`campaign-row ${selected?.id === campaign.id ? 'is-selected' : ''}`} onClick={() => void selectCampaign(campaign.id)}><span className={`campaign-status status-${campaign.status}`} /><span className="campaign-row-copy"><strong>{campaign.name}</strong><small>{campaign.linkIds.length} link · {statusLabel[campaign.status]}</small></span><ChevronRight size={17} /></button>)}</div>}
+    </section>
+    <section className="campaign-detail-panel" data-campaign-enter>{selected ? <><div className="campaign-detail-head"><div><span className="campaign-eyebrow">{statusLabel[selected.status]} CAMPAIGN</span><h2>{selected.name}</h2><p>{selected.description || 'Chưa có mô tả cho campaign này.'}</p></div><Link to={`/dashboard/campaign-operations?campaign=${selected.id}`} className="campaign-ghost"><ArrowUpRight size={16} />Mở operations</Link></div><div className="campaign-metrics"><div><Activity size={17}/><span>Routing rules</span><strong>{selected.rules.length}</strong></div><div><Link2 size={17}/><span>Linked destinations</span><strong>{selected.links.length}</strong></div></div><div className="campaign-detail-grid"><div><div className="campaign-section-title"><SlidersHorizontal size={16}/><span>Routing rules</span></div>{selected.rules.length ? selected.rules.map((rule) => <div className="campaign-rule" key={rule.id}><span>#{rule.priority}</span><p>{rule.condition.type} <strong>{rule.condition.values?.join(', ') || `${rule.condition.startMinute}–${rule.condition.endMinute}`}</strong></p><small>→ {selected.links.find((link) => link.id === rule.targetLinkId)?.title || 'Default link'}</small></div>) : <p className="campaign-muted">Chưa có rule. Traffic hiện đi qua default link.</p>}</div><div><div className="campaign-section-title"><Link2 size={16}/><span>Destinations</span></div>{selected.links.map((link) => <div className="campaign-destination" key={link.id}><span>{link.title || 'Untitled link'}</span><small>{link.shortUrl}</small></div>)}</div></div></> : <div className="campaign-detail-empty"><Route size={28}/><h2>Chọn một campaign</h2><p>Xem routing rules, destination links và hiệu suất tại một nơi.</p></div>}</section>
+  </div></div>;
+}
