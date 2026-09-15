@@ -34,7 +34,7 @@ export class AuthService {
     email: string;
     password: string;
   }): Promise<AuthTokens & { user: IUser }> {
-    // email + username đều lưu ở dạng chữ thường — chuẩn hoá trước khi so sánh/tạo mới
+    // email + username đều lưu ở dạng chữ thường, chuẩn hoá trước khi so sánh/tạo mới
     const email = input.email.trim().toLowerCase();
     const username = input.username.trim().toLowerCase();
 
@@ -60,9 +60,10 @@ export class AuthService {
   }): Promise<AuthTokens & { user: IUser }> {
     // email và username đều lưu ở dạng chữ thường nên chỉ cần một giá trị tra cứu cho cả hai
     const id = input.identifier.trim().toLowerCase();
-    const user = await User.findOne({ $or: [{ email: id }, { username: id }] }).select(
-      '+passwordHash +refreshTokenHash'
-    );
+    const user = await User.findOne({
+      $or: [{ email: id }, { username: id }],
+      isDeleted: { $ne: true },
+    }).select('+passwordHash +refreshTokenHash');
     if (!user || !(await user.comparePassword(input.password))) {
       throw AppError.unauthorized('Invalid email/username or password');
     }
@@ -84,7 +85,12 @@ export class AuthService {
     }
 
     const user = await User.findById(payload.sub).select('+refreshTokenHash');
-    if (!user || !user.refreshTokenHash || user.refreshTokenHash !== hashToken(refreshToken)) {
+    if (
+      !user ||
+      user.isDeleted ||
+      !user.refreshTokenHash ||
+      user.refreshTokenHash !== hashToken(refreshToken)
+    ) {
       throw AppError.unauthorized('Invalid refresh token', 'INVALID_TOKEN');
     }
     if (user.isBanned) {
@@ -114,7 +120,7 @@ export class AuthService {
   ): Promise<IUser> {
     const update: Record<string, unknown> = {};
     if (input.username !== undefined) {
-      // Đảm bảo username là duy nhất — bỏ qua chính user đang cập nhật
+      // Đảm bảo username là duy nhất, bỏ qua chính user đang cập nhật
       const username = input.username.trim().toLowerCase();
       const taken = await User.exists({ username, _id: { $ne: userId } });
       if (taken) {

@@ -16,16 +16,10 @@ const SOURCE_LABELS: Record<string, string> = {
   qr: 'QR code',
 };
 
-export interface RecentActivityDTO {
-  linkId: string;
-  clickedAt: string;
-}
-
 export interface OverviewDTO {
   totalLinks: number;
   totalClicks: number;
   clicksToday: number;
-  recentActivity: RecentActivityDTO[];
 }
 
 export interface LinkAnalyticsDTO {
@@ -106,27 +100,19 @@ export class AnalyticsService {
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
-    const [totalLinks, totalClicksAgg, clicksToday, recent] = await Promise.all([
+    const [totalLinks, totalClicksAgg, clicksToday] = await Promise.all([
       Link.countDocuments(linkFilter),
       Link.aggregate([
         { $match: { userId: new mongoose.Types.ObjectId(userId), isArchived: { $ne: true } } },
         { $group: { _id: null, total: { $sum: '$clicks' } } },
       ]),
       Analytics.countDocuments({ linkId: { $in: linkIds }, createdAt: { $gte: startOfToday } }),
-      Analytics.find({ linkId: { $in: linkIds } })
-        .sort({ createdAt: -1 })
-        .limit(10)
-        .select('linkId createdAt'),
     ]);
 
     return {
       totalLinks,
       totalClicks: totalClicksAgg[0]?.total ?? 0,
       clicksToday,
-      recentActivity: recent.map((doc) => ({
-        linkId: doc.linkId.toString(),
-        clickedAt: doc.createdAt.toISOString(),
-      })),
     };
   }
 
@@ -144,11 +130,12 @@ export class AnalyticsService {
     }
 
     const match: mongoose.FilterQuery<IAnalytics> = { linkId: link._id };
-    if (range.from || range.to) {
-      match.createdAt = {};
-      if (range.from) match.createdAt.$gte = range.from;
-      if (range.to) match.createdAt.$lte = range.to;
-    }
+    // Date-range filtering is not used by the frontend yet — disabled for now.
+    // if (range.from || range.to) {
+    //   match.createdAt = {};
+    //   if (range.from) match.createdAt.$gte = range.from;
+    //   if (range.to) match.createdAt.$lte = range.to;
+    // }
 
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);

@@ -11,6 +11,7 @@ export interface IUser extends Document {
   tier: 'FREE' | 'PREMIUM';
   isVerified: boolean;
   isBanned: boolean;
+  isDeleted: boolean;
   timezone: string;
   refreshTokenHash: string | null;
   createdAt: Date;
@@ -29,6 +30,7 @@ const UserSchema = new Schema<IUser>(
     tier: { type: String, enum: ['FREE', 'PREMIUM'], default: 'FREE' },
     isVerified: { type: Boolean, default: true },
     isBanned: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
     timezone: { type: String, default: 'UTC' },
     refreshTokenHash: { type: String, select: false, default: null },
   },

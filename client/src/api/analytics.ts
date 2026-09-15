@@ -1,15 +1,9 @@
 import { api } from '../lib/axios';
 
-export interface RecentActivity {
-  linkId: string;
-  clickedAt: string;
-}
-
 export interface OverviewData {
   totalLinks: number;
   totalClicks: number;
   clicksToday: number;
-  recentActivity: RecentActivity[];
 }
 
 export interface LocationBreakdown {
