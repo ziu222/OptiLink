@@ -155,7 +155,7 @@ export class AdminService {
 
     // Admins manage other users here, not each other/themselves — that's
     // handled by their own account settings, not this moderation list.
-    const filter: mongoose.FilterQuery<IUser> = { role: { $ne: 'admin' } };
+    const filter: mongoose.FilterQuery<IUser> = { role: { $ne: 'admin' }, isDeleted: { $ne: true } };
     if (search) {
       const rx = new RegExp(escapeRegex(search), 'i');
       filter.$or = [{ email: rx }, { username: rx }, { fullName: rx }];
@@ -177,7 +177,7 @@ export class AdminService {
     if (!mongoose.isValidObjectId(id)) {
       throw AppError.notFound('User not found');
     }
-    const user = await User.findById(id);
+    const user = await User.findOne({ _id: id, isDeleted: { $ne: true } });
     if (!user) {
       throw AppError.notFound('User not found');
     }
@@ -203,7 +203,7 @@ export class AdminService {
     if (targetId === adminId) {
       throw AppError.badRequest(selfMessage, selfCode);
     }
-    const user = await User.findById(targetId);
+    const user = await User.findOne({ _id: targetId, isDeleted: { $ne: true } });
     if (!user) {
       throw AppError.notFound('User not found');
     }
@@ -227,7 +227,7 @@ export class AdminService {
       throw AppError.badRequest('Không thể tự thay đổi vai trò của chính mình', 'SELF_ROLE_CHANGE');
     }
 
-    const user = await User.findById(targetId);
+    const user = await User.findOne({ _id: targetId, isDeleted: { $ne: true } });
     if (!user) {
       throw AppError.notFound('User not found');
     }
@@ -262,7 +262,8 @@ export class AdminService {
       'Không thể tự xóa chính mình',
       'SELF_DELETE',
     );
-    await user.deleteOne();
+    user.isDeleted = true;
+    await user.save();
   }
 
   async listLinks(
@@ -344,7 +345,10 @@ export class AdminService {
     if (!mongoose.isValidObjectId(id)) {
       throw AppError.notFound('Link not found');
     }
-    const result = await Link.findByIdAndDelete(id);
+    const result = await Link.findOneAndUpdate(
+      { _id: id, isArchived: { $ne: true } },
+      { isArchived: true }
+    );
     if (!result) {
       throw AppError.notFound('Link not found');
     }
