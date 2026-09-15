@@ -13,6 +13,7 @@ export interface IQRConfig {
 export interface IQRCode extends Document {
   userId: mongoose.Types.ObjectId;
   linkId?: mongoose.Types.ObjectId | null;
+  campaignId?: mongoose.Types.ObjectId | null;
   title: string;
   targetUrl: string;
   config: IQRConfig;
@@ -51,6 +52,7 @@ const QRCodeSchema = new Schema<IQRCode>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     linkId: { type: Schema.Types.ObjectId, ref: 'Link', default: null, index: true },
+    campaignId: { type: Schema.Types.ObjectId, ref: 'Campaign', default: null, index: true },
     title: { type: String, default: 'My QR Code', trim: true, maxlength: 120 },
     targetUrl: { type: String, required: true, trim: true },
     config: { type: QRConfigSchema, default: () => ({}) },

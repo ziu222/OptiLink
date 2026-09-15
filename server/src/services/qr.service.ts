@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import QRCodeModel, { IQRCode, IQRConfig } from '../models/QRCode.js';
 import Link from '../models/Link.js';
 import User from '../models/User.js';
+import { Campaign } from '../models/Campaign.js';
 import { CreateQrInput } from '../validators/qr.validator.js';
 import { AppError } from '../utils/AppError.js';
 import { logger } from '../utils/logger.js';
@@ -170,6 +171,22 @@ export class QrService {
     }
 
     return true;
+  }
+
+  async attachToCampaign(id: string, userId: string, campaignId: string | null): Promise<IQRCode> {
+    const qr = await this.getQrById(id, userId);
+    if (campaignId === null) {
+      qr.campaignId = null;
+      return qr.save();
+    }
+    if (!mongoose.isValidObjectId(campaignId)) throw AppError.badRequest('Campaign ID is invalid');
+    const campaign = await Campaign.findOne({ _id: campaignId, userId });
+    if (!campaign) throw AppError.notFound('Campaign not found');
+    if (qr.linkId && !campaign.linkIds.some((linkId) => linkId.equals(qr.linkId!))) {
+      throw AppError.unprocessable('QR link must belong to the campaign');
+    }
+    qr.campaignId = campaign._id;
+    return qr.save();
   }
 
   /**
