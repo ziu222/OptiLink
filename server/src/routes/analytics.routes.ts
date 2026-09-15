@@ -28,6 +28,8 @@ const router = Router();
  */
 router.get('/overview', authenticate, asyncHandler(analyticsController.getOverview));
 
+router.get('/campaign/:id', authenticate, validate(analyticsRangeQuerySchema, 'query'), asyncHandler(analyticsController.getCampaignAnalytics));
+
 /**
  * @swagger
  * /api/analytics/link/{id}:

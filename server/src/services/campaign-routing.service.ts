@@ -14,6 +14,11 @@ interface RoutingContext {
   languages: string[];
 }
 
+export interface CampaignResolution {
+  campaignId: string;
+  destination: ILink;
+}
+
 const deviceFromRequest = (req: Request): DeviceType => {
   const userAgent = req.headers['user-agent']?.toString() ?? '';
   if (/ipad|android(?!.*mobile)/i.test(userAgent)) return 'tablet';
@@ -77,7 +82,7 @@ export const conditionMatches = (condition: ICampaignRuleCondition, context: Rou
 };
 
 export class CampaignRoutingService {
-  async resolveDestination(entryLink: ILink, req: Request): Promise<ILink | null> {
+  async resolveDestination(entryLink: ILink, req: Request): Promise<CampaignResolution | null> {
     const routingCampaign = await campaignService.getActiveRoutingCampaign(entryLink._id);
     if (!routingCampaign) return null;
 
@@ -87,10 +92,11 @@ export class CampaignRoutingService {
     const selectedLinkId = selectedRule?.targetLinkId ?? campaign.defaultLinkId;
 
     const destination = await this.getActiveDestination(selectedLinkId.toString());
-    if (destination) return destination;
+    if (destination) return { campaignId: campaign._id.toString(), destination };
 
     if (selectedRule) {
-      return this.getActiveDestination(campaign.defaultLinkId.toString());
+      const fallback = await this.getActiveDestination(campaign.defaultLinkId.toString());
+      return fallback ? { campaignId: campaign._id.toString(), destination: fallback } : null;
     }
     return null;
   }

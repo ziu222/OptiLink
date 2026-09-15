@@ -2,6 +2,8 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IAnalytics extends Document {
   linkId: mongoose.Types.ObjectId; // Trỏ về Link
+  campaignId?: mongoose.Types.ObjectId | null;
+  destinationLinkId?: mongoose.Types.ObjectId | null;
   ipAddress: string;
   userAgent: string;
   deviceType: 'desktop' | 'mobile' | 'tablet' | 'unknown';
@@ -14,6 +16,8 @@ export interface IAnalytics extends Document {
 
 const AnalyticsSchema = new Schema({
   linkId: { type: Schema.Types.ObjectId, ref: 'Link', required: true, index: true },
+  campaignId: { type: Schema.Types.ObjectId, ref: 'Campaign', default: null, index: true },
+  destinationLinkId: { type: Schema.Types.ObjectId, ref: 'Link', default: null, index: true },
   ipAddress: { type: String, default: 'unknown' },
   userAgent: { type: String, default: 'unknown' },
   deviceType: { 
@@ -35,5 +39,6 @@ const AnalyticsSchema = new Schema({
 
 // Covers the rolling-window click aggregation (match by linkId + createdAt range).
 AnalyticsSchema.index({ linkId: 1, createdAt: -1 });
+AnalyticsSchema.index({ campaignId: 1, createdAt: -1 });
 
 export default mongoose.model<IAnalytics>('Analytics', AnalyticsSchema);
