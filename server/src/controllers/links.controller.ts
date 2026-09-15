@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { linksService } from '../services/links.service.js';
 import { redirectService } from '../services/redirect.service.js';
 import { campaignRoutingService } from '../services/campaign-routing.service.js';
@@ -83,8 +84,10 @@ export class LinksController {
       }
 
       const destination = await campaignRoutingService.resolveDestination(link, req);
-      redirectService.recordHit(link, req, source);
-      res.redirect(destination ? 302 : 301, (destination ?? link).originalUrl);
+      redirectService.recordHit(link, req, source, destination
+        ? { campaignId: new mongoose.Types.ObjectId(destination.campaignId), destinationLinkId: destination.destination._id }
+        : {});
+      res.redirect(destination ? 302 : 301, (destination?.destination ?? link).originalUrl);
     } catch (error) {
       console.error('Redirect Error:', error);
       res.status(500).send('Internal Server Error');
@@ -105,10 +108,12 @@ export class LinksController {
     }
 
     const destination = await campaignRoutingService.resolveDestination(link, req);
-    redirectService.recordHit(link, req, source);
+    redirectService.recordHit(link, req, source, destination
+      ? { campaignId: new mongoose.Types.ObjectId(destination.campaignId), destinationLinkId: destination.destination._id }
+      : {});
     res.status(200).json({
       success: true,
-      data: { originalUrl: (destination ?? link).originalUrl },
+      data: { originalUrl: (destination?.destination ?? link).originalUrl },
     });
   }
 }

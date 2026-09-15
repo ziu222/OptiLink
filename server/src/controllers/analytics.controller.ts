@@ -24,6 +24,15 @@ export class AnalyticsController {
       data,
     });
   }
+
+  async getCampaignAnalytics(req: Request, res: Response): Promise<void> {
+    const data = await analyticsService.getCampaignAnalytics(
+      req.user!.id,
+      req.params.id as string,
+      req.query as unknown as AnalyticsRangeQuery,
+    );
+    res.status(200).json({ success: true, data });
+  }
 }
 
 export const analyticsController = new AnalyticsController();

@@ -208,4 +208,6 @@ router.delete('/:id', authenticate, qrController.deleteQr);
  */
 router.get('/link/:linkId', authenticate, qrController.getLinkQr);
 
+router.patch('/:id/campaign', authenticate, qrController.attachToCampaign);
+
 export const qrRoutes = router;
