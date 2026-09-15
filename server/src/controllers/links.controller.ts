@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { linksService } from '../services/links.service.js';
 import { redirectService } from '../services/redirect.service.js';
+import { campaignRoutingService } from '../services/campaign-routing.service.js';
 import { AppError } from '../utils/AppError.js';
 import type { ListLinksQuery } from '../validators/links.validators.js';
 
@@ -72,8 +73,9 @@ export class LinksController {
         return;
       }
 
+      const destination = await campaignRoutingService.resolveDestination(link, req);
       redirectService.recordHit(link, req, source);
-      res.redirect(301, link.originalUrl);
+      res.redirect(destination ? 302 : 301, (destination ?? link).originalUrl);
     } catch (error) {
       console.error('Redirect Error:', error);
       res.status(500).send('Internal Server Error');
@@ -93,10 +95,11 @@ export class LinksController {
       throw AppError.unauthorized('Incorrect password', 'INVALID_PASSWORD');
     }
 
+    const destination = await campaignRoutingService.resolveDestination(link, req);
     redirectService.recordHit(link, req, source);
     res.status(200).json({
       success: true,
-      data: { originalUrl: link.originalUrl },
+      data: { originalUrl: (destination ?? link).originalUrl },
     });
   }
 }
