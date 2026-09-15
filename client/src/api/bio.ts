@@ -22,3 +22,14 @@ export const saveBio = async (bioData: Partial<IBioPage>): Promise<IBioPage> => 
   const res = await api.post('/bio', bioData);
   return res.data.data.bio;
 };
+
+/** Public, unauthenticated lookup — used by the visitor-facing bio page. */
+export const getBioByUsername = async (username: string): Promise<IBioPage | null> => {
+  try {
+    const res = await api.get(`/bio/${username}`);
+    return res.data.data.bio;
+  } catch (err: any) {
+    if (err?.response?.status === 404) return null;
+    throw err;
+  }
+};

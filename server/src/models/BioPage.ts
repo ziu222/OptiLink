@@ -83,6 +83,10 @@ export interface IBioPage extends Document {
   };
 
   isActive: boolean;
+  /** The auto-created Link (Shortened Links list) whose originalUrl points at
+   * this bio page's public address — lets visitors reach it via opti.link
+   * like any other shortened link, with clicks tracked the same way. */
+  shortLinkId?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -188,7 +192,8 @@ const BioPageSchema = new Schema({
     pro: { type: Boolean, default: false }
   },
 
-  isActive: { type: Boolean, default: true }
+  isActive: { type: Boolean, default: true },
+  shortLinkId: { type: Schema.Types.ObjectId, ref: 'Link' }
 }, {
   timestamps: true
 });

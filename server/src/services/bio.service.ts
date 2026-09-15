@@ -1,5 +1,10 @@
 import BioPage, { IBioPage } from '../models/BioPage';
+import Link from '../models/Link.js';
 import { linksService } from './links.service.js';
+import { AppError } from '../utils/AppError.js';
+
+const frontendUrl = (): string =>
+  (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/+$/, '');
 
 export class BioService {
   /**
@@ -41,10 +46,11 @@ export class BioService {
 
     // 2. Lưu vào Database
     const existingBio = await BioPage.findOne({ userId });
-    
+    let bio: IBioPage;
+
     if (existingBio) {
       // Cập nhật
-      return await BioPage.findOneAndUpdate(
+      bio = await BioPage.findOneAndUpdate(
         { userId },
         { $set: bioData },
         { new: true, runValidators: true }
@@ -52,13 +58,53 @@ export class BioService {
     } else {
       // Tạo mới: cần username duy nhất nếu client chưa cung cấp
       const username = bioData.username || await this.generateUsername(userEmail || userId);
-      const newBio = new BioPage({
+      bio = await new BioPage({
         ...bioData,
         userId,
         username
-      });
-      return await newBio.save();
+      }).save();
     }
+
+    // 3. Đảm bảo bio page có 1 shortened link công khai (hiện trong danh sách
+    // Shortened Links như link thường), trỏ tới đúng địa chỉ /:username hiện tại.
+    await this.syncShortLink(bio, userId);
+    return bio;
+  }
+
+  /**
+   * Tạo (lần đầu publish) hoặc cập nhật destination của shortened link gắn
+   * với bio page, để `opti.link/<slug>` luôn dẫn tới đúng bio page hiện tại.
+   */
+  private async syncShortLink(bio: IBioPage, userId: string): Promise<void> {
+    const destination = `${frontendUrl()}/${bio.username}`;
+
+    if (bio.shortLinkId) {
+      await Link.updateOne({ _id: bio.shortLinkId }, { originalUrl: destination });
+      return;
+    }
+
+    let newLink;
+    try {
+      newLink = await linksService.createLink(userId, {
+        originalUrl: destination,
+        title: bio.title || 'Bio Page',
+        slug: bio.username,
+      });
+    } catch (err) {
+      if (err instanceof AppError && err.code === 'SLUG_TAKEN') {
+        // Someone else already holds that slug on the shortened-links side —
+        // fall back to an auto-generated one rather than failing the publish.
+        newLink = await linksService.createLink(userId, {
+          originalUrl: destination,
+          title: bio.title || 'Bio Page',
+        });
+      } else {
+        throw err;
+      }
+    }
+
+    bio.shortLinkId = newLink.id as unknown as IBioPage['shortLinkId'];
+    await BioPage.updateOne({ _id: bio._id }, { shortLinkId: newLink.id });
   }
 
   /**
