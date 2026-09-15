@@ -69,7 +69,7 @@ const serialize = (link: ILink, hourlyClicks?: number[]): LinkDTO => ({
 });
 
 export class LinksService {
-  async createLink(userId: string, input: CreateLinkInput): Promise<LinkDTO> {
+  async createLink(userId: string | null, input: CreateLinkInput): Promise<LinkDTO> {
     const slug = input.slug
       ? await this.claimCustomSlug(input.slug)
       : await this.generateUniqueSlug();

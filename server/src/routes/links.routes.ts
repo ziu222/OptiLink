@@ -2,8 +2,10 @@ import { Router } from 'express';
 import { linksController } from '../controllers/links.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.js';
+import { anonymousLinkLimiter } from '../middleware/rateLimiter.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {
+  createAnonymousLinkSchema,
   createLinkSchema,
   listLinksQuerySchema,
   updateLinkSchema,
@@ -51,6 +53,35 @@ const router = Router();
  *         description: Tạo thành công
  */
 router.post('/', authenticate, validate(createLinkSchema), asyncHandler(linksController.createLink));
+
+/**
+ * @swagger
+ * /api/links/anonymous:
+ *   post:
+ *     summary: Tạo link rút gọn không cần đăng nhập (giới hạn 5 lần/ngày theo IP)
+ *     tags: [Links]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [originalUrl]
+ *             properties:
+ *               originalUrl:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Tạo thành công
+ *       429:
+ *         description: Đã vượt quá giới hạn 5 lần/ngày
+ */
+router.post(
+  '/anonymous',
+  anonymousLinkLimiter,
+  validate(createAnonymousLinkSchema),
+  asyncHandler(linksController.createAnonymousLink),
+);
 
 /**
  * @swagger

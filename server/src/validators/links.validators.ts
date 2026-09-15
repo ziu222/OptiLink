@@ -19,6 +19,10 @@ export const createLinkSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters').optional(),
 });
 
+export const createAnonymousLinkSchema = z.object({
+  originalUrl: z.string().url('Enter a valid URL'),
+});
+
 export const verifyLinkSchema = z.object({
   password: z.string().min(1, 'Password is required'),
   src: z.enum(['direct', 'qr']).optional(),
@@ -55,5 +59,6 @@ export const updateLinkSchema = z
   .refine((o) => Object.keys(o).length > 0, { message: 'No fields to update' });
 
 export type CreateLinkInput = z.infer<typeof createLinkSchema>;
+export type CreateAnonymousLinkInput = z.infer<typeof createAnonymousLinkSchema>;
 export type UpdateLinkInput = z.infer<typeof updateLinkSchema>;
 export type ListLinksQuery = z.infer<typeof listLinksQuerySchema>;

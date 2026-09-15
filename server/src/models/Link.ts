@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ILink extends Document {
   _id: mongoose.Types.ObjectId;
-  userId: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId | null;
   originalUrl: string;
   slug: string;
   shortUrl: string;
@@ -18,7 +18,7 @@ export interface ILink extends Document {
 }
 
 const LinkSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: false, default: null },
   originalUrl: { type: String, required: true },
   slug: { type: String, required: true, unique: true, index: true },
   shortUrl: { type: String, required: true },
