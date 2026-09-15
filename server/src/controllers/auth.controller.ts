@@ -5,13 +5,19 @@ import { AppError } from '../utils/AppError.js';
 const REFRESH_COOKIE = 'refreshToken';
 const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-const refreshCookieOptions = (): CookieOptions => ({
-  httpOnly: true,
-  sameSite: 'lax',
-  secure: process.env.NODE_ENV === 'production',
-  path: '/api/auth',
-  maxAge: REFRESH_COOKIE_MAX_AGE,
-});
+const refreshCookieOptions = (): CookieOptions => {
+  const isProd = process.env.NODE_ENV === 'production';
+  return {
+    httpOnly: true,
+    // Frontend (Vercel) and backend (EC2) are different sites in production,
+    // so the refresh cookie needs SameSite=None (requires Secure) to be sent
+    // on cross-site API calls; local dev keeps 'lax' since both run on localhost.
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
+    path: '/api/auth',
+    maxAge: REFRESH_COOKIE_MAX_AGE,
+  };
+};
 
 export class AuthController {
   async register(req: Request, res: Response): Promise<void> {
