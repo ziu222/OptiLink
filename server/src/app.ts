@@ -23,6 +23,8 @@ import { aiRoutes } from './routes/ai.routes.js';
 import { adminRoutes } from './routes/admin.routes.js';
 import { campaignRoutes } from './routes/campaign.routes.js';
 import { trackingRoutes } from './routes/tracking.routes.js';
+import { healthRoutes } from './routes/health.routes.js';
+import { templatesRoutes } from './routes/templates.routes.js';
 import { redirectRoutes } from './routes/redirect.routes.js';
 
 // ── Create Express app ──────────────────────────────────────────
@@ -93,6 +95,8 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/tracking', trackingRoutes);
+app.use('/api/health-checks', healthRoutes);
+app.use('/api/templates', templatesRoutes);
 
 // MUST BE LAST (catch-all /:slug)
 app.use('/', redirectRoutes);
