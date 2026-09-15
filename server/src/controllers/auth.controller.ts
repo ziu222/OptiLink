@@ -82,7 +82,7 @@ export class AuthController {
     });
   }
 
-  // ── Email flows deferred — still mock (see plan) ────────────────
+  // ── Xác thực email, quên mật khẩu, cấp lại mật khẩu (mock)
 
   async verifyEmail(_req: Request, res: Response): Promise<void> {
     res.status(200).json({
