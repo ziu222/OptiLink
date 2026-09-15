@@ -22,6 +22,7 @@ import { qrRoutes } from './routes/qr.routes.js';
 import { aiRoutes } from './routes/ai.routes.js';
 import { adminRoutes } from './routes/admin.routes.js';
 import { campaignRoutes } from './routes/campaign.routes.js';
+import { trackingRoutes } from './routes/tracking.routes.js';
 import { redirectRoutes } from './routes/redirect.routes.js';
 
 // ── Create Express app ──────────────────────────────────────────
@@ -91,6 +92,7 @@ app.use('/api/qr', qrRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/campaigns', campaignRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // MUST BE LAST (catch-all /:slug)
 app.use('/', redirectRoutes);
