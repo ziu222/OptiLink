@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Analytics, { IAnalytics } from '../models/Analytics.js';
 import Link from '../models/Link.js';
+import { Campaign } from '../models/Campaign.js';
 import { AppError } from '../utils/AppError.js';
 import type { AnalyticsRangeQuery } from '../validators/analytics.validators.js';
 
@@ -35,6 +36,18 @@ export interface LinkAnalyticsDTO {
   locations: { country: string; clicks: number }[];
   devices: { device: string; clicks: number }[];
   sources: { source: string; clicks: number }[];
+}
+
+export interface CampaignAnalyticsDTO {
+  campaignId: string;
+  totalClicks: number;
+  uniqueVisitors: number;
+  clicksToday: number;
+  timeline: { date: string; clicks: number }[];
+  locations: { country: string; clicks: number }[];
+  devices: { device: string; clicks: number }[];
+  sources: { source: string; clicks: number }[];
+  destinations: { linkId: string; title: string; clicks: number }[];
 }
 
 const HOUR_MS = 3_600_000;
@@ -187,6 +200,44 @@ export class AnalyticsService {
         source: SOURCE_LABELS[row._id as string] ?? SOURCE_LABELS.direct,
         clicks: row.clicks,
       })),
+    };
+  }
+
+  async getCampaignAnalytics(
+    userId: string,
+    campaignId: string,
+    range: AnalyticsRangeQuery,
+  ): Promise<CampaignAnalyticsDTO> {
+    if (!mongoose.isValidObjectId(campaignId)) throw AppError.notFound('Campaign not found');
+    const campaign = await Campaign.findOne({ _id: campaignId, userId }).select('_id');
+    if (!campaign) throw AppError.notFound('Campaign not found');
+
+    const match: mongoose.FilterQuery<IAnalytics> = { campaignId: campaign._id };
+    if (range.from || range.to) {
+      match.createdAt = {};
+      if (range.from) match.createdAt.$gte = range.from;
+      if (range.to) match.createdAt.$lte = range.to;
+    }
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const [summary, clicksToday, timeline, locations, devices, sources, destinations] = await Promise.all([
+      Analytics.aggregate([{ $match: match }, { $group: { _id: null, totalClicks: { $sum: 1 }, visitors: { $addToSet: '$ipAddress' } } }, { $project: { _id: 0, totalClicks: 1, uniqueVisitors: { $size: '$visitors' } } }]),
+      Analytics.countDocuments({ campaignId: campaign._id, createdAt: { $gte: startOfToday } }),
+      Analytics.aggregate([{ $match: match }, { $group: { _id: { $dateToString: { date: '$createdAt', format: '%Y-%m-%d' } }, clicks: { $sum: 1 } } }, { $sort: { _id: 1 } }]),
+      Analytics.aggregate([{ $match: match }, { $group: { _id: '$country', clicks: { $sum: 1 } } }, { $sort: { clicks: -1 } }]),
+      Analytics.aggregate([{ $match: match }, { $group: { _id: '$deviceType', clicks: { $sum: 1 } } }, { $sort: { clicks: -1 } }]),
+      Analytics.aggregate([{ $match: match }, { $group: { _id: { $ifNull: ['$source', 'direct'] }, clicks: { $sum: 1 } } }, { $sort: { clicks: -1 } }]),
+      Analytics.aggregate([{ $match: match }, { $group: { _id: '$destinationLinkId', clicks: { $sum: 1 } } }, { $sort: { clicks: -1 } }, { $lookup: { from: 'links', localField: '_id', foreignField: '_id', as: 'link' } }]),
+    ]);
+
+    return {
+      campaignId: campaign._id.toString(), totalClicks: summary[0]?.totalClicks ?? 0,
+      uniqueVisitors: summary[0]?.uniqueVisitors ?? 0, clicksToday,
+      timeline: timeline.map((row) => ({ date: row._id, clicks: row.clicks })),
+      locations: locations.map((row) => ({ country: row._id ?? 'unknown', clicks: row.clicks })),
+      devices: devices.map((row) => ({ device: DEVICE_LABELS[row._id as string] ?? 'Unknown', clicks: row.clicks })),
+      sources: sources.map((row) => ({ source: SOURCE_LABELS[row._id as string] ?? SOURCE_LABELS.direct, clicks: row.clicks })),
+      destinations: destinations.map((row) => ({ linkId: row._id?.toString() ?? '', title: row.link[0]?.title ?? 'Default destination', clicks: row.clicks })),
     };
   }
 }

@@ -4,6 +4,12 @@ import Analytics from '../models/Analytics';
 import { syncExpiryState } from './links.service';
 import { lookupGeo } from '../utils/geoLookup';
 import { Request } from 'express';
+import mongoose from 'mongoose';
+
+interface HitContext {
+  campaignId?: mongoose.Types.ObjectId;
+  destinationLinkId?: mongoose.Types.ObjectId;
+}
 
 export class RedirectService {
   /**
@@ -29,7 +35,7 @@ export class RedirectService {
    * `source` marks whether the visit came from the short link or a QR scan.
    * Fire-and-forget — never blocks the redirect.
    */
-  recordHit(link: ILink, req: Request, source: 'direct' | 'qr' = 'direct'): void {
+  recordHit(link: ILink, req: Request, source: 'direct' | 'qr' = 'direct', context: HitContext = {}): void {
     const userAgentString = req.headers['user-agent']?.toString() || '';
     const isMobile = /mobile|iphone|ipod|android.*mobile|windows.*phone/i.test(userAgentString);
     const isTablet = /ipad|android(?!.*mobile)/i.test(userAgentString);
@@ -41,6 +47,8 @@ export class RedirectService {
       .then(({ country, city }) =>
         new Analytics({
           linkId: link._id,
+          campaignId: context.campaignId ?? null,
+          destinationLinkId: context.destinationLinkId ?? null,
           ipAddress,
           userAgent: userAgentString || 'unknown',
           deviceType,
