@@ -53,6 +53,11 @@ export const createLink = async (input: CreateLinkInput | string): Promise<Short
   return res.data.data.link;
 };
 
+export const createAnonymousLink = async (originalUrl: string): Promise<ShortenedLink> => {
+  const res = await api.post('/links/anonymous', { originalUrl });
+  return res.data.data.link;
+};
+
 export const listLinks = async (params?: {
   page?: number;
   limit?: number;

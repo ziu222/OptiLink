@@ -55,6 +55,24 @@ export const redirectLimiter = rateLimit({
 });
 
 /**
+ * Anonymous link creation: 5 requests per rolling 24h per IP.
+ * Applies to: POST /api/links/anonymous.
+ */
+export const anonymousLinkLimiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: 'RATE_LIMIT',
+      message: 'Bạn đã dùng hết 5 lượt rút gọn miễn phí hôm nay. Đăng ký tài khoản để rút gọn không giới hạn!',
+    },
+  },
+});
+
+/**
  * AI routes: 10 requests per minute per IP.
  * Applies to: /api/ai/*.
  */

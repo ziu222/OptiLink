@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { createLink } from '../../../api/links';
+import { createAnonymousLink, createLink } from '../../../api/links';
 import { useAuth } from '../../../contexts/AuthContext';
+import { getErrorMessage } from '../../../lib/formError';
 import shortenIllustration from '../../../assets/hero-shorten-illustration.png';
 import './Hero.css';
 
@@ -25,11 +26,11 @@ export function Hero() {
 
     setLoading(true);
     try {
-      const link = await createLink(url.trim());
+      const link = user ? await createLink(url.trim()) : await createAnonymousLink(url.trim());
       setResult({ shortUrl: link.shortUrl, slug: link.slug });
       setUrl('');
-    } catch {
-      setError('Đã có lỗi xảy ra. Vui lòng thử lại.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Đã có lỗi xảy ra. Vui lòng thử lại.'));
     } finally {
       setLoading(false);
     }

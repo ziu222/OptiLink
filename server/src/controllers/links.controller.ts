@@ -15,6 +15,15 @@ export class LinksController {
     });
   }
 
+  async createAnonymousLink(req: Request, res: Response): Promise<void> {
+    const link = await linksService.createLink(null, req.body);
+    res.status(201).json({
+      success: true,
+      message: 'Link created successfully',
+      data: { link },
+    });
+  }
+
   async getLinks(req: Request, res: Response): Promise<void> {
     const data = await linksService.listLinks(
       req.user!.id,
